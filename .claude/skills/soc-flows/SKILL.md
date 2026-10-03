@@ -34,7 +34,7 @@ Key flows:
 | verilator-lint / verilator-run | x-heep build/run | no |
 | firmware-build / firmware-demo | sw/firmware | no |
 | harden-classic / harden-chip | LibreLane GF180 (hours; needs Nix+PDK) | no |
-| pytest | test/test_x_heep_gen suites | no |
+| pytest | test/test_mosaic_gen suites | no |
 
 ## Failure playbook
 
@@ -48,7 +48,7 @@ Key flows:
 
 ## MCP tools
 
-Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `oh-my-soc approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
+Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
 | step | MCP tool |
 |---|---|

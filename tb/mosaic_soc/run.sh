@@ -30,9 +30,9 @@ PY="$REPO/.venv/bin/python"
 
 echo "### [1/4] generating RTL ($MOSAIC_CFG: 1 TITAN + 1 ATLAS + 1 NANO) ..."
 TPLS=$(mosaic_templates)
-"$PY" util/xheep_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" --base_config configs/general.hjson \
+"$PY" util/mosaic_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" --base_config configs/general.hjson \
     --pads_cfg configs/pad_cfg.py --output-root build/mosaic --outtpl "$TPLS" --externaltpl "" >/dev/null 2>&1 || { echo "RTL gen failed"; exit 1; }
-MANIFEST="$("$PY" util/xheep_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
+MANIFEST="$("$PY" util/mosaic_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
     --base-config configs/general.hjson --pads-cfg configs/pad_cfg.py --repo-root "$REPO")" || exit 1
 MOSAIC_GENERATED_ROOT="$("$PY" -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["generated_root"])' \
@@ -66,7 +66,7 @@ echo "### [2/4] assembling the 3 programs (TITAN + ATLAS + NANO, rv32i, ld-linke
 # all-or-nothing; a config mixing a berkeley worker with a non-berkeley
 # worker would need per-hart program selection here.
 ATLAS_S=atlas; NANO_S=nano
-CPU_SUBSYSTEM="$("$PY" util/xheep_gen/build_manifest.py generated-path --manifest "$MANIFEST" \
+CPU_SUBSYSTEM="$("$PY" util/mosaic_gen/build_manifest.py generated-path --manifest "$MANIFEST" \
     --logical-path hw/core-v-mini-mcu/cpu_subsystem.sv)" || exit 1
 if grep -qE "rocket_sci|boom_sci" "$CPU_SUBSYSTEM" 2>/dev/null; then
   ATLAS_S=atlas_tl; NANO_S=nano_tl

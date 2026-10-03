@@ -36,7 +36,7 @@ from typing import Any, Callable, Dict, Optional
 
 from harness.evidence.status import EvidenceStatus
 
-log = logging.getLogger("oh-my-soc.gate")
+log = logging.getLogger("mosaic.gate")
 
 FAIL_OPEN_ENV = "MOSAIC_GATE_FAIL_OPEN"
 

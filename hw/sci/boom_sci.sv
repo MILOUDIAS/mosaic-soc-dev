@@ -6,7 +6,7 @@
 // Wraps the SmallBoomV3 BoomTile extracted from chipyard 1.14.0 (CONFIG=
 // MosaicRocketBoomConfig, see hw/vendor/mosaic/berkeley/) and converts its
 // TileLink-C master port to a unified OBI master through the
-// xheep_tilelink_to_obi window bridge:
+// mosaic_tilelink_to_obi window bridge:
 //
 //   code/data  0x8000_0000|x (cacheable DRAM in the tile's PMAs) -> SRAM x
 //   sentinels  0x0200_0000+x (CLINT range, uncached device)      -> generated
@@ -149,7 +149,7 @@ module boom_sci #(
     );
 
     // ── TileLink -> OBI window bridge ────────────────────────────────────
-    xheep_tilelink_to_obi #(
+    mosaic_tilelink_to_obi #(
         .obi_req_t (obi_pkg::obi_req_t),
         .obi_resp_t(obi_pkg::obi_resp_t),
         .TL_AW     (TL_AW),

@@ -1,12 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
   "mcpServers": {
-    "oh-my-soc": {
+    "mosaic": {
       "command": "python3",
       "args": [
-        "plugins/oh-my-soc/launch_mcp.py",
+        "plugins/mosaic/launch_mcp.py",
         "--request",
-        "${OH_MY_SOC_REQUEST:-}"
+        "${MOSAIC_REQUEST:-}"
       ],
       "timeout": 0
     }

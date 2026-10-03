@@ -5,7 +5,7 @@ only by explicit ``soc-from-prompt --llm`` calls. The streamed provider classes
 below it power the real bounded model/tool/observation loop in ``agent.py``;
 they can propose typed tool calls but cannot execute commands or bypass gates.
 Deterministic parsing remains the default and fallback for the compatibility
-path, while ``oh-my-soc agent --driver api`` uses the streamed adapters.
+path, while ``mosaic agent --driver api`` uses the streamed adapters.
 
 Two wire formats cover essentially every provider:
   anthropic          — api.anthropic.com/v1/messages
@@ -147,7 +147,7 @@ def _extract_json(text: str) -> Dict[str, Any]:
 #: is not one. Measured 2026-09-17 -- every opencode-go call from this harness
 #: was being refused that way, and the same request with a User-Agent got a
 #: real answer from the gateway. Callers may still override it.
-_USER_AGENT = "oh-my-soc-harness/1.0"
+_USER_AGENT = "mosaic-harness/1.0"
 
 
 def _post(url: str, headers: Dict[str, str], payload: Dict[str, Any],

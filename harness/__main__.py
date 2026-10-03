@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""oh-my-soc — CLI entry point for the MOSAIC-SoC agentic harness.
+"""mosaic — CLI entry point for the MOSAIC-SoC agentic harness.
 
 Based on oh-my-pi, adapted for MOSAIC-SoC EDA flows.
 
@@ -60,10 +60,10 @@ def external_agent_prompt(driver: str, text: str, *, surface: str = "mcp") -> st
     Public because `demo/03_blocka_from_prompt.sh` drives `claude -p` with the
     very same string: a demo that invented its own prompt would be evidence
     about the demo, not about the surface a user actually gets from
-    `oh-my-soc agent`.
+    `mosaic agent`.
 
     `surface` exists because there are now genuinely two, and telling a model
-    to use tools it has not been given is worse than either. `oh-my-soc agent
+    to use tools it has not been given is worse than either. `mosaic agent
     --driver claude` supplies the gated MCP server, so it gets "mcp". The demo
     supplies a Bash scoped to `python3 -m harness` and no MCP server, so it
     asks for "cli" — and is therefore a probe of prose-to-typed-flags
@@ -77,7 +77,7 @@ def external_agent_prompt(driver: str, text: str, *, surface: str = "mcp") -> st
         tool_clause = ("invoke python3 -m harness commands as separate visible "
                        "Bash tool calls, react to each JSON result")
     elif surface == "mcp":
-        tool_clause = ("use the oh-my-soc MCP tools for every MOSAIC action, "
+        tool_clause = ("use the mosaic MCP tools for every MOSAIC action, "
                        "starting with request_scope, and react to each gate "
                        "result")
     else:
@@ -203,7 +203,7 @@ def _external_agent_command(
     if driver == "omp":
         # --no-tools removes every BUILT-IN tool (bash, edit, write, task...),
         # which is omp's equivalent of claude's --disallowedTools: the gated
-        # MCP server from .omp/mcp.json is what remains. OH_MY_SOC_REQUEST is
+        # MCP server from .omp/mcp.json is what remains. MOSAIC_REQUEST is
         # set by the caller and expanded into that server's env, which locks
         # its ceiling to this request.
         command = [binary, "--no-tools"]
@@ -908,7 +908,7 @@ def cmd_flow_runner(args):
 
     elif args.flow_runner_cmd == "run":
         if (
-            os.environ.get("OH_MY_SOC_AGENT_TOOL") == "1"
+            os.environ.get("MOSAIC_AGENT_TOOL") == "1"
             and args.flow_name in {"harden-classic", "harden-chip"}
         ):
             _print_result(
@@ -998,22 +998,22 @@ def cmd_mcp_server(args):
 
     # A host config cannot always pass argv, so the request may also arrive
     # through the environment (omp expands it into the server's env).
-    request = args.request or os.environ.get("OH_MY_SOC_REQUEST") or None
+    request = args.request or os.environ.get("MOSAIC_REQUEST") or None
     try:
-        allowlist = parse_scope_allowlist(os.environ.get("OH_MY_SOC_SCOPES"))
+        allowlist = parse_scope_allowlist(os.environ.get("MOSAIC_SCOPES"))
         session = build_session(
             request, repo_root=_ROOT,
             required_evidence=args.required_evidence,
             scope_allowlist=allowlist,
             approvals=Approvals(token_dir=approvals_dir()))
     except ValueError as error:
-        print(f"oh-my-soc MCP server: {error}", file=sys.stderr, flush=True)
+        print(f"mosaic MCP server: {error}", file=sys.stderr, flush=True)
         raise SystemExit(2)
     ceiling = (f"scope ceiling '{session.authorized_scope}' (locked)"
                if session.locked else
                f"plugin mode · scopes {sorted(session.scope_allowlist)}")
     print(
-        f"oh-my-soc MCP server · {ceiling} · repo {_ROOT} · "
+        f"mosaic MCP server · {ceiling} · repo {_ROOT} · "
         f"{len(session.registry.specs)} tools",
         file=sys.stderr, flush=True,
     )
@@ -1094,7 +1094,7 @@ def cmd_agent(args):
                 summary=f"external driver '{driver}' does not implement harness policy flags",
                 errors=[
                     f"unsupported: {', '.join(unsupported)}; use driver=api or deterministic",
-                    "for approvals, run `oh-my-soc approve <scope>` in a terminal",
+                    "for approvals, run `mosaic approve <scope>` in a terminal",
                 ],
             )
             _print_result(result, verbose=True)
@@ -1105,7 +1105,7 @@ def cmd_agent(args):
                 ok=False,
                 skill="agent",
                 summary=f"configured agent driver '{driver}' is not installed",
-                errors=[f"'{driver}' was not found on PATH; run oh-my-soc setup"],
+                errors=[f"'{driver}' was not found on PATH; run mosaic setup"],
             )
             _print_result(result, verbose=True)
             return
@@ -1154,7 +1154,7 @@ def cmd_agent(args):
             disabled = "Bash/Write/Edit disabled"
         else:
             # omp reads the committed .omp/mcp.json, which expands
-            # OH_MY_SOC_REQUEST into the server's env: same locked ceiling as
+            # MOSAIC_REQUEST into the server's env: same locked ceiling as
             # the claude driver's --request argv.
             if not (repo_root / ".omp" / "mcp.json").is_file():
                 _print_result(SkillResult(
@@ -1163,7 +1163,7 @@ def cmd_agent(args):
                     errors=[f"expected {repo_root / '.omp' / 'mcp.json'}"],
                 ), verbose=True)
                 return
-            child_env = dict(os.environ, OH_MY_SOC_REQUEST=text)
+            child_env = dict(os.environ, MOSAIC_REQUEST=text)
             disabled = "built-in tools disabled"
         print(
             f"Enforced session · scope ceiling '{scope}' · tools via the "
@@ -1174,7 +1174,7 @@ def cmd_agent(args):
                 token_dir=approvals_dir()).granted(scope):
             print(
                 f"Note: '{scope}' work needs a person's approval first: run "
-                f"`oh-my-soc approve {scope}` in another terminal.",
+                f"`mosaic approve {scope}` in another terminal.",
                 flush=True,
             )
         command = _external_agent_command(
@@ -1218,7 +1218,7 @@ def cmd_agent(args):
                 ok=False,
                 skill="agent",
                 summary="API agent is not configured",
-                errors=["run oh-my-soc setup --driver api --api-kind ..."],
+                errors=["run mosaic setup --driver api --api-kind ..."],
             )
             journal.close()
             _print_result(result, verbose=True)
@@ -1335,7 +1335,7 @@ def cmd_wrapper_smith(args):
         _print_result(result, verbose=True)
 
     elif args.wrapper_smith_cmd == "scaffold":
-        if os.environ.get("OH_MY_SOC_AGENT_TOOL") == "1" and args.apply:
+        if os.environ.get("MOSAIC_AGENT_TOOL") == "1" and args.apply:
             _print_result(
                 SkillResult(
                     ok=False,
@@ -1447,7 +1447,7 @@ def main():
     if hasattr(signal, "SIGTERM"):
         signal.signal(signal.SIGTERM, _cancel_handler)
     parser = _StrictArgumentParser(
-        prog="oh-my-soc",
+        prog="mosaic",
         description="Agentic harness for MOSAIC-SoC EDA flows (based on oh-my-pi)",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
@@ -1890,7 +1890,7 @@ def main():
     sfp_plan.add_argument("text", help="The natural-language SoC request")
     sfp_plan.add_argument("--llm", action="store_true",
                           help="Translate intent via the configured api driver "
-                               "(oh-my-soc setup); grammar fallback on failure")
+                               "(mosaic setup); grammar fallback on failure")
 
     sfp_run = sfp_sub.add_parser("run", help="Write the config (+ --run: verify pipeline)")
     sfp_run.add_argument("text", help="The natural-language SoC request")
@@ -1979,7 +1979,7 @@ def main():
         help="the user's request; the scope ceiling is derived from it and "
              "locked before any client connects. Omitted (plugin mode): each "
              "request is bound with session_new and the ceiling is the "
-             "OH_MY_SOC_SCOPES allowlist")
+             "MOSAIC_SCOPES allowlist")
     mcp.add_argument(
         "--required-evidence", default="auto",
         choices=["auto", *sorted(_SCOPES)],
@@ -2007,7 +2007,7 @@ def main():
                      help="host config file to merge into (default: the "
                           "host's user config)")
     ins.add_argument("--scopes", default=None,
-                     help="OH_MY_SOC_SCOPES to write (default: every scope "
+                     help="MOSAIC_SCOPES to write (default: every scope "
                           "except integration and physical)")
 
     # topo-viz
@@ -2057,7 +2057,7 @@ def main():
         if sys.stdin.isatty() and sys.stdout.isatty() and not CONFIG_PATH.exists():
             print("First run — no driver configured yet.")
             _print_result(SetupWizard().configure(), verbose=False)
-            print("\nNow try:  oh-my-soc agent \"an SoC with one cv32e20 "
+            print("\nNow try:  mosaic agent \"an SoC with one cv32e20 "
                   "controller and two picorv32 workers, tdu, a uart\"")
             sys.exit(0)
         parser.print_help()

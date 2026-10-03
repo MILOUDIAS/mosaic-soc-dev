@@ -1,4 +1,4 @@
-# oh-my-soc demos — prompt→SoC and wrap-any-core
+# mosaic demos — prompt→SoC and wrap-any-core
 
 Phase 2 deliverable walkthroughs. The harness (`python -m harness`, see
 [`harness/README.md`](../harness/README.md)) provides typed deterministic
@@ -10,10 +10,10 @@ cards in [`.claude/skills/`](../.claude/skills/).
 ([can1357/oh-my-pi](https://github.com/can1357/oh-my-pi)). What we adapted
 and why — **drive, don't fork**:
 
-| oh-my-pi mechanism | oh-my-soc use |
+| oh-my-pi mechanism | mosaic use |
 |---|---|
 | skills = `SKILL.md` dirs; its `claude` provider reads `.claude/skills/` | one set of cards serves omp AND Claude Code (zero duplication) |
-| custom tools in `.omp/tools/` (`CustomToolFactory`, `pi.zod`) | [`.omp/tools/oh-my-soc.ts`](../.omp/tools/oh-my-soc.ts): one schema-validated tool → `python -m harness <skill> <cmd> --json` |
+| custom tools in `.omp/tools/` (`CustomToolFactory`, `pi.zod`) | [`.omp/tools/mosaic.ts`](../.omp/tools/mosaic.ts): one schema-validated tool → `python -m harness <skill> <cmd> --json` |
 | full TUI + event plumbing | native interactive omp runs; normalized headless streams use the built-in API driver |
 | "agent assists, deterministic tooling checks" | every pipeline stage is a hard gate (schema validation, semantic checks, mcu-gen render, TB PASS, wake-demo EXIT SUCCESS) |
 
@@ -26,8 +26,8 @@ through the gated pipeline.
 
 **Agent path (oh-my-pi):** launch its full TUI (no print-mode suppression):
 ```bash
-./oh-my-soc setup --driver omp
-./oh-my-soc agent "an SoC with one cv32e20 controller, two picorv32 workers, 64KB sram, tdu, a uart"
+./mosaic setup --driver omp
+./mosaic agent "an SoC with one cv32e20 controller, two picorv32 workers, 64KB sram, tdu, a uart"
 ```
 
 **No-LLM visible workflow (CI-able):**
@@ -50,7 +50,7 @@ separates the two halves rather than blurring them:
 | | |
 |---|---|
 | **steps 2–5** | no model. The regex grammar reproduces `configs/mosaic_tapeout_ultra.yaml` field-for-field, then the capability gate **refuses** the same prompt with `no debug` removed, and refuses a sim-only core asked to tape out. CI-able; evidence about the *guardrails*. |
-| **step 6** | the model. Gated on an agent harness on PATH (`claude` / `omp`), **not** an API key. It gets the framing `oh-my-soc agent` sends — imported from the harness, not retyped — and must reach the frozen config through typed `config-author` flags, with `soc-from-prompt` explicitly off the table. |
+| **step 6** | the model. Gated on an agent harness on PATH (`claude` / `omp`), **not** an API key. It gets the framing `mosaic agent` sends — imported from the harness, not retyped — and must reach the frozen config through typed `config-author` flags, with `soc-from-prompt` explicitly off the table. |
 
 Step 6 is *reported*, not asserted: a model run is evidence, so the exit status
 stays governed by the deterministic steps and a divergence is printed in full.

@@ -17,7 +17,7 @@ from .events import AgentEvent, EventStream
 from .llm import ProviderEvent, ToolCallingProvider
 
 
-SYSTEM_PROMPT = """You are the oh-my-soc MOSAIC hardware agent. You operate by
+SYSTEM_PROMPT = """You are the mosaic MOSAIC hardware agent. You operate by
 calling the typed deterministic tools provided to you; never claim a command
 ran unless its tool result says ok=true. Choose tools based on the user's
 request, inspect every result, and recover from a failed non-physical gate when
@@ -522,7 +522,7 @@ class AgentState:
         # Reuse the same complete source-closure identity as MOSAIC generation.
         # It excludes volatile build products but includes RTL, TBs, configs,
         # software, flow inputs, scripts, and generator sources.
-        from util.xheep_gen.build_manifest import _generator_source_record
+        from util.mosaic_gen.build_manifest import _generator_source_record
 
         return _generator_source_record(self.repo_root)["sha256"]
 
@@ -1168,7 +1168,7 @@ class AgentRunner:
                         ok=False,
                         skill="agent",
                         summary="API agent has no configured provider",
-                        errors=["run oh-my-soc setup --driver api"],
+                        errors=["run mosaic setup --driver api"],
                     )
                 else:
                     self.state.required_scope = authorized_scope

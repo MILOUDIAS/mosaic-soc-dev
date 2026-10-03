@@ -10,7 +10,7 @@
 #
 # So those 35 live here, comments and all, and the five design-specific keys --
 # DESIGN_NAME, CLOCK_PERIOD, FP_SIZING, DIE_AREA, CORE_AREA -- are appended by
-# `oh-my-soc physical-intent harden`, which derives them from the SoC config
+# `mosaic physical-intent harden`, which derives them from the SoC config
 # and its objectives. CLOCK_PERIOD was identical in both designs only because
 # both chose 10 MHz; it is derived, not invariant.
 #

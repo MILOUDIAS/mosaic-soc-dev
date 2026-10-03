@@ -23,8 +23,8 @@ from typing import Any, Dict, Mapping
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT))
 
-from util.xheep_gen.core_registry import target_capability_errors  # noqa: E402
-from util.xheep_gen.build_manifest import SCHEMA_VERSION as BUILD_SCHEMA_VERSION  # noqa: E402
+from util.mosaic_gen.core_registry import target_capability_errors  # noqa: E402
+from util.mosaic_gen.build_manifest import SCHEMA_VERSION as BUILD_SCHEMA_VERSION  # noqa: E402
 
 
 class PreflightError(RuntimeError):

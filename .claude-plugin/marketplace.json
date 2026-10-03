@@ -6,8 +6,8 @@
   },
   "plugins": [
     {
-      "name": "oh-my-soc",
-      "source": "./plugins/oh-my-soc",
+      "name": "mosaic",
+      "source": "./plugins/mosaic",
       "description": "Gated MCP tools for the MOSAIC-SoC generator (YAML or natural language to verified SoC)."
     }
   ]

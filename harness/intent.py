@@ -219,7 +219,7 @@ class DesignIntent:
         `validate_soc_config` -- this module must never become a second
         opinion about what a legal config is.
         """
-        from util.xheep_gen.core_registry import validate_soc_config
+        from util.mosaic_gen.core_registry import validate_soc_config
 
         errors = validate_soc_config(cfg, allow_sim_only=allow_sim_only)
         if errors:

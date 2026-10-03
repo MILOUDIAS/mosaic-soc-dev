@@ -12,7 +12,7 @@ import copy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from util.xheep_gen.core_registry import CURRENT_SCHEMA
+from util.mosaic_gen.core_registry import CURRENT_SCHEMA
 
 from ..core import (
     SkillResult, REPO_ROOT, validate_config, dump_yaml,
@@ -488,7 +488,7 @@ class ConfigAuthor:
         # ("valid: ['rv32imc']") -- the documented `tb-smith wake-demo hazard3`
         # path could not run at all. Any core added to the registry without a
         # CORE_DEFAULTS entry would have repeated it.
-        from util.xheep_gen.core_registry import CORE_SPECS
+        from util.mosaic_gen.core_registry import CORE_SPECS
 
         supported = CORE_SPECS[core].isas
         preferred = CORE_DEFAULTS.get(core, {}).get("isa")

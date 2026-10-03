@@ -3,10 +3,10 @@
 A plugin host starts the MCP server before anyone has typed a request, so the
 old rule "the ceiling is derived from the request on the command line" has no
 request to derive from. The ceiling becomes a standing allowlist the user
-writes into the host config (OH_MY_SOC_SCOPES), and anything expensive or
+writes into the host config (MOSAIC_SCOPES), and anything expensive or
 tree-changing needs a second, time-limited yes from a person:
 
-    oh-my-soc approve physical --minutes 60
+    mosaic approve physical --minutes 60
 
 `approve` refuses without a real terminal on both stdin and stdout and makes
 the user type a phrase back. An agent's shell tool has no TTY, so a model that
@@ -25,7 +25,7 @@ typed them. Tokens are consulted there too.
 WHAT THIS DOES NOT STOP. A model that has a general shell as the same Unix user
 can write this file directly. The Claude Code plugin's PreToolUse hook denies
 shell and file writes that touch the approvals directory or the harness CLI,
-and `oh-my-soc agent --driver claude|omp` removes the shell entirely; those
+and `mosaic agent --driver claude|omp` removes the shell entirely; those
 are the enforced paths. A host that hands the model an unrestricted shell is
 trusting the model with the user's account, and no file-based token changes
 that.
@@ -135,12 +135,12 @@ class Approvals:
 
 
 def how_to_approve(scope: str) -> str:
-    return (f"a person must run `oh-my-soc approve {scope}` in a terminal; "
+    return (f"a person must run `mosaic approve {scope}` in a terminal; "
             "the model cannot grant this")
 
 
 def cli_approve(scope: str, minutes: int, *, revoke_only: bool = False) -> int:
-    """The `oh-my-soc approve` command. Returns the exit status."""
+    """The `mosaic approve` command. Returns the exit status."""
     if revoke_only:
         removed = revoke(scope)
         print(f"{'revoked' if removed else 'no token for'} {scope}")

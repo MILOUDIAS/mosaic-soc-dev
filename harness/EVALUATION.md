@@ -1,4 +1,4 @@
-# oh-my-soc agentic-harness evaluation
+# mosaic agentic-harness evaluation
 
 Date: 2026-07-13
 

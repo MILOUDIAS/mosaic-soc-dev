@@ -1,4 +1,4 @@
-"""Typed evidence primitives for the oh-my-soc harness.
+"""Typed evidence primitives for the mosaic harness.
 
 This package implements the mechanics for the evidence model specified in
 ``docs/general_multicore_soc_generator_roadmap.md`` §12, starting with the

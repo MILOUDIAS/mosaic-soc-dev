@@ -1,6 +1,6 @@
 # 2. Use the deterministic harness
 
-`oh-my-soc` wraps the generator and verification commands in typed tools with
+`mosaic` wraps the generator and verification commands in typed tools with
 structured results and hard gates. Start with the deterministic driver: it is
 CI-safe, uses no model, and exercises the same validation and EDA tools as the
 agent path.
@@ -19,18 +19,18 @@ source .venv/bin/activate
 ## Stage 1 — select the deterministic driver
 
 ```bash
-./oh-my-soc setup --driver deterministic --non-interactive
-./oh-my-soc setup show
+./mosaic setup --driver deterministic --non-interactive
+./mosaic setup show
 ```
 
 Expected key lines:
 
 ```text
-[OK] driver 'deterministic' saved to ~/.config/oh-my-soc/config.json
+[OK] driver 'deterministic' saved to ~/.config/mosaic/config.json
 [OK] driver: deterministic
 ```
 
-Artifact created: `~/.config/oh-my-soc/config.json`. It contains the driver
+Artifact created: `~/.config/mosaic/config.json`. It contains the driver
 choice, not project RTL or credentials.
 
 ## Stage 2 — author a config without hand-editing YAML
@@ -39,7 +39,7 @@ Write generated tutorial output under the ignored `build/` tree:
 
 ```bash
 mkdir -p build/tutorial
-./oh-my-soc config-author generate \
+./mosaic config-author generate \
   --name tutorial_authored \
   --core cv32e20:1:titan \
   --core fazyrv:1:atlas \
@@ -71,9 +71,9 @@ configuration.
 ## Stage 3 — run the config and topology gates
 
 ```bash
-./oh-my-soc config-author validate build/tutorial/tutorial_authored.yaml
-./oh-my-soc topo-viz check build/tutorial/tutorial_authored.yaml
-./oh-my-soc topo-viz render build/tutorial/tutorial_authored.yaml \
+./mosaic config-author validate build/tutorial/tutorial_authored.yaml
+./mosaic topo-viz check build/tutorial/tutorial_authored.yaml
+./mosaic topo-viz render build/tutorial/tutorial_authored.yaml \
   -o build/tutorial/tutorial_authored_topology.html
 ```
 
@@ -91,7 +91,7 @@ allowed to turn an invalid config into a PASS.
 ## Stage 4 — generate through `flow-runner`
 
 ```bash
-./oh-my-soc flow-runner run mosaic-gen-config \
+./mosaic flow-runner run mosaic-gen-config \
   --config build/tutorial/tutorial_authored.yaml
 ```
 
@@ -107,7 +107,7 @@ software-contract, FuseSoC, and manifest markers shown in the direct tutorial.
 ## Stage 5 — run the all-hart completion gate
 
 ```bash
-./oh-my-soc flow-runner run tb-soc-generic \
+./mosaic flow-runner run tb-soc-generic \
   --config build/tutorial/tutorial_authored.yaml
 ```
 
@@ -128,7 +128,7 @@ The deterministic grammar reports what it matched, what it did not understand,
 and every repair before writing anything:
 
 ```bash
-./oh-my-soc soc-from-prompt plan \
+./mosaic soc-from-prompt plan \
   "an SoC with one cv32e20 controller, two picorv32 workers, 64KB sram, a tdu and a uart"
 ```
 
@@ -154,7 +154,7 @@ This command creates `configs/tutorial_agent.yaml`, then runs the ordered gates
 through a visible event stream:
 
 ```bash
-./oh-my-soc agent \
+./mosaic agent \
   "build and verify an SoC with one cv32e20 controller, two picorv32 workers, 64KB sram, a tdu and a uart" \
   --driver deterministic \
   --name tutorial_agent \
@@ -164,7 +164,7 @@ through a visible event stream:
 Expected stable event sequence (individual tool output is abbreviated):
 
 ```text
-╭─ oh-my-soc agent
+╭─ mosaic agent
 → soc_plan
 ✓ soc_plan: parsed ...
 → soc_generate
@@ -196,7 +196,7 @@ the constraint that forbids them.
 Start with the free tier; it validates the entire array in seconds:
 
 ```bash
-./oh-my-soc tb-matrix run --tier validate
+./mosaic tb-matrix run --tier validate
 ```
 
 Expected summary:
@@ -213,9 +213,9 @@ SMP, worker-only, mixed-ABI). These cost minutes per config, so bound them
 and let the resume mechanism carry a campaign across sessions:
 
 ```bash
-./oh-my-soc tb-matrix run --tier render --limit 10
-./oh-my-soc tb-matrix run --tier sim --limit 2
-./oh-my-soc tb-matrix report
+./mosaic tb-matrix run --tier render --limit 10
+./mosaic tb-matrix run --tier sim --limit 2
+./mosaic tb-matrix report
 ```
 
 Results accumulate in `build/tb_matrix/report.json`; a re-run skips configs
@@ -231,7 +231,7 @@ MOSAIC_CFG=build/tb_matrix/configs/<name>.yaml tb/mosaic_soc/run_generic.sh
 Put the global `--json` flag before the skill:
 
 ```bash
-./oh-my-soc --json config-author validate tutorial/configs/tutorial_soc.yaml
+./mosaic --json config-author validate tutorial/configs/tutorial_soc.yaml
 ```
 
 Expected shape:

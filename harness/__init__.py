@@ -1,7 +1,7 @@
-# oh-my-soc — Agentic harness for MOSAIC-SoC
+# mosaic — Agentic harness for MOSAIC-SoC
 # Based on oh-my-pi, adapted for MOSAIC-SoC EDA flows.
 
-"""oh-my-soc: agentic harness for MOSAIC-SoC EDA flows.
+"""mosaic: agentic harness for MOSAIC-SoC EDA flows.
 
 Based on oh-my-pi (general-purpose agentic harness pattern),
 customized for the MOSAIC-SoC multi-core RISC-V SoC generator.

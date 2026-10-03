@@ -1,10 +1,10 @@
-// idma_stub.sv — DMA-disabled stub of idma_xheep_wrapper, for the Icarus
+// idma_stub.sv — DMA-disabled stub of idma_mosaic_wrapper, for the Icarus
 // (event-driven) full-SoC wake-and-run demo. The pulp iDMA uses package-function
 // param defaults (cf_math_pkg::idx_width) and other constructs Icarus can't parse,
 // and the demo doesn't use DMA — so we replace the wrapper with this stub (same
 // ports) and exclude the real iDMA sources from the Icarus filelist. All outputs
 // tied off; the DMA register region is simply acked (never accessed by the demo).
-module idma_xheep_wrapper #(
+module idma_mosaic_wrapper #(
     parameter type reg_req_t = logic,
     parameter type reg_rsp_t = logic,
     parameter type obi_req_t = logic,

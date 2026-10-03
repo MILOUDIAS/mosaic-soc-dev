@@ -1,4 +1,4 @@
-"""The pinned toolchain, and `oh-my-soc doctor` to check a machine against it.
+"""The pinned toolchain, and `mosaic doctor` to check a machine against it.
 
 nix-eda is the reference (root flake.nix, `nix develop .#sim`). Every piece of
 signoff evidence the project holds was produced under LibreLane 3.0.0's own

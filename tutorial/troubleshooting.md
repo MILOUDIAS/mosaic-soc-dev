@@ -17,7 +17,7 @@ fix that stage and rerun it; do not skip ahead to a later PASS marker.
 | `BUILD FAILED` | Verilator compile/elaboration error | Read `tb/mosaic_soc/build-generic.log`; search from the first `%Error`. |
 | Simulation exits without `EXIT SUCCESS` | One or more harts did not reach the exact sentinel | Read `tb/mosaic_soc/sim-generic.log`; the flow is a failure even if the process exit code is zero. |
 | `OPENCODE_API_KEY is not set` | Key was not exported in this shell | Use the hidden zsh `read -rs` sequence in `03-opencode-go.md`. |
-| API setup succeeds but the request fails | Missing/expired key, subscription, quota, or model access | Check `./oh-my-soc setup show`, then verify the account in OpenCode Go. Never paste the key into logs. |
+| API setup succeeds but the request fails | Missing/expired key, subscription, quota, or model access | Check `./mosaic setup show`, then verify the account in OpenCode Go. Never paste the key into logs. |
 | `raw model ID` error | TUI-prefixed model name used | Use `kimi-k2.7-code`, not `opencode-go/kimi-k2.7-code`. |
 
 ## The build hash changed
@@ -32,7 +32,7 @@ build/mosaic/tutorial_soc-<new-hash>/
 Locate the active manifest instead of hard-coding the hash:
 
 ```bash
-./.venv/bin/python util/xheep_gen/build_manifest.py locate \
+./.venv/bin/python util/mosaic_gen/build_manifest.py locate \
   --config tutorial/configs/tutorial_soc.yaml \
   --base-config configs/general.hjson \
   --pads-cfg configs/pad_cfg.py \
@@ -85,7 +85,7 @@ Capture these items without secrets:
 git status --short
 verilator --version
 "${RISCV_TC}-gcc" --version
-./oh-my-soc config-author validate tutorial/configs/tutorial_soc.yaml
+./mosaic config-author validate tutorial/configs/tutorial_soc.yaml
 ```
 
 Then include the first actual error from the relevant log, not only its final

@@ -1,4 +1,4 @@
-// idma_tb_top.sv — per-block test top for the iDMA (idma_xheep_wrapper).
+// idma_tb_top.sv — per-block test top for the iDMA (idma_mosaic_wrapper).
 //
 // Instantiates the wrapper with the real x-heep types (so it elaborates with
 // proper struct types, not the default `logic`), connects its read+write OBI
@@ -57,7 +57,7 @@ module idma_tb_top #(
     assign clk_gate_en_n[i] = 1'b1;
   end
   // ── DUT ────────────────────────────────────────────────────────
-  idma_xheep_wrapper #(
+  idma_mosaic_wrapper #(
       .reg_req_t  (reg_pkg::reg_req_t),
       .reg_rsp_t  (reg_pkg::reg_rsp_t),
       .obi_req_t  (obi_pkg::obi_req_t),

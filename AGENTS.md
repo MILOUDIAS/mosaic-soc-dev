@@ -9,7 +9,7 @@ MOSAIC-SoC is a **configuration-driven multi-core SoC generator** based on x-hee
 
 **Two phases:**
 - **Phase 1** — Modify x-heep into a single-config-file multi-core generator. A YAML config drives the entire flow — core selection, counts, memory size, bus fabric, scheduler, peripherals. Support heterogeneous cores (SERV, QERV, FazyRV, Ibex, CVA6) and multiple NoC/bus options. PoC: 1× Ibex (TITAN) + 2× FazyRV-CHUNK8 (ATLAS) + 4× SERV (NANO).
-- **Phase 2** — Build an agentic harness (oh-my-soc, based on oh-my-pi) with skills for RTL-to-GDS automation, config authoring, DRC triage, and documentation generation.
+- **Phase 2** — Build an agentic harness (mosaic, based on oh-my-pi) with skills for RTL-to-GDS automation, config authoring, DRC triage, and documentation generation.
 
 **Context:** IEEE SSCS Chipathon 2026, Track D (AI/LLM for Circuits). Target PDK: GF180MCU. Target area: 1.249 mm². All EDA is open-source (Librelane, Yosys, OpenROAD, Verilator).
 
@@ -91,16 +91,16 @@ Agents MUST understand these files before modifying x-heep. All paths are relati
 
 | File | Purpose |
 |------|---------|
-| `util/xheep_gen/mcu_gen.py` | Entry point — renders Mako `.sv.tpl` templates into `.sv` files using the `XHeep` config object |
-| `util/xheep_gen/xheep.py` | `XHeep` class — central config: single `_cpu`, `_bus_type`, `_memory_ss`, peripheral domains, pad ring |
-| `util/xheep_gen/load_config.py` | Loads HJSON or Python config files; `load_cpu_config()` creates the right CPU subclass |
-| `util/xheep_gen/cpu/cpu.py` | Base `CPU` class with `AVAILABLE_CPUS` set |
-| `util/xheep_gen/cpu/cv32e20.py` | CVE2 CPU class (params: `rv32e`, `rv32m`) |
-| `util/xheep_gen/cpu/cv32e40p.py` | CV32E40P CPU class (params: `fpu`, `zfinx`, `corev_pulp`, `num_mhpmcounters`) |
-| `util/xheep_gen/cpu/cv32e40px.py` | CV32E40P+XIF (inherits cv32e40p) |
-| `util/xheep_gen/cpu/cv32e40x.py` | CV32E40X CPU class (params: `num_mhpmcounters`) |
-| `util/xheep_gen/bus_type.py` | `BusType` enum: `onetoM` or `NtoM` |
-| `util/xheep_gen/cv_x_if.py` | `CvXIf` class for CV-X-IF extension interface config |
+| `util/mosaic_gen/mcu_gen.py` | Entry point — renders Mako `.sv.tpl` templates into `.sv` files using the `XHeep` config object |
+| `util/mosaic_gen/xheep.py` | `XHeep` class — central config: single `_cpu`, `_bus_type`, `_memory_ss`, peripheral domains, pad ring |
+| `util/mosaic_gen/load_config.py` | Loads HJSON or Python config files; `load_cpu_config()` creates the right CPU subclass |
+| `util/mosaic_gen/cpu/cpu.py` | Base `CPU` class with `AVAILABLE_CPUS` set |
+| `util/mosaic_gen/cpu/cv32e20.py` | CVE2 CPU class (params: `rv32e`, `rv32m`) |
+| `util/mosaic_gen/cpu/cv32e40p.py` | CV32E40P CPU class (params: `fpu`, `zfinx`, `corev_pulp`, `num_mhpmcounters`) |
+| `util/mosaic_gen/cpu/cv32e40px.py` | CV32E40P+XIF (inherits cv32e40p) |
+| `util/mosaic_gen/cpu/cv32e40x.py` | CV32E40X CPU class (params: `num_mhpmcounters`) |
+| `util/mosaic_gen/bus_type.py` | `BusType` enum: `onetoM` or `NtoM` |
+| `util/mosaic_gen/cv_x_if.py` | `CvXIf` class for CV-X-IF extension interface config |
 | `configs/*.hjson` / `configs/*.py` | Configuration files (Python takes precedence over HJSON) |
 
 ### RTL Templates (`hw/core-v-mini-mcu/`)
@@ -216,8 +216,8 @@ All reference IPs are in `refs/` for study and potential integration. **Do not m
 
 1. **Study the core** — examine its RTL in `refs/IP_Cores_Catalog/<core>/`, note its bus interface, config parameters, and HDL (Verilog vs SystemVerilog)
 2. **Write the SCI wrapper** — create `hw/sci/<core_name>_sci.sv` that presents OBI 1.3 instruction + data ports. Handle bus protocol conversion (Wishbone→OBI for SERV/FazyRV, req/gnt→OBI for Ibex, AXI→OBI for CVA6)
-3. **Add Python CPU class** — create `util/xheep_gen/cpu/<core_name>.py` inheriting from `CPU` base class. Define parameters, validate config
-4. **Register the CPU** — add to `AVAILABLE_CPUS` set in `util/xheep_gen/cpu/cpu.py`
+3. **Add Python CPU class** — create `util/mosaic_gen/cpu/<core_name>.py` inheriting from `CPU` base class. Define parameters, validate config
+4. **Register the CPU** — add to `AVAILABLE_CPUS` set in `util/mosaic_gen/cpu/cpu.py`
 5. **Add Mako conditional** — add a branch in `cpu_subsystem.sv.tpl` for the new core type
 6. **Add FuseSoC dependency** — add the core IP to the `.core` file's `depend` list. If the core uses Bender, run `bender fusesoc` to generate `.core` files first
 7. **Write a config file** — create `configs/<name>.hjson` or `configs/<name>.py` using the new core
@@ -235,7 +235,7 @@ All reference IPs are in `refs/` for study and potential integration. **Do not m
 ## 7. Build System
 
 - **FuseSoC** (CAPI=2 `.core` files) — primary build system. x-heep uses this exclusively, NOT Bender
-- **Mako templates** (`.sv.tpl`) — rendered by `util/xheep_gen/mcu_gen.py` into `.sv` files. The `XHeep` config object is passed to all templates
+- **Mako templates** (`.sv.tpl`) — rendered by `util/mosaic_gen/mcu_gen.py` into `.sv` files. The `XHeep` config object is passed to all templates
 - **Makefile** — `make mcu-gen` generates RTL from templates, `make verilate` runs Verilator simulation
 - **Config files** — HJSON (declarative, `configs/*.hjson`) or Python (programmatic, `configs/*.py`). Python takes precedence
 - **Bender** — available in `refs/IP_Tools/bender/` but NOT used by x-heep. Required when integrating PULP IPs that use `Bender.yml` (CVA6, FlooNoC). Use `bender fusesoc` to bridge
@@ -252,7 +252,7 @@ config (.hjson/.py) → mcu_gen.py → .sv.tpl → .sv files → FuseSoC → EDA
 | Synthesis | Yosys + ABC | Via Librelane |
 | Place & Route | OpenROAD | Via Librelane |
 | PDK | GF180MCU | SkyWater-equivalent open PDK |
-| Environment | Nix: `nix develop .#sim` / `.#physical` (reference) | LibreLane 3.0.0's nix-eda; IIC-OSIC-TOOLS 2026.09 via `tools/iic-osic.sh` is a labelled convenience runtime. `oh-my-soc doctor` checks. See docs/reproducing.md |
+| Environment | Nix: `nix develop .#sim` / `.#physical` (reference) | LibreLane 3.0.0's nix-eda; IIC-OSIC-TOOLS 2026.09 via `tools/iic-osic.sh` is a labelled convenience runtime. `mosaic doctor` checks. See docs/reproducing.md |
 | Simulation | Verilator **5.050** + cocotb | Pre-synthesis RTL sim; runners refuse any other Verilator (tb/tools.sh) |
 | Formal verification | SymbiYosys + riscv-formal | For SCI wrapper validation |
 | Signoff | DRC + LVS clean | STA closure at 50 MHz |
@@ -260,16 +260,16 @@ config (.hjson/.py) → mcu_gen.py → .sv.tpl → .sv files → FuseSoC → EDA
 
 ## 9. Phase 2: Agentic Harness — IMPLEMENTED (2026-07-12)
 
-- **Harness:** oh-my-soc (`harness/` — typed deterministic tools plus a bounded
+- **Harness:** mosaic (`harness/` — typed deterministic tools plus a bounded
   model/tool/observation loop and live terminal/JSONL event stream;
-  `./oh-my-soc` executable, `pip install -e .` console script, omp-style
-  first-run driver picker: deterministic/claude/omp/api via `oh-my-soc setup`,
-  one-line dispatch via `oh-my-soc agent "<request>"`).
+  `./mosaic` executable, `pip install -e .` console script, omp-style
+  first-run driver picker: deterministic/claude/omp/api via `mosaic setup`,
+  one-line dispatch via `mosaic agent "<request>"`).
   Based on **oh-my-pi** (vendored at `refs/IP_Tools/oh-my-pi`,
   can1357/oh-my-pi): we **drive it, we don't fork it** — skill cards in
   `.claude/skills/` are discovered by BOTH Claude Code and omp (its `claude`
   skill provider). omp reaches the harness through the same MCP server
-  (`.omp/mcp.json`); the old ungated `.omp/tools/oh-my-soc.ts` shim is gone.
+  (`.omp/mcp.json`); the old ungated `.omp/tools/mosaic.ts` shim is gone.
   TTY omp launches use its full native TUI rather than `--print`.
 - **Design principle:** The agent *assists and is checked by* deterministic
   tooling. It never replaces signoff. Every pipeline stage is a hard gate
@@ -282,7 +282,7 @@ config (.hjson/.py) → mcu_gen.py → .sv.tpl → .sv files → FuseSoC → EDA
   physical/integration actions need explicit approval. Child output is live;
   each session has a private append-only journal with a bounded in-memory tail.
 - **Core registries are single-sourced**: `harness/core.py` AST-reads
-  `AVAILABLE_CPUS`/`SCI_CORES` from `util/xheep_gen` (sync enforced by
+  `AVAILABLE_CPUS`/`SCI_CORES` from `util/mosaic_gen` (sync enforced by
   `test_harness_core.py`; every shipped config must validate).
 - **The external drivers are gated too** (2026-08-09). `--driver claude`/`omp`
   used to be a `subprocess.call` with a prompt: every rule above existed in
@@ -302,18 +302,18 @@ config (.hjson/.py) → mcu_gen.py → .sv.tpl → .sv files → FuseSoC → EDA
   starts the server before any request exists, so there is no request to
   derive a ceiling from. Without `--request` the server runs in plugin mode:
   - the ceiling is a standing allowlist the USER writes into the host config
-    (`OH_MY_SOC_SCOPES`; the default excludes `integration` and `physical`);
+    (`MOSAIC_SCOPES`; the default excludes `integration` and `physical`);
   - the model binds each request with `session_new` and picks a scope inside
     the allowlist;
   - `physical`, `integration`, any flow whose `FlowSpec` declares approval, a
     tb-matrix run above validate, and wrapper apply also need a person's
-    time-limited token from `oh-my-soc approve <scope>`. That command refuses
+    time-limited token from `mosaic approve <scope>`. That command refuses
     without a TTY on stdin and stdout, so an agent's shell cannot run it.
     This applies to locked sessions too.
 
   Packaging: a Claude Code plugin with a marketplace entry and a PreToolUse
-  hook that denies the ungated Bash paths (`plugins/oh-my-soc`);
-  `oh-my-soc install --host codex|opencode|omp|claude` prints or merges the
+  hook that denies the ungated Bash paths (`plugins/mosaic`);
+  `mosaic install --host codex|opencode|omp|claude` prints or merges the
   host config. Smoke results: `docs/plugin_smoke.md`.
 
 ### Skills (all implemented; cards in `.claude/skills/`)
@@ -343,7 +343,7 @@ TB in 229 cycles. Demos: `demo/01_soc_from_prompt.sh`,
 ## 10. Coding Conventions
 
 - **SystemVerilog:** Follow PULP-platform style — `lowercase_snake_case`, explicit types, packed structs, `typedef` before use
-- **Python:** Follow x-heep's `util/xheep_gen/` patterns — class-based config, type hints, dataclasses where appropriate
+- **Python:** Follow x-heep's `util/mosaic_gen/` patterns — class-based config, type hints, dataclasses where appropriate
 - **Config files:** HJSON for declarative configs, Python for programmatic configs (multi-core, conditional logic)
 - **Mako templates:** Use `% if`/`% endif` for conditionals, `${expr}` for substitution, `<% %>` for Python blocks
 - **File naming:** `snake_case.sv` for RTL, `snake_case.sv.tpl` for templates, `snake_case.py` for Python
@@ -382,14 +382,14 @@ TB in 229 cycles. Demos: `demo/01_soc_from_prompt.sh`,
 | `hw/vendor/mosaic/fazyrv/` | Vendored FazyRV RTL (from refs/) |
 | `hw/vendor/mosaic/serv/` | Vendored SERV + servile RTL (from refs/) |
 | `hw/vendor/mosaic/idma/` | Vendored iDMA RTL (generated + static, OBI backend + reg frontend + x-heep wrapper) |
-| `util/xheep_gen/mosaic_config.py` | MOSAIC YAML parser → XHeep multi-core config (overlays on base HJSON) |
+| `util/mosaic_gen/mosaic_config.py` | MOSAIC YAML parser → XHeep multi-core config (overlays on base HJSON) |
 | `scripts/fusesoc-setup.sh` | FuseSoC build setup helper (resolves deps + generates files, excludes refs/) |
 | `core-v-mini-mcu.core` | Top-level FuseSoC core — includes TDU + SCI fileset deps |
 | `refs/IP_Cores_Catalog/` | 5 RISC-V cores: serv, qerv, FazyRV, ibex, cva6 |
 | `refs/IP_Interconnect_Catalog/` | 4 IPs: FlooNoC, TeraNoC, axi_obi, iDMA |
 | `refs/IP_SoCs_Catalog/` | 8 SoC designs: pulp, pulp_cluster, pulpissimo, pulpino, mempool, chipyard, adam, x-heep |
 | `refs/IP_Tools/` | bender, fusesoc |
-| `refs/IP_SoCs_Catalog/x-heep/util/xheep_gen/` | x-heep Python generator (mcu_gen.py, xheep.py, cpu/, load_config.py) |
+| `refs/IP_SoCs_Catalog/x-heep/util/mosaic_gen/` | x-heep Python generator (mcu_gen.py, xheep.py, cpu/, load_config.py) |
 | `refs/IP_SoCs_Catalog/x-heep/hw/core-v-mini-mcu/` | x-heep RTL templates (.sv.tpl) and static RTL |
 | `refs/IP_SoCs_Catalog/x-heep/configs/` | x-heep configuration files (.hjson, .py) |
 
@@ -398,7 +398,7 @@ TB in 229 cycles. Demos: `demo/01_soc_from_prompt.sh`,
 ### Completed
 - ✅ **Config-driven generation**: `mosaic.yaml` → `make mosaic-gen` → 37 RTL templates
 - ✅ **Multi-core XHeep API**: `XHeep.set_cpus()`, `num_harts()`, `is_multi_core()`, `CpuConfig` dataclass
-- ✅ **Mosaic YAML parser**: `util/xheep_gen/mosaic_config.py` — overlays multi-core topology on base HJSON
+- ✅ **Mosaic YAML parser**: `util/mosaic_gen/mosaic_config.py` — overlays multi-core topology on base HJSON
 - ✅ **Per-core master indices**: `CORE0..N_{INSTR,DATA}_IDX` in `core_v_mini_mcu_pkg.sv.tpl`
 - ✅ **Multi-core cpu_subsystem**: generate-loop over heterogeneous cores (cv32e20 + fazyrv_sci + serv_sci)
 - ✅ **Multi-master system_bus**: per-core OBI master ports, DMA index fix, ext slave fix
@@ -408,16 +408,16 @@ TB in 229 cycles. Demos: `demo/01_soc_from_prompt.sh`,
 - ✅ **TDU instantiation**: reg-bus tap in `ao_peripheral_subsystem.sv.tpl`, wired through top-level
 - ✅ **SCI wrappers**: `hw/sci/fazyrv_sci.sv` + `hw/sci/serv_sci.sv` — Verilator lint-clean with vendored cores
 - ✅ **Vendored cores**: `hw/vendor/mosaic/fazyrv/` + `hw/vendor/mosaic/serv/` with FuseSoC `.core` files
-- ✅ **iDMA (pulp-platform 0.6.5, functionally verified)**: `hw/vendor/mosaic/idma/` — rw_obi backend + ND midend + `idma_reg32_3d` reg frontend + `idma_xheep_wrapper` matching x-heep's DMA interface. Conditionally instantiated in `ao_peripheral_subsystem.sv.tpl` for multi-core mode (active in the PoC). **The wrapper was rewritten** against the latest iDMA module interfaces (the original was version-skewed and did not elaborate): it builds the 1D/ND request + OBI meta-channel types, wires reg-fe → id-gen → `idma_nd_midend` → `idma_backend_rw_obi`, and converts the backend's pulp-platform OBI masters to x-heep's `obi_pkg` bus. Required vendoring the **OBI package** (`hw/vendor/pulp_platform/obi` v0.1.2 + `obi.core`) and fixing `idma.core` (missing `idma/typedef.svh` include dir; dropped `*_synth` wrappers that pull an un-vendored AXI backend). **Tested with cocotb+Verilator** (`tb/idma/`): a mem-to-mem copy programmed via the register frontend completes correctly at **per-block** (dual-port memory) AND **SoC level** (shared, arbitrated memory) — `TESTS=1 PASS=1` each. `mosaic:ip:idma` + `pulp-platform.org::obi` resolve in FuseSoC; `make mosaic-gen` is EXIT=0.
+- ✅ **iDMA (pulp-platform 0.6.5, functionally verified)**: `hw/vendor/mosaic/idma/` — rw_obi backend + ND midend + `idma_reg32_3d` reg frontend + `idma_mosaic_wrapper` matching x-heep's DMA interface. Conditionally instantiated in `ao_peripheral_subsystem.sv.tpl` for multi-core mode (active in the PoC). **The wrapper was rewritten** against the latest iDMA module interfaces (the original was version-skewed and did not elaborate): it builds the 1D/ND request + OBI meta-channel types, wires reg-fe → id-gen → `idma_nd_midend` → `idma_backend_rw_obi`, and converts the backend's pulp-platform OBI masters to x-heep's `obi_pkg` bus. Required vendoring the **OBI package** (`hw/vendor/pulp_platform/obi` v0.1.2 + `obi.core`) and fixing `idma.core` (missing `idma/typedef.svh` include dir; dropped `*_synth` wrappers that pull an un-vendored AXI backend). **Tested with cocotb+Verilator** (`tb/idma/`): a mem-to-mem copy programmed via the register frontend completes correctly at **per-block** (dual-port memory) AND **SoC level** (shared, arbitrated memory) — `TESTS=1 PASS=1` each. `mosaic:ip:idma` + `pulp-platform.org::obi` resolve in FuseSoC; `make mosaic-gen` is EXIT=0.
 - ✅ **FuseSoC integration**: TDU + SCI + iDMA filesets in `core-v-mini-mcu.core`
 
 ### Remaining
 - ✅ **QERV**: reuses the W-parameterized `serv_sci.sv` at `W=4` (no new wrapper/vendor) — `qerv` branch in `cpu_subsystem.sv.tpl`. Elaborates Verilator-clean.
 - ✅ **Ibex**: `hw/sci/ibex_sci.sv` (req/gnt→OBI) + self-contained vendored core `hw/vendor/mosaic/ibex/` (`mosaic:ip:ibex`) + `ibex` branch + `AVAILABLE_CPUS`/`sci.core` entries. Wrapper + full Ibex hierarchy Verilator lint-clean. NOTE: the vendored core bundles its own lowRISC prim closure; co-building with cv32e20 in a full SoC needs a prim de-dup step (see `ibex.core` header) — generation (template render) is unaffected.
-- ✅ **CVA6 (SIM-ONLY, 2026-07-11)**: integrated as a **32-bit** cv32a65x derivative — vendored WT-cache subset at `hw/vendor/mosaic/cva6/` with a MOSAIC config package (`cv32a6_mosaic_config_pkg.sv`: CvxifEn=0, data side fully uncached for sentinel-polling coherence, NonIdempotent PMA over `0x2000_0000+`, DCacheType=WT), `hw/sci/cva6_sci.sv` (folds the burst-capable `xheep_axi_burst_to_obi` bridge, 64-bit AXI → 32-bit OBI), and a `cva6` branch in `cpu_subsystem.sv.tpl` (unified OBI port). Verified: `configs/mosaic_cva6.yaml` (cva6 TITAN + fazyrv + serv) and `configs/mosaic_new_cores.yaml` (cva6 + snitch + picorv32) reach EXIT SUCCESS in the full-SoC TDU wake demo. **The GF180 tapeout exclusion still stands** — ~80 kGE + caches does not fit the 1.249 mm² PoC budget; do not add cva6 to tapeout configs.
+- ✅ **CVA6 (SIM-ONLY, 2026-07-11)**: integrated as a **32-bit** cv32a65x derivative — vendored WT-cache subset at `hw/vendor/mosaic/cva6/` with a MOSAIC config package (`cv32a6_mosaic_config_pkg.sv`: CvxifEn=0, data side fully uncached for sentinel-polling coherence, NonIdempotent PMA over `0x2000_0000+`, DCacheType=WT), `hw/sci/cva6_sci.sv` (folds the burst-capable `mosaic_axi_burst_to_obi` bridge, 64-bit AXI → 32-bit OBI), and a `cva6` branch in `cpu_subsystem.sv.tpl` (unified OBI port). Verified: `configs/mosaic_cva6.yaml` (cva6 TITAN + fazyrv + serv) and `configs/mosaic_new_cores.yaml` (cva6 + snitch + picorv32) reach EXIT SUCCESS in the full-SoC TDU wake demo. **The GF180 tapeout exclusion still stands** — ~80 kGE + caches does not fit the 1.249 mm² PoC budget; do not add cva6 to tapeout configs.
 - ✅ **PicoRV32 (2026-07-10)**: `hw/vendor/mosaic/picorv32/` (YosysHQ picorv32.v @ f00a88c, the spimemio vendoring pin) + `hw/sci/picorv32_sci.sv` (native mem port → unified OBI, serv-style single-outstanding + reset-hold dormancy). Verified: `configs/mosaic_picorv32.yaml` wake demo EXIT SUCCESS (both workers picorv32).
 - ✅ **Snitch (2026-07-10)**: bare mempool-flavor integer core vendored at `hw/vendor/mosaic/snitch/` (local divergences: extension `ifdef` defaults 1'bX→0; fork-only fpnew config blobs removed; one perf-`ifdef` guard) + `hw/sci/snitch_sci.sv` (instr refill + TCDM reqrsp → split OBI; TCDM writes get no p-channel response — handled). RV32I (acc port tied; RVM needs `snitch_shared_muldiv` first). Verified: `configs/mosaic_snitch.yaml` wake demo EXIT SUCCESS (both workers snitch).
-- ✅ **Rocket + BOOM v3 (RV64, SIM-ONLY, 2026-07-12)**: extracted **RocketTile** and **SmallBoomV3 BoomTile** closures from ONE chipyard 1.14.0 elaboration (`MosaicRocketBoomConfig`, 64-bit sbus — single firtool namespace, so both tiles co-exist in one Verilator build), vendored at `hw/vendor/mosaic/berkeley/` (299 modules; reproducible via `extract_tile_closure.py`, incl. the RESET_VECTOR re-parameterization — upstream folds the tile boot address to the bootrom hang 0x10000). Bridged by `hw/vendor/mosaic/tl_obi/xheep_tilelink_to_obi.sv` (TL-C→OBI: Acquire/GrantData/GrantAck refills, Release(Data) writebacks, uncached Get/Put; unit TB `tb/tl_obi/run.sh`, 21 checks) with **window translation**: code via the tile-cacheable DRAM alias `0x8000_0000|addr`→SRAM, sentinels via the uncached CLINT range `0x0200_0000+off`→`0x3000+off`, TDU via the uncached PLIC range `0x0C00_0000+off`→`0x200A_0000+off` — shared state is uncached BY CONSTRUCTION (the CVA6 coherence trick, generalized). Workers use `prog/{atlas_tl,nano_tl}.S` (CLINT-window sentinel stores; rv32i encodings are valid RV64I). Wrappers `hw/sci/{rocket,boom}_sci.sv` (unified OBI port, reset-hold dormancy inverts to the tiles' active-high reset). **Never part of the GF180 tapeout.**
+- ✅ **Rocket + BOOM v3 (RV64, SIM-ONLY, 2026-07-12)**: extracted **RocketTile** and **SmallBoomV3 BoomTile** closures from ONE chipyard 1.14.0 elaboration (`MosaicRocketBoomConfig`, 64-bit sbus — single firtool namespace, so both tiles co-exist in one Verilator build), vendored at `hw/vendor/mosaic/berkeley/` (299 modules; reproducible via `extract_tile_closure.py`, incl. the RESET_VECTOR re-parameterization — upstream folds the tile boot address to the bootrom hang 0x10000). Bridged by `hw/vendor/mosaic/tl_obi/mosaic_tilelink_to_obi.sv` (TL-C→OBI: Acquire/GrantData/GrantAck refills, Release(Data) writebacks, uncached Get/Put; unit TB `tb/tl_obi/run.sh`, 21 checks) with **window translation**: code via the tile-cacheable DRAM alias `0x8000_0000|addr`→SRAM, sentinels via the uncached CLINT range `0x0200_0000+off`→`0x3000+off`, TDU via the uncached PLIC range `0x0C00_0000+off`→`0x200A_0000+off` — shared state is uncached BY CONSTRUCTION (the CVA6 coherence trick, generalized). Workers use `prog/{atlas_tl,nano_tl}.S` (CLINT-window sentinel stores; rv32i encodings are valid RV64I). Wrappers `hw/sci/{rocket,boom}_sci.sv` (unified OBI port, reset-hold dormancy inverts to the tiles' active-high reset). **Never part of the GF180 tapeout.**
 
 ### Bug fixes & flow (later additions)
 - ✅ **`make mosaic-gen`/`mcu-gen` FuseSoC fix**: the register-gen step now routes through `scripts/fusesoc-setup.sh` (refs-excluding cores-root). A bare `--cores-root .` made FuseSoC recurse into `refs/` and crash on the 0-byte `refs/IP_Tools/fusesoc/tests/capi2_cores/misc/empty.core`. (`.fusesoc.conf` is inert — FuseSoC only auto-loads `fusesoc.conf` without the dot.)
@@ -432,14 +432,14 @@ TB in 229 cycles. Demos: `demo/01_soc_from_prompt.sh`,
 - 🐛 **Three bugs found+fixed via the harness:** (1) **FazyRV reset polarity** — `hw/sci/fazyrv_sci.sv` connected `.rst_in(~rst_ni)`, but FazyRV's `rst_in` is active-low (like `rst_ni`); the inversion held FazyRV in reset during operation (PC pinned at `BOOTADR`, regfile writes gated off). Fixed to `.rst_in(rst_ni)` (now `.rst_in(rst_ni & fetch_enable_i)` after the wake-gating change) — a real PoC bug (any FazyRV/ATLAS core would never execute). (2) `core_v_mini_mcu_pkg.sv.tpl` emitted `CpuType = <first-core-name>`, invalid when the first core is an SCI core (not in `cpu_type_e`) — now falls back to a valid enum value. (3) the `cpu_subsystem.sv.tpl` FazyRV branch defaulted `rftype=LOGIC` while `conf=CSR`, an invalid FazyRV combo (asserts at elaboration) that also affected the PoC — `rftype` now defaults to `BRAM_DP_BP`.
 
 ### Multi-fabric system bus (bus: obi | log | floonoc)
-- ✅ **Config seam**: `bus:` in mosaic.yaml is no longer cosmetic. `obi`→`BusType.NtoM` (existing crossbar), `log`→`BusType.LOG`, `floonoc`→`BusType.FLOONOC`; `axi` is now a hard error. Optional `bus_opts:` mapping (validated, typo-rejecting): `log: {topology: lic|bfly2|bfly4, num_banks: auto|N}`, `floonoc: {route_algo, endpoints}`. SV `bus_type_e` widened to 2 bits. Pytest: `test/test_x_heep_gen/test_bus_types.py` (10 tests).
+- ✅ **Config seam**: `bus:` in mosaic.yaml is no longer cosmetic. `obi`→`BusType.NtoM` (existing crossbar), `log`→`BusType.LOG`, `floonoc`→`BusType.FLOONOC`; `axi` is now a hard error. Optional `bus_opts:` mapping (validated, typo-rejecting): `log: {topology: lic|bfly2|bfly4, num_banks: auto|N}`, `floonoc: {route_algo, endpoints}`. SV `bus_type_e` widened to 2 bits. Pytest: `test/test_mosaic_gen/test_bus_types.py` (10 tests).
 - ✅ **`bus: log` — two-tier logarithmic interconnect**: per-master 1-rule demux splits `[0, MEM_SIZE)` (memory tier) from the rest; memory tier = classic fixed-latency `tcdm_interconnect` (already vendored under `hw/vendor/xheep/cluster_interconnect/rtl/tcdm_interconnect/`, now compiled via a new `files_rtl_tcdm` fileset) over word-interleaved banks with per-bank RR arbitration; non-memory tier = the varlat crossbar over ERROR/DEBUG/AO/PERIPHERAL/FLASH. The generator rebuilds RAM as ONE interleaved group (`num_banks` auto = next_pow2(bus masters); LIC hard-requires banks >= masters — `tcdm_interconnect.sv:318` is sim-only, the Python `XHeep._validate_log_bus()` is the authoritative gate; bank cap raised to 32 for LOG). Configs: `mosaic_log.yaml` (3 harts, 16 banks), `mosaic_log_poc.yaml` (PoC, 32x2KB), `mosaic_wake_demo_log.yaml` (32 banks — the TESTHARNESS adds EXT_XBAR_NMASTER=8 masters). Verified: `tb/log_xbar/run.sh` (T1 interleave sweep, T2 same-cycle parallel-bank grants, T3 same-bank RR, T4 mid-stream peripheral, T5 unmapped→ERROR — all PASS) and the full-SoC TDU wake demo **EXIT SUCCESS** on the LOG fabric.
-- ✅ **`bus: floonoc` — FlooNoC AXI NoC**: floogen (installed into .venv from `refs/IP_Interconnect_Catalog/FlooNoC`, see util/python-requirements.txt) generates `hw/ip/floonoc_fabric/floo_mosaic_noc{_pkg,}.sv` from the topology emitted by `util/xheep_gen/floonoc_gen.py` (compact: per-hart I+D merged → one AXI manager endpoint each, debug+DMA+EXT → `shared`, two subordinates `mem`/`periph`; single router, ID-table routing; stubs are written for non-floonoc configs so `mosaic:ip:floonoc_fabric` always resolves). MOSAIC-owned bridges `hw/vendor/mosaic/axi_obi/xheep_{obi_to_axi,axi_to_obi}.sv` (x-heep obi structs as type params — pulp obi_pkg is never compiled, idma-wrapper pattern; no atomics, 32/32). FlooNoC RTL vendored (`mosaic:ip:floonoc`, single-AXI subset) with 3 documented local patches for the common_cells 1.38-vs-1.39 skew (addr_decode NoIndices; 4-arg `ASSERT`/2-arg `ASSERT_INIT` vs OpenTitan prim_assert). Verified: bridge loopback + NoC smoke cocotb (`tb/floonoc/cocotb/run.sh [stage2]`, PASS) and the full-SoC TDU wake demo **EXIT SUCCESS** over the NoC.
+- ✅ **`bus: floonoc` — FlooNoC AXI NoC**: floogen (installed into .venv from `refs/IP_Interconnect_Catalog/FlooNoC`, see util/python-requirements.txt) generates `hw/ip/floonoc_fabric/floo_mosaic_noc{_pkg,}.sv` from the topology emitted by `util/mosaic_gen/floonoc_gen.py` (compact: per-hart I+D merged → one AXI manager endpoint each, debug+DMA+EXT → `shared`, two subordinates `mem`/`periph`; single router, ID-table routing; stubs are written for non-floonoc configs so `mosaic:ip:floonoc_fabric` always resolves). MOSAIC-owned bridges `hw/vendor/mosaic/axi_obi/xheep_{obi_to_axi,axi_to_obi}.sv` (x-heep obi structs as type params — pulp obi_pkg is never compiled, idma-wrapper pattern; no atomics, 32/32). FlooNoC RTL vendored (`mosaic:ip:floonoc`, single-AXI subset) with 3 documented local patches for the common_cells 1.38-vs-1.39 skew (addr_decode NoIndices; 4-arg `ASSERT`/2-arg `ASSERT_INIT` vs OpenTitan prim_assert). Verified: bridge loopback + NoC smoke cocotb (`tb/floonoc/cocotb/run.sh [stage2]`, PASS) and the full-SoC TDU wake demo **EXIT SUCCESS** over the NoC.
 - 🐛 **floogen router-table gap (found via the wake demo)**: floogen's `gen_router_tables` emits ID-table rules only for SUBORDINATE endpoints, so response flits to manager-only endpoints (our harts) missed the table and the router's default-less decode sent them all to port 0 — hart 0 accidentally worked, every other hart hung on its first fetch. `floonoc_gen.py::_patch_router_map` now rewrites the generated map to the full identity map (router port i == endpoint id i in the single-router topology).
 - 🐛 **Stale-generated-RTL hazards in the full-SoC sim flow (found via the LOG wake demo)**: (1) `tb/mosaic_soc/run.sh` used to skip the FuseSoC register-gen pass — a power manager generated for FEWER banks leaves the extra banks power-gated (reads return 0 while the backdoor-loaded data is visibly present). run.sh now re-runs `scripts/fusesoc-setup.sh` (with RISCV_XHEEP/COMPILER_PREFIX for the boot-ROM generator). (2) `gen_filelist.py` now remaps `floo_mosaic_noc{_pkg,}.sv` to the live generated sources (same config-dependence hazard as `core_v_mini_mcu_pkg.sv`). (3) `tb/mosaic_soc/tb_util.svh` is now GENERATED from `tb_util.svh.tpl` (bank count/size/interleave are config-dependent; the old static copy hardcoded 2x32KB banks).
-- ✅ **oh-my-soc `topo-viz` skill** (soc-topgen-ui-inspired): `python -m harness topo-viz check <cfg>` (semantic checks beyond schema: LOG bank constraint, derived address-map overlap, inert/unknown bus_opts) and `topo-viz render <cfg> -o topology.html` (self-contained interactive HTML/SVG, per-fabric layered diagram + memory-map table). Pytest: `test_topo_viz.py`.
+- ✅ **mosaic `topo-viz` skill** (soc-topgen-ui-inspired): `python -m harness topo-viz check <cfg>` (semantic checks beyond schema: LOG bank constraint, derived address-map overlap, inert/unknown bus_opts) and `topo-viz render <cfg> -o topology.html` (self-contained interactive HTML/SVG, per-fabric layered diagram + memory-map table). Pytest: `test_topo_viz.py`.
 
 ### FuseSoC Build Verification
-- ✅ **FuseSoC resolves all MOSAIC-SoC cores**: `x-heep:ip:tdu`, `mosaic:ip:idma`, `mosaic:ip:sci`, `mosaic:ip:fazyrv`, `mosaic:ip:serv`, `mosaic:ip:servile` all successfully prepared.
+- ✅ **FuseSoC resolves all MOSAIC-SoC cores**: `mosaic:ip:tdu`, `mosaic:ip:idma`, `mosaic:ip:sci`, `mosaic:ip:fazyrv`, `mosaic:ip:serv`, `mosaic:ip:servile` all successfully prepared.
 - ✅ **All x-heep dependencies resolve** (cv32e20, peripherals, OpenTitan IPs, PULP IPs).
 - ⚠️ **Full build requires external tools**: RISCV `elf-gcc` toolchain (for boot_rom) and `regtool`/`periph_structs_gen` tools. Use `scripts/fusesoc-setup.sh` to reproduce.

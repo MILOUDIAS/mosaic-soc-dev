@@ -1,7 +1,7 @@
 """Stage-2 smoke test: OBI traffic through the generated FlooNoC fabric.
 
-cocotb OBI master -> xheep_obi_to_axi -> hart0 chimney -> router -> mem/periph
-chimney -> xheep_axi_to_obi -> OBI slaves. The mem endpoint covers
+cocotb OBI master -> mosaic_obi_to_axi -> hart0 chimney -> router -> mem/periph
+chimney -> mosaic_axi_to_obi -> OBI slaves. The mem endpoint covers
 [0, 0x8000); everything above routes to the periph endpoint.
 """
 

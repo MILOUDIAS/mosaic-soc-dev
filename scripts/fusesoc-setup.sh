@@ -65,11 +65,11 @@ if [ -n "$MANIFEST" ]; then
     RUN_ROOT="$(mktemp -d "$BUNDLE_DIR/runs/fusesoc.XXXXXX")"
     FUSESOC_ROOT="$RUN_ROOT/core-root"
     BUILD_ROOT="$RUN_ROOT/build"
-    "$VENV_PY" "$REPO_ROOT/util/xheep_gen/build_manifest.py" stage \
+    "$VENV_PY" "$REPO_ROOT/util/mosaic_gen/build_manifest.py" stage \
         --manifest "$MANIFEST" --output "$FUSESOC_ROOT" >/dev/null
     while IFS= read -r flag; do
         [ -n "$flag" ] && FUSESOC_ARGS+=(--flag "$flag")
-    done < <("$VENV_PY" "$REPO_ROOT/util/xheep_gen/build_manifest.py" flags --manifest "$MANIFEST")
+    done < <("$VENV_PY" "$REPO_ROOT/util/mosaic_gen/build_manifest.py" flags --manifest "$MANIFEST")
 else
     # Compatibility mode: generated RTL is beside its templates, as in x-heep.
     RUN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/mosaic-fusesoc.XXXXXX")"

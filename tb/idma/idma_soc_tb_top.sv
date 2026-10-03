@@ -51,7 +51,7 @@ module idma_soc_tb_top #(
     assign hw_fifo_resp[i]  = '0;
     assign clk_gate_en_n[i] = 1'b1;
   end
-  idma_xheep_wrapper #(
+  idma_mosaic_wrapper #(
       .reg_req_t  (reg_pkg::reg_req_t),
       .reg_rsp_t  (reg_pkg::reg_rsp_t),
       .obi_req_t  (obi_pkg::obi_req_t),

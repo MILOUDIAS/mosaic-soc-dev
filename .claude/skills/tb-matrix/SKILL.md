@@ -12,7 +12,7 @@ description: >
 # tb-matrix — test every integration combination
 
 tb-smith proves ONE core; tb-matrix proves the SPACE. Axes come live from
-`util/xheep_gen/core_registry.py`, so a core integrated through
+`util/mosaic_gen/core_registry.py`, so a core integrated through
 wrapper-smith automatically enters the matrix — never edit the axes by hand.
 
 ## Commands
@@ -62,7 +62,7 @@ file it; do not delete the report to make the summary green.
 
 ## MCP tools
 
-Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `oh-my-soc approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
+Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
 | step | MCP tool |
 |---|---|

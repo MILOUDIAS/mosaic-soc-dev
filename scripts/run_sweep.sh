@@ -47,8 +47,8 @@ EXIT_OK='EXIT SUCCESS|RESULT: EXIT SUCCESS'
 # The marker matters as much as the exit status: several of these scripts exit
 # 0 while printing a failure, so "did it exit 0" alone is not a pass.
 STEPS=(
-  "pytest|[0-9]+ passed|python3 -m pytest test/test_x_heep_gen -q"
-  "tb_matrix_validate|report|./oh-my-soc tb-matrix run --tier validate"
+  "pytest|[0-9]+ passed|python3 -m pytest test/test_mosaic_gen -q"
+  "tb_matrix_validate|report|./mosaic tb-matrix run --tier validate"
 
   "tdu_soc_cocotb|PASS|passed|tb/tdu/soc/cocotb/run.sh"
   "mosaic_sci_wakeloop|PASS|SUCCESS|tb/mosaic/run.sh"

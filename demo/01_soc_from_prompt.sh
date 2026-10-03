@@ -8,4 +8,4 @@ PROMPT="an SoC with one cv32e20 controller, two picorv32 workers, 64KB sram, tdu
 
 echo "### prompt: $PROMPT"
 echo "### live agent workflow (plan -> typed tools -> gates -> EXIT SUCCESS):"
-./oh-my-soc agent "$PROMPT" --driver deterministic --name prompted_demo
+./mosaic agent "$PROMPT" --driver deterministic --name prompted_demo

@@ -106,7 +106,7 @@ FAMILIES = {
         "proven_by": "hw/sci/snitch_sci.sv (writes get no p-response — template handles)",
     },
     "axi4_unified": {
-        "description": "flattened AXI4 master signals (bridged via xheep_axi_burst_to_obi)",
+        "description": "flattened AXI4 master signals (bridged via mosaic_axi_burst_to_obi)",
         "signatures": {
             ("awvalid", "aw_valid"): 1,
             ("awready", "aw_ready"): 1,
@@ -122,7 +122,7 @@ FAMILIES = {
         "min_matches": 5,
         "template": "axi4_unified",
         "port_shape": "unified",
-        "proven_by": "hw/vendor/mosaic/axi_obi/xheep_axi_burst_to_obi.sv (cva6 path)",
+        "proven_by": "hw/vendor/mosaic/axi_obi/mosaic_axi_burst_to_obi.sv (cva6 path)",
     },
     "axi4_struct": {
         "description": "struct-port AXI4 master (noc_req/noc_resp, cva6-style)",
@@ -135,7 +135,7 @@ FAMILIES = {
         "proven_by": "hw/sci/cva6_sci.sv (mirrored channel typedefs + burst bridge)",
     },
     "tilelink_unified": {
-        "description": "TileLink(-C) master (window-bridged via xheep_tilelink_to_obi)",
+        "description": "TileLink(-C) master (window-bridged via mosaic_tilelink_to_obi)",
         "signatures": {
             ("a_opcode", "a_bits_opcode"): 3,
             ("a_valid",): 1,

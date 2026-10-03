@@ -128,7 +128,7 @@ class TbSmith:
         if core in ("cva6",):
             lines.append("-y hw/vendor/mosaic/axi_obi")
         if core in ("rocket", "boom"):
-            lines.append("hw/vendor/mosaic/tl_obi/xheep_tilelink_to_obi.sv")
+            lines.append("hw/vendor/mosaic/tl_obi/mosaic_tilelink_to_obi.sv")
             lines.append("-f hw/vendor/mosaic/berkeley/berkeley.f")
         (out_dir / "deps.f").write_text(
             "# deps.f — vendor visibility for tb_%s_sci (extend as needed)\n%s\n"

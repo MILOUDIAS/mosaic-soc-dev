@@ -37,7 +37,7 @@ swallows an adjacent `clock`; the bare word still means a timer everywhere else.
 ## Interactive agent behavior
 
 When an agent drives this skill (Claude Code, Codex, opencode or omp with the
-oh-my-soc MCP server), create a visible multi-step plan before acting and call
+mosaic MCP server), create a visible multi-step plan before acting and call
 each gate as a separate **MCP tool** — the table under "MCP tools" below maps
 every step. Do not run the `python3 -m harness` commands through a shell: that
 path has no session gates, and the plugin's hook refuses it. The CLI pipeline
@@ -108,7 +108,7 @@ Every command prints a SkillResult: `{ok, skill, summary, details, errors}`.
 
 ## MCP tools
 
-Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `oh-my-soc approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
+Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
 | step | MCP tool |
 |---|---|

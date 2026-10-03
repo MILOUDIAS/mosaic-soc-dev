@@ -85,6 +85,6 @@ buffer at fanout 11.
 
 ## MCP tools
 
-Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `oh-my-soc approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
+Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
-No MCP tool exposes this skill yet. In a gated session (plugin or `oh-my-soc agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.
+No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.

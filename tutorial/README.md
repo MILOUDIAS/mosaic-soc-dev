@@ -2,7 +2,7 @@
 
 This tutorial takes one small heterogeneous SoC from YAML to generated RTL and
 then proves that every configured hart executes. It also shows the same flow
-through `oh-my-soc`, first without an LLM and then with the optional OpenCode Go
+through `mosaic`, first without an LLM and then with the optional OpenCode Go
 API driver.
 
 The tutorial SoC is deliberately small:

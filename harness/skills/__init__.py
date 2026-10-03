@@ -1,4 +1,4 @@
-"""oh-my-soc skills package."""
+"""mosaic skills package."""
 
 from .config_author import ConfigAuthor
 from .flow_runner import FlowRunner

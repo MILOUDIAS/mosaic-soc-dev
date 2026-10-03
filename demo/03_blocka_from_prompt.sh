@@ -19,7 +19,7 @@
 #   Step 6 is the only step where a MODEL does the work. It is gated on an agent
 #   harness being installed -- Claude Code or oh-my-pi, whichever is on PATH --
 #   not on an API key, because a harness is what a reviewer actually has. The
-#   model gets the same framing `oh-my-soc agent` sends (imported from the
+#   model gets the same framing `mosaic agent` sends (imported from the
 #   harness, not retyped here) and must reach the frozen config through typed
 #   CLI arguments, with the grammar explicitly off the table.
 #
@@ -50,7 +50,7 @@ echo "$PROMPT" | fold -s -w 78 | sed 's/^/  /'
 echo
 
 echo "═══ 2. what the deterministic grammar understood ═══"
-./oh-my-soc soc-from-prompt plan "$PROMPT" 2>&1 | sed 's/^/  /' | head -20
+./mosaic soc-from-prompt plan "$PROMPT" 2>&1 | sed 's/^/  /' | head -20
 echo
 
 echo "═══ 3. generate, and diff against the frozen tapeout config ═══"
@@ -93,14 +93,14 @@ echo
 echo "═══ 4. the gate: same design, but keep the debug module ═══"
 echo "  (one clause removed: 'no debug')"
 BAD="${PROMPT/no debug, /}"
-./oh-my-soc soc-from-prompt run "$BAD" --name probe 2>&1 | sed 's/^/  /' | tail -6
+./mosaic soc-from-prompt run "$BAD" --name probe 2>&1 | sed 's/^/  /' | tail -6
 echo
 echo "  → refused. 'tapeout' in a prompt is a CLAIM; core_registry's capability"
 echo "    matrix decides whether it holds. A prompt cannot argue with it."
 echo
 
 echo "═══ 5. and a simulation-only core asked to tape out ═══"
-./oh-my-soc soc-from-prompt run "a tapeout SoC with one cva6 titan and two serv workers, 32kb sram, uart" \
+./mosaic soc-from-prompt run "a tapeout SoC with one cva6 titan and two serv workers, 32kb sram, uart" \
     --name probe2 2>&1 | sed 's/^/  /' | tail -4
 echo
 echo "  → refused: CVA6/Rocket/BOOM are simulation-only on GF180."
@@ -126,12 +126,12 @@ if [ "$AGENT" = "off" ]; then
 else
   rm -f configs/agent_probe.yaml
   # The framing is the harness's own, imported rather than retyped, so this
-  # demo cannot drift from what `oh-my-soc agent` actually sends.
+  # demo cannot drift from what `mosaic agent` actually sends.
   #
   # surface="cli" because this step gives the model a Bash scoped to
   # `python3 -m harness` and NO MCP server. It probes whether a model can
   # translate prose into correct typed flags -- it is not the enforced path.
-  # `oh-my-soc agent --driver claude` uses the gated MCP session instead; see
+  # `mosaic agent --driver claude` uses the gated MCP session instead; see
   # harness/mcp_server.py.
   AGENT_PROMPT="$(python3 - "$AGENT" "$PROMPT" <<'PY'
 import sys

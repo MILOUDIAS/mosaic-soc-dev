@@ -1,14 +1,14 @@
-"""`oh-my-soc install --host ...`: wire the gated MCP server into an agent host.
+"""`mosaic install --host ...`: wire the gated MCP server into an agent host.
 
 Every host gets the SAME server (`python -m harness mcp-server`, plugin mode)
-pointed at THIS checkout through OH_MY_SOC_REPO and PYTHONPATH, so the host's
+pointed at THIS checkout through MOSAIC_REPO and PYTHONPATH, so the host's
 own working directory does not matter. The only per-host work is the config
 shape, which was read from what each host's own `mcp add` writes:
 
-    codex     ~/.codex/config.toml   [mcp_servers.oh-my-soc] + .env table
-    opencode  ~/.config/opencode/opencode.json(c)   mcp.servers.oh-my-soc (v2)
-    omp       ~/.omp/agent/mcp.json  mcpServers.oh-my-soc, timeout 0
-    claude    the plugin under plugins/oh-my-soc (marketplace at the repo root)
+    codex     ~/.codex/config.toml   [mcp_servers.mosaic] + .env table
+    opencode  ~/.config/opencode/opencode.json(c)   mcp.servers.mosaic (v2)
+    omp       ~/.omp/agent/mcp.json  mcpServers.mosaic, timeout 0
+    claude    the plugin under plugins/mosaic (marketplace at the repo root)
 
 Without --write this only prints. With --write it merges into the host's
 config after a timestamped backup, and refuses rather than guess when the
@@ -41,9 +41,9 @@ def server_python(repo: Path = REPO_ROOT) -> str:
 def server_env(scopes: Optional[str], repo: Path = REPO_ROOT) -> Dict[str, str]:
     allowlist = parse_scope_allowlist(scopes)       # raises on a typo
     return {
-        "OH_MY_SOC_REPO": str(repo),
+        "MOSAIC_REPO": str(repo),
         "PYTHONPATH": str(repo),
-        "OH_MY_SOC_SCOPES": ",".join(sorted(allowlist)),
+        "MOSAIC_SCOPES": ",".join(sorted(allowlist)),
     }
 
 
@@ -102,7 +102,7 @@ _HEADER = re.compile(r"^\s*\[\[?\s*([^\]]+?)\s*\]\]?\s*(#.*)?$")
 
 
 def merge_codex(text: str, block: str) -> str:
-    """Replace our [mcp_servers.oh-my-soc*] tables, keep everything else."""
+    """Replace our [mcp_servers.mosaic*] tables, keep everything else."""
     import tomllib
 
     tomllib.loads(text)                      # refuse to edit a broken file
@@ -150,13 +150,13 @@ def install(host: str, *, write: bool = False,
     if host == "claude":
         commands = [
             f"claude plugin marketplace add {REPO_ROOT}",
-            "claude plugin install oh-my-soc@mosaic-soc",
+            "claude plugin install mosaic@mosaic-soc",
         ]
         details = {"host": host, "commands": commands,
                    "markdown": "\n".join(["Run:", *commands, "",
                                           "The plugin launches the server "
                                           "from the checkout you open Claude "
-                                          "Code in (or OH_MY_SOC_REPO)."])}
+                                          "Code in (or MOSAIC_REPO)."])}
         if write:
             return SkillResult(
                 ok=False, skill=skill,

@@ -30,9 +30,9 @@ registered flows, 1,558 tests in 61 files.
   `make mosaic-gen MOSAIC_CFG=configs/<name>.yaml`. 33 configs ship, from
   `mosaic_sim.yaml` to the tapeout candidate `mosaic_tapeout_ultra.yaml`.
 - ✅ **Mako templates render the RTL** (`hw/**/*.sv.tpl`, driven by
-  `util/xheep_gen/mcu_gen.py`): per-core master indices, hart IDs, interrupt
+  `util/mosaic_gen/mcu_gen.py`): per-core master indices, hart IDs, interrupt
   routing and a multi-master `system_bus` all follow from the config.
-- ✅ **Content-addressed build bundles** (`util/xheep_gen/build_manifest.py`).
+- ✅ **Content-addressed build bundles** (`util/mosaic_gen/build_manifest.py`).
   Every bundle is named by a hash of the whole generator closure (`hw/`, `tb/`,
   `util/`, `configs/`, `sw/`, `flow/`, `scripts/`), and every physical run
   records the bundle it consumed, so no run can silently harden stale RTL.
@@ -98,7 +98,7 @@ registered flows, 1,558 tests in 61 files.
   flash, a flip-flop scratchpad, and a legal no-SRAM profile (the Block A part
   has no on-chip RAM pool and runs XIP).
 - ✅ **Peripherals**: uart, gpio, i2c, spi, timer, serial_link, with PLIC and
-  timer generation (`util/xheep_gen/plic_gen.py`).
+  timer generation (`util/mosaic_gen/plic_gen.py`).
 
 ## 4. Verification
 
@@ -109,7 +109,7 @@ registered flows, 1,558 tests in 61 files.
 - ✅ **Subsystem testbenches**: `tb/tdu/`, `tb/idma/`, `tb/log_xbar/`,
   `tb/floonoc/`, `tb/tl_obi/`, `tb/sci/` (cocotb), `tb/systemc_tb/`.
 - ✅ **21 registered flows** behind one runner with timeout protection and
-  structured log parsing: `oh-my-soc flow-runner list`.
+  structured log parsing: `mosaic flow-runner list`.
 - ✅ **Generated testbenches**: `tb-smith` writes per-core TBs; `tb-matrix`
   reports which core × fabric combinations exist.
 - ✅ **Software**: `sw/` carries applications, production firmware, FreeRTOS and
@@ -255,12 +255,12 @@ machine can execute. Five parts, all measured:
 
 - ✅ **Installable as a plugin in four agent hosts** (2026-09-24,
   `harness/mcp_server.py`, `harness/approvals.py`, `harness/install.py`,
-  `plugins/oh-my-soc/`).
+  `plugins/mosaic/`).
   - **Plugin mode:** the server starts without a request. The ceiling is a
-    user-set allowlist (`OH_MY_SOC_SCOPES`), and each request is bound with
+    user-set allowlist (`MOSAIC_SCOPES`), and each request is bound with
     `session_new`.
   - **Approval:** `physical`/`integration` and approval-gated flows need a
-    person's time-limited token (`oh-my-soc approve`, TTY only).
+    person's time-limited token (`mosaic approve`, TTY only).
   - **Tools:** `soc_generate`, `config_generate`, `tb_generate` and
     `tb_wake_demo`, which were dead over MCP, now work. The slow test runs
     plan → generate → sim to a passing simulation over MCP alone.
@@ -270,7 +270,7 @@ machine can execute. Five parts, all measured:
 
 ## 8. Checking any of this yourself
 
-Run these from the repo root. `./oh-my-soc <args>` is the same CLI and works
+Run these from the repo root. `./mosaic <args>` is the same CLI and works
 from any directory; `pip install` does **not** work yet, which is the packaging
 gap in Part II E.
 
@@ -324,7 +324,7 @@ python3 -m harness web serve                           # the same, live, on 127.
   EXIT SUCCESS. Block A's boot ROM also comes out byte-identical to the one
   the old `/opt` toolchain built.
 
-  `oh-my-soc doctor` checks a machine and flags an exported `PDK_ROOT` that
+  `mosaic doctor` checks a machine and flags an exported `PDK_ROOT` that
   overrides the LibreLane Makefile. IIC-OSIC-TOOLS 2026.09 runs through
   `tools/iic-osic.sh`, and evidence produced there is labelled `iic:<tag>`.
   See [reproducing.md](reproducing.md).

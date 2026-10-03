@@ -1,4 +1,4 @@
-"""Shared types, validation, and logging for oh-my-soc skills."""
+"""Shared types, validation, and logging for mosaic skills."""
 
 import json
 import logging
@@ -13,7 +13,7 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Mapping, Optional
 
-from util.xheep_gen.core_registry import (
+from util.mosaic_gen.core_registry import (
     SCI_CORES,
     SIM_ONLY_CORES,
     VALID_BUS,
@@ -26,12 +26,12 @@ from util.xheep_gen.core_registry import (
     validate_soc_config,
 )
 
-log = logging.getLogger("oh-my-soc")
+log = logging.getLogger("mosaic")
 
 # ── Repo root ────────────────────────────────────────────────────────
 
 def _is_checkout(path: Path) -> bool:
-    return ((path / "util" / "xheep_gen" / "core_registry.py").is_file()
+    return ((path / "util" / "mosaic_gen" / "core_registry.py").is_file()
             and (path / "configs").is_dir())
 
 
@@ -41,17 +41,17 @@ def _find_repo_root() -> Path:
     The package location is only the last resort. An agent host launches the
     MCP server from its own install or plugin cache; flows, configs and
     evidence must still land in the user's checkout, not in site-packages.
-    Order: OH_MY_SOC_REPO, then the first checkout at or above the cwd, then
+    Order: MOSAIC_REPO, then the first checkout at or above the cwd, then
     the package parent (editable install).
     """
-    pinned = os.environ.get("OH_MY_SOC_REPO")
+    pinned = os.environ.get("MOSAIC_REPO")
     if pinned:
         root = Path(pinned).expanduser().resolve()
         if not _is_checkout(root):
             # Loud on purpose: silently acting on some other tree is worse.
             raise RuntimeError(
-                f"OH_MY_SOC_REPO={pinned} is not a MOSAIC checkout "
-                "(no util/xheep_gen/core_registry.py or configs/)")
+                f"MOSAIC_REPO={pinned} is not a MOSAIC checkout "
+                "(no util/mosaic_gen/core_registry.py or configs/)")
         return root
     cwd = Path.cwd().resolve()
     for candidate in (cwd, *cwd.parents):
@@ -108,8 +108,8 @@ def _configured_model_api_env_key() -> Optional[str]:
     neither config contents nor credential values reach logs.
     """
     config_dir = Path(os.environ.get(
-        "OH_MY_SOC_CONFIG_DIR",
-        Path.home() / ".config" / "oh-my-soc",
+        "MOSAIC_CONFIG_DIR",
+        Path.home() / ".config" / "mosaic",
     ))
     try:
         config = json.loads((config_dir / "config.json").read_text())

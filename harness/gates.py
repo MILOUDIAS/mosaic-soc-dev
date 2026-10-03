@@ -87,7 +87,7 @@ def gate_precondition(
                     skill=name,
                     summary=f"scope '{requested}' is not in this installation's allowlist",
                     errors=[f"allowed: {sorted(allowlist)}",
-                            "the user widens it in OH_MY_SOC_SCOPES; the model cannot"],
+                            "the user widens it in MOSAIC_SCOPES; the model cannot"],
                 )
         if getattr(state, "scope_approval_required", False):
             refusal = _approval_refusal(registry, requested, scopes_needing=True)

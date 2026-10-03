@@ -492,7 +492,7 @@ module ao_peripheral_subsystem
   // topology. DMA selection is independent of the optional TDU.
   // It exposes one OBI read/write pair per stream; the legacy simple-DMA
   // address master is absent from explicit topologies.
-  idma_xheep_wrapper #(
+  idma_mosaic_wrapper #(
       .reg_req_t(reg_pkg::reg_req_t),
       .reg_rsp_t(reg_pkg::reg_rsp_t),
       .obi_req_t(obi_pkg::obi_req_t),

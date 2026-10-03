@@ -13,7 +13,7 @@ python3 -m harness setup --driver api
 Writes one file, outside the repository:
 
 ```text
-~/.config/oh-my-soc/config.json
+~/.config/mosaic/config.json
 ```
 
 Nothing else. No repository state, no secrets: an API key is read from a named
@@ -65,6 +65,6 @@ it), expose only the read, and leave the write to a person at a terminal.
 
 ## MCP tools
 
-Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `oh-my-soc approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
+Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
-No MCP tool exposes this skill yet. In a gated session (plugin or `oh-my-soc agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.
+No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.

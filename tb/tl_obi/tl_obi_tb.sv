@@ -1,7 +1,7 @@
 // Copyright 2026 MOSAIC-SoC contributors
 // SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
-// tl_obi_tb.sv — self-checking unit TB for xheep_tilelink_to_obi (the
+// tl_obi_tb.sv — self-checking unit TB for mosaic_tilelink_to_obi (the
 // TileLink-C -> OBI bridge used by the Rocket/BOOM SCI wrappers).
 //
 // An OBI memory model with pseudorandom grant delays backs three regions:
@@ -63,7 +63,7 @@ module tl_obi_tb;
   obi_pkg::obi_req_t obi_req;
   obi_pkg::obi_resp_t obi_resp;
 
-  xheep_tilelink_to_obi #(
+  mosaic_tilelink_to_obi #(
       .obi_req_t (obi_pkg::obi_req_t),
       .obi_resp_t(obi_pkg::obi_resp_t),
       .TL_AW     (TL_AW),

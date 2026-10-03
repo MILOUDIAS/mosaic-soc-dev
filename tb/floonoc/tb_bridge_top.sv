@@ -3,7 +3,7 @@
 //
 // tb_bridge_top.sv — stage-1 loopback for the MOSAIC OBI<->AXI bridges:
 //
-//   cocotb OBI master -> xheep_obi_to_axi -> AXI -> xheep_axi_to_obi -> OBI mem
+//   cocotb OBI master -> mosaic_obi_to_axi -> AXI -> mosaic_axi_to_obi -> OBI mem
 //
 // Proves the two bridges compose (R/W, byte enables, back-to-back,
 // read-after-write) before the FlooNoC fabric is inserted between them
@@ -48,7 +48,7 @@ module tb_bridge_top (
   assign rvalid_o = obi_m_resp.rvalid;
   assign rdata_o = obi_m_resp.rdata;
 
-  xheep_obi_to_axi #(
+  mosaic_obi_to_axi #(
       .obi_req_t (obi_pkg::obi_req_t),
       .obi_resp_t(obi_pkg::obi_resp_t),
       .axi_req_t (axi_req_t),
@@ -62,7 +62,7 @@ module tb_bridge_top (
       .axi_resp_i(axi_resp)
   );
 
-  xheep_axi_to_obi #(
+  mosaic_axi_to_obi #(
       .obi_req_t (obi_pkg::obi_req_t),
       .obi_resp_t(obi_pkg::obi_resp_t),
       .axi_req_t (axi_req_t),

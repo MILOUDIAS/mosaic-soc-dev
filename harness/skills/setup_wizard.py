@@ -1,17 +1,17 @@
 """setup skill — omp-style first-run driver/provider selection.
 
-oh-my-pi's onboarding picks the model provider for its agent loop. oh-my-soc
+oh-my-pi's onboarding picks the model provider for its agent loop. mosaic
 stores the DRIVER that owns the visible planning/tool loop:
 
   deterministic  auditable scope-aware workflow with the same live event transcript
                  (default; no model, no keys, CI-safe; not labelled as an LLM)
   claude         Claude Code interactive agent drives the documented CLI skills
-  omp            oh-my-pi full TUI drives its oh_my_soc tool and skill cards
+  omp            oh-my-pi full TUI drives its mosaic_soc tool and skill cards
   api            built-in multi-turn model/tool/observation agent loop
                  (anthropic, openai-compatible, or OpenCode Go; the key is
                  read from an ENV VAR at call time — never stored)
 
-Config lives at ~/.config/oh-my-soc/config.json (user-level, out of the
+Config lives at ~/.config/mosaic/config.json (user-level, out of the
 repo, so keys/choices never end up in git). The in-process API and deterministic
 drivers enforce the gate policy in Python. External interactive drivers use
 their native permission/UI model and must consume the deterministic CLI results.
@@ -33,8 +33,8 @@ from ..llm import (
     normalize_api_config,
 )
 
-CONFIG_DIR = Path(os.environ.get("OH_MY_SOC_CONFIG_DIR",
-                                 Path.home() / ".config" / "oh-my-soc"))
+CONFIG_DIR = Path(os.environ.get("MOSAIC_CONFIG_DIR",
+                                 Path.home() / ".config" / "mosaic"))
 CONFIG_PATH = CONFIG_DIR / "config.json"
 
 DRIVERS = ("deterministic", "claude", "omp", "api")
@@ -85,7 +85,7 @@ class SetupWizard:
         return SkillResult(
             ok=True, skill="setup",
             summary=("driver: " + cfg.get("driver", "deterministic (default — "
-                     "run `oh-my-soc setup` to change)")),
+                     "run `mosaic setup` to change)")),
             details={"config_path": str(CONFIG_PATH), "config": cfg,
                      "detected": env},
         )
@@ -186,7 +186,7 @@ class SetupWizard:
         return reply or default
 
     def _ask_driver(self, env: Dict[str, Any]) -> str:
-        print("\noh-my-soc — choose your intent driver (like oh-my-pi's "
+        print("\nmosaic — choose your intent driver (like oh-my-pi's "
               "provider picker, but for the deterministic harness):\n")
         rows = [
             ("1", "deterministic",

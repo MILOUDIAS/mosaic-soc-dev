@@ -12,7 +12,7 @@
 #
 # Every revision is LibreLane 3.0.0's own: librelane -> nix-eda 6.11.0 ->
 # nixpkgs 25.11. flow/librelane/flake.lock pins the same three, and
-# test/test_x_heep_gen/test_toolchain_pin.py fails if the two locks disagree.
+# test/test_mosaic_gen/test_toolchain_pin.py fails if the two locks disagree.
 {
   nixConfig = {
     extra-substituters = [

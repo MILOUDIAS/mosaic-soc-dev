@@ -362,7 +362,7 @@ if "cva6_sci" in _cpu_ss_txt:
 # top-level FuseSoC graph — verified: the .vc stages no *_sci files), so the
 # sci.core -> berkeley -> tl_obi dep chain never delivers it.
 if ("rocket_sci" in _cpu_ss_txt) or ("boom_sci" in _cpu_ss_txt):
-    out.append(os.path.join(REPO, "hw/vendor/mosaic/tl_obi/xheep_tilelink_to_obi.sv"))
+    out.append(os.path.join(REPO, "hw/vendor/mosaic/tl_obi/mosaic_tilelink_to_obi.sv"))
     with open(os.path.join(REPO, "hw/vendor/mosaic/berkeley/berkeley.f")) as _f:
         for _line in _f:
             _line = _line.strip()

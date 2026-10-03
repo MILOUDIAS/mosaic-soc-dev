@@ -13,7 +13,7 @@ description: >
 
 `mosaic.yaml` drives the ENTIRE flow (core selection → GDSII). The harness
 fills per-core defaults, strips harness-only metadata, and validates against
-the LIVE registries (single-sourced from `util/xheep_gen` — core lists in the
+the LIVE registries (single-sourced from `util/mosaic_gen` — core lists in the
 harness can never drift). Registered cores: run `presets`/errors list them.
 Sim-only cores (cva6, rocket, boom) are rejected for tapeout presets.
 
@@ -53,7 +53,7 @@ the frequency ends up living in two places.
 
 ## MCP tools
 
-Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `oh-my-soc approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
+Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
 | step | MCP tool |
 |---|---|

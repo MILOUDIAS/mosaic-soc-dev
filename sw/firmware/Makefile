@@ -41,7 +41,7 @@ NANO_ARCH = $(ARCH)
 ifneq ($(strip $(MOSAIC_GENERATED_ROOT)),)
 include $(MOSAIC_GENERATED_ROOT)/sw/make/mosaic_isa.mk
 PRODUCTION_DEMO_VALIDATION := $(shell $(PYTHON) \
-    $(abspath ../../util/xheep_gen/software_gen.py) \
+    $(abspath ../../util/mosaic_gen/software_gen.py) \
     --validate-production-demo $(MOSAIC_GENERATED_ROOT)/sw/boot_images.json \
     --isa-makefile $(MOSAIC_GENERATED_ROOT)/sw/make/mosaic_isa.mk 2>&1)
 ifneq ($(strip $(PRODUCTION_DEMO_VALIDATION)),)
@@ -232,7 +232,7 @@ $(NANO_BIN): $(NANO_ELF)
 
 $(FLASH_BIN): $(TITAN_BIN) $(ATLAS_BIN) $(NANO_BIN) $(MOSAIC_GENERATED_ROOT)/sw/boot_images.json
 	@echo "  PACK  $@"
-	$(PYTHON) $(ROOT)/util/xheep_gen/pack_flash.py \
+	$(PYTHON) $(ROOT)/util/mosaic_gen/pack_flash.py \
 		--manifest $(MOSAIC_GENERATED_ROOT)/sw/boot_images.json \
 		--image $(TITAN_IMAGE)=$(TITAN_BIN) \
 		--image $(ATLAS_IMAGE)=$(ATLAS_BIN) \

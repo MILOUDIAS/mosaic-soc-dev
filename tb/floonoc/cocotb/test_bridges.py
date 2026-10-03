@@ -1,6 +1,6 @@
 """Stage-1 loopback test for the MOSAIC OBI<->AXI bridges.
 
-cocotb OBI master -> xheep_obi_to_axi -> AXI -> xheep_axi_to_obi -> OBI memory.
+cocotb OBI master -> mosaic_obi_to_axi -> AXI -> mosaic_axi_to_obi -> OBI memory.
 Checks writes, reads, byte enables, back-to-back traffic, read-after-write.
 """
 

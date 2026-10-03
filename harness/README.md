@@ -1,4 +1,4 @@
-# oh-my-soc — Agentic Harness for MOSAIC-SoC
+# mosaic — Agentic Harness for MOSAIC-SoC
 
 > Based on [oh-my-pi](https://github.com/can1357/oh-my-pi) (vendored for study at
 > `refs/IP_Tools/oh-my-pi`), adapted for MOSAIC-SoC EDA flows.
@@ -6,7 +6,7 @@
 The before/after runtime audit and verification boundary are recorded in
 [`EVALUATION.md`](EVALUATION.md).
 
-oh-my-soc is the Phase 2 agentic harness for MOSAIC-SoC. It combines a
+mosaic is the Phase 2 agentic harness for MOSAIC-SoC. It combines a
 **bounded model/tool/observation loop** with deterministic skills for SoC
 generation, core integration, verification, DRC triage, and documentation.
 The built-in API driver can select tools and react to their results; omp and
@@ -26,7 +26,7 @@ We **drive oh-my-pi, we don't fork it** — the same layout serves Claude Code:
   Claude Code and omp (omp's `claude` skill provider). Each card teaches the
   agent when to use a skill, the exact CLI, the output contract, and a
   failure playbook.
-- **`.omp/tools/oh-my-soc.ts`** — a thin omp custom tool that shells to
+- **`.omp/tools/mosaic.ts`** — a thin omp custom tool that shells to
   `python -m harness ... --json` and returns the parsed `SkillResult`.
 - **`python -m harness <skill> <cmd> [--json]`** — the CLI both agents (and
   CI) call. `--json` emits the raw `SkillResult`; exit code 1 on failure.
@@ -48,15 +48,15 @@ We **drive oh-my-pi, we don't fork it** — the same layout serves Claude Code:
 Three equivalent ways to invoke — pick by context:
 
 ```bash
-./oh-my-soc <skill> <command> [args...]        # zero-install launcher (any cwd)
-oh-my-soc <skill> <command> [args...]          # after: .venv/bin/python -m pip install -e .
+./mosaic <skill> <command> [args...]        # zero-install launcher (any cwd)
+mosaic <skill> <command> [args...]          # after: .venv/bin/python -m pip install -e .
 python -m harness <skill> <command> [args...]  # module form (used by the agent cards)
 
-oh-my-soc setup                                # choose the intent driver (first run does this)
-oh-my-soc agent "an SoC with ..."              # one-liner: dispatch to the configured driver
-oh-my-soc agent "..." --events-jsonl           # in-process normalized live event stream
-oh-my-soc agent "..." --dry-run                # read/plan only; writes and execution denied
-oh-my-soc agent "..." --require-evidence analysis # explicit side-effect/evidence ceiling
+mosaic setup                                # choose the intent driver (first run does this)
+mosaic agent "an SoC with ..."              # one-liner: dispatch to the configured driver
+mosaic agent "..." --events-jsonl           # in-process normalized live event stream
+mosaic agent "..." --dry-run                # read/plan only; writes and execution denied
+mosaic agent "..." --require-evidence analysis # explicit side-effect/evidence ceiling
 
 python -m harness config-author generate --preset poc --name my_soc
 python -m harness config-author validate mosaic.yaml
@@ -75,11 +75,11 @@ python -m harness topo-viz render configs/mosaic_picorv32.yaml -o topo.html
 
 ## First run: choosing your driver (omp-style)
 
-A bare interactive `./oh-my-soc` with no saved config launches the picker
-(never in pipes/CI — TTY only); rerun any time with `oh-my-soc setup`:
+A bare interactive `./mosaic` with no saved config launches the picker
+(never in pipes/CI — TTY only); rerun any time with `mosaic setup`:
 
 ```console
-$ ./oh-my-soc
+$ ./mosaic
 First run — no driver configured yet.
   1) deterministic   visible scope-aware workflow; no model or keys (CI-safe)
   2) claude          Claude Code interactive agent        [detected]
@@ -87,17 +87,17 @@ First run — no driver configured yet.
   4) api             built-in multi-turn tool-calling agent
 ```
 
-oh-my-pi's picker chooses the model for its loop; oh-my-soc's picker chooses
+oh-my-pi's picker chooses the model for its loop; mosaic's picker chooses
 who owns the loop. The Python API agent enforces gate ordering itself. omp and
 Claude run their real interactive UIs and compose the same deterministic gates
 through the omp tool or visible CLI calls, so activity is not hidden by print
 mode.
 
-| driver | what happens on `oh-my-soc agent "<request>"` |
+| driver | what happens on `mosaic agent "<request>"` |
 |---|---|
 | `deterministic` | visible, scope-aware evidence workflow (default; CI-safe; no model) |
 | `claude` | hands an interactive TTY to Claude Code, which invokes the documented harness CLI through visible Bash calls |
-| `omp` | launches omp's full TUI with the `oh_my_soc` tool—never `--print` or a fake startup `/skill` command |
+| `omp` | launches omp's full TUI with the `mosaic_soc` tool—never `--print` or a fake startup `/skill` command |
 | `api` | built-in Anthropic/OpenAI-compatible streaming tool loop; tool results return to the model for bounded recovery/replanning |
 
 Normalized `--events-jsonl`, `--dry-run`, and harness approval flags belong to
@@ -111,10 +111,10 @@ are `analysis`, `config`, `rtl`, `simulation`, `physical`, `integration`,
 `testbench`, `documentation`, and `drc`. Ambiguous automatic requests remain
 analysis-only, and the model cannot widen the derived ceiling.
 
-Non-interactive: `oh-my-soc setup --driver api --api-kind anthropic
+Non-interactive: `mosaic setup --driver api --api-kind anthropic
 [--model M] [--base-url URL] [--env-key VAR] --non-interactive`.
-Config: `~/.config/oh-my-soc/config.json` — the API key is **never stored**,
-only the env-var name that holds it. `oh-my-soc setup show` prints the
+Config: `~/.config/mosaic/config.json` — the API key is **never stored**,
+only the env-var name that holds it. `mosaic setup show` prints the
 current state + what's detected on this machine.
 
 ### OpenCode Go
@@ -127,8 +127,8 @@ without putting it in command history, then select the preset:
 read -rs "OPENCODE_API_KEY?OpenCode Go API key: "
 printf '\n'
 export OPENCODE_API_KEY
-oh-my-soc setup --driver api --api-kind opencode-go --non-interactive
-oh-my-soc agent "inspect mosaic.yaml" --driver api
+mosaic setup --driver api --api-kind opencode-go --non-interactive
+mosaic agent "inspect mosaic.yaml" --driver api
 ```
 
 The preset stores only `env_key: OPENCODE_API_KEY`; it defaults to raw API
@@ -143,7 +143,7 @@ the Anthropic Messages endpoint (currently MiniMax and Qwen), use the generic
 form instead:
 
 ```bash
-oh-my-soc setup --driver api --api-kind anthropic --model qwen3.7-plus \
+mosaic setup --driver api --api-kind anthropic --model qwen3.7-plus \
   --base-url https://opencode.ai/zen/go --env-key OPENCODE_API_KEY \
   --non-interactive
 ```
@@ -154,8 +154,8 @@ The terminal is an event renderer, not delayed log decoration. Decisions and
 tool output are printed while the subprocess is still running:
 
 ```console
-$ oh-my-soc agent "build one cv32e20 titan and two serv workers with tdu"
-╭─ oh-my-soc agent
+$ mosaic agent "build one cv32e20 titan and two serv workers with tdu"
+╭─ mosaic agent
 │  driver=api · session=... · build one cv32e20 ...
 ◇ model turn 1: choosing the next evidence step
   │ I will classify the requested outcome before taking action.
@@ -330,7 +330,7 @@ skill card's playbook).
 | **drc-triage** | Parse DRC/LVS reports, propose fixes | Report file → classified violations + suggestions |
 | **doc-gen** | Generate documentation | Config/artifacts → markdown docs |
 | **topo-viz** | Semantic config checks + topology diagram | Config → checks + interactive SVG/HTML |
-| **setup** | omp-style driver picker (deterministic/claude/omp/api) | choice → `~/.config/oh-my-soc/config.json` (keys never stored) |
+| **setup** | omp-style driver picker (deterministic/claude/omp/api) | choice → `~/.config/mosaic/config.json` (keys never stored) |
 | **physical-intent** | Derive the floorplan/hardening config, and watch routing | Config → die size + LibreLane config; run dir → routability verdict |
 | **mcp-server** | Serve the gated registry to an MCP client over stdio | Request → locked scope ceiling + 20 gated tools |
 
@@ -341,7 +341,7 @@ ceiling, evidence binding and completion gate existed in `AgentRunner` and
 applied to nothing the external driver did.
 
 ```
-oh-my-soc mcp-server --request "simulate a two-core SoC and run the wake demo"
+mosaic mcp-server --request "simulate a two-core SoC and run the wake demo"
 ```
 
 Derives the ceiling from the request with the same `classify_request_scope` the
@@ -351,9 +351,9 @@ The gates live in `harness/gates.py` and are called by both paths, so a refusal
 over MCP is the *identical* string produced in-process — not a second
 implementation that agrees today.
 
-`oh-my-soc agent --driver claude` now wires this up automatically:
+`mosaic agent --driver claude` now wires this up automatically:
 `--mcp-config` + `--strict-mcp-config` + an `--allowedTools` list naming only
-the `mcp__oh-my-soc__*` tools, with `Bash`/`Write`/`Edit` disallowed. That last
+the `mcp__mosaic__*` tools, with `Bash`/`Write`/`Edit` disallowed. That last
 part is load-bearing — with Bash available the model can call
 `python3 -m harness ...` directly and the gate is decoration.
 
@@ -379,9 +379,9 @@ authorization ceiling applies.
 ### physical-intent: sizing a die, and knowing when to stop
 
 ```
-oh-my-soc physical-intent floorplan --config configs/mosaic_blockc_4hart.yaml
-oh-my-soc physical-intent harden    --config ... --design mosaic_block_c -o out.yaml
-oh-my-soc physical-intent watch     --run-dir flow/librelane/experimental/runs/<tag>
+mosaic physical-intent floorplan --config configs/mosaic_blockc_4hart.yaml
+mosaic physical-intent harden    --config ... --design mosaic_block_c -o out.yaml
+mosaic physical-intent watch     --run-dir flow/librelane/experimental/runs/<tag>
 ```
 
 The config is **validated, not just parsed**. This used to be a bare
@@ -400,7 +400,7 @@ to route. Pass the flag explicitly to override; the config records a
 `# routability` note either way.
 
 ```
-oh-my-soc physical-intent metrics --run-dir runs/<tag> [--compare runs/<other>]
+mosaic physical-intent metrics --run-dir runs/<tag> [--compare runs/<other>]
 ```
 
 `metrics` reports a finished run's signoff numbers **typed** — units, corner
@@ -411,9 +411,9 @@ into prose; a confounded experiment survived a full run that way, because the
 die had moved and nothing printed the die.
 
 ```
-oh-my-soc physical-intent metrics  --run-dir runs/<tag> --record
-oh-my-soc physical-intent evidence --run-dir runs/<tag>     # still current?
-oh-my-soc physical-intent evidence --pdk gf180mcuD          # what a PDK swap hits
+mosaic physical-intent metrics  --run-dir runs/<tag> --record
+mosaic physical-intent evidence --run-dir runs/<tag>     # still current?
+mosaic physical-intent evidence --pdk gf180mcuD          # what a PDK swap hits
 ```
 
 `--record` stores the run in a **content-addressed evidence store** under
@@ -428,10 +428,10 @@ record exists under the key today's inputs produce. Touch a parser and the key
 moves:
 
 ```console
-$ oh-my-soc physical-intent evidence --run-dir runs/blocka_reharden
+$ mosaic physical-intent evidence --run-dir runs/blocka_reharden
 [OK] evidence is current
 $ printf '\n# touch\n' >> harness/evidence/metric.py
-$ oh-my-soc physical-intent evidence --run-dir runs/blocka_reharden
+$ mosaic physical-intent evidence --run-dir runs/blocka_reharden
 [OK] no stored evidence for these inputs — something changed
 ```
 
@@ -452,9 +452,9 @@ status 3 triggers it — a watcher that cannot tell never kills anything.
 ### Registry single-sourcing
 
 Core lists (`VALID_CORE_IPS`, `SCI_CORES`) are derived from the typed
-`util/xheep_gen/core_registry.py::CORE_SPECS` mapping — never edit them in
+`util/mosaic_gen/core_registry.py::CORE_SPECS` mapping — never edit them in
 `mosaic_config.py` or `harness/core.py`.
-`test/test_x_heep_gen/test_harness_core.py` enforces sync and validates every
+`test/test_mosaic_gen/test_harness_core.py` enforces sync and validates every
 shipped `configs/mosaic_*.yaml`. Simulation-only cores (cva6, rocket, boom —
 excluded from the GF180 tapeout) are rejected in tapeout presets.
 
@@ -566,7 +566,7 @@ User request
 Agent loop (API in-process / omp TUI / Claude UI / deterministic workflow)
     │  decision -> typed tool call
     ▼
-oh-my-soc deterministic skills
+mosaic deterministic skills
     │  live progress + SkillResult observation
     ▼
 Agent loop reacts/replans ────────────────┐

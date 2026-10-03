@@ -62,7 +62,7 @@ contract is:
 Validate it with the authoritative schema:
 
 ```bash
-./oh-my-soc config-author validate tutorial/configs/tutorial_soc.yaml
+./mosaic config-author validate tutorial/configs/tutorial_soc.yaml
 ```
 
 Expected:
@@ -82,9 +82,9 @@ are internally consistent.
 Run semantic checks that are easier to understand before RTL generation:
 
 ```bash
-./oh-my-soc topo-viz check tutorial/configs/tutorial_soc.yaml
+./mosaic topo-viz check tutorial/configs/tutorial_soc.yaml
 mkdir -p build/tutorial
-./oh-my-soc topo-viz render tutorial/configs/tutorial_soc.yaml \
+./mosaic topo-viz render tutorial/configs/tutorial_soc.yaml \
   -o build/tutorial/tutorial_soc_topology.html
 ```
 
@@ -149,7 +149,7 @@ YAML or a source `.sv.tpl` file and regenerate instead.
 Do not guess the `<hash>`. Ask the manifest locator:
 
 ```bash
-MANIFEST="$(./.venv/bin/python util/xheep_gen/build_manifest.py locate \
+MANIFEST="$(./.venv/bin/python util/mosaic_gen/build_manifest.py locate \
   --config tutorial/configs/tutorial_soc.yaml \
   --base-config configs/general.hjson \
   --pads-cfg configs/pad_cfg.py \

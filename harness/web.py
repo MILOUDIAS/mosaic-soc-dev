@@ -1,4 +1,4 @@
-"""oh-my-soc web: a viewer for designs, runs and evidence.
+"""mosaic web: a viewer for designs, runs and evidence.
 
 `build_site` writes static, self-contained pages (inline CSS/SVG, no external
 URL) from what is on disk: every config's SoCView and diagrams, every
@@ -89,7 +89,7 @@ def _pdk_panel(repo_root: Path) -> List[Dict[str, Any]]:
     from .physical.floorplan import CALIBRATED_PDKS
     from .physical.technology import TECHNOLOGIES
     from .skills.pdk_port import survey
-    from util.xheep_gen.core_registry import TAPEOUT_PDK
+    from util.mosaic_gen.core_registry import TAPEOUT_PDK
     rows = []
     for tech in TECHNOLOGIES:
         rep = survey(tech, repo_root=repo_root)

@@ -24,7 +24,7 @@
 # switching power by an unmeasured amount. That is a smaller error than the
 # default toggle model it replaces, and it is not zero.
 #
-# Invoked by `oh-my-soc physical-intent power`, which passes the paths below.
+# Invoked by `mosaic physical-intent power`, which passes the paths below.
 
 if { ![info exists ::env(MOSAIC_ODB)] } {
     puts "ERROR: MOSAIC_ODB not set"

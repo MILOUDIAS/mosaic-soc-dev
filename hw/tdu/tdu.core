@@ -1,6 +1,6 @@
 CAPI=2:
 
-name: "x-heep:ip:tdu"
+name: "mosaic:ip:tdu"
 description: "MOSAIC-SoC Task Dispatch Unit"
 
 # Copyright MOSAIC-SoC

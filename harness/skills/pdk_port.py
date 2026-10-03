@@ -104,7 +104,7 @@ REQUIREMENTS: tuple = (
     Requirement(
         "tapeout-matrix",
         "an entry in the qualified matrix, or refusal of target: tapeout",
-        "util/xheep_gen/core_registry.py TAPEOUT_PDK, a scalar not a table",
+        "util/mosaic_gen/core_registry.py TAPEOUT_PDK, a scalar not a table",
         "a config claims tapeout-qualified on unqualified collateral",
         silent=False,  # core_registry refuses non-GF180 at target: tapeout
     ),
@@ -173,7 +173,7 @@ def survey(technology: str = GF180_7T, *,
         elif req.key == "signoff-collateral":
             ok = tree is not None
         elif req.key == "tapeout-matrix":
-            from util.xheep_gen.core_registry import TAPEOUT_PDK
+            from util.mosaic_gen.core_registry import TAPEOUT_PDK
             ok = pdk == TAPEOUT_PDK
         elif req.key in ("site-geometry", "corner-names", "cell-library"):
             # These now have real per-technology storage. Declaring geometry

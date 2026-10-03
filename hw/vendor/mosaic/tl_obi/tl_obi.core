@@ -13,7 +13,7 @@ description: "TileLink-C -> x-heep OBI window bridge (Rocket/BOOM SCI cores)"
 filesets:
   core:
     files:
-      - xheep_tilelink_to_obi.sv
+      - mosaic_tilelink_to_obi.sv
     file_type: systemVerilogSource
 
 targets:

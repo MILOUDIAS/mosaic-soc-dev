@@ -66,7 +66,7 @@ if [ -n "${MOSAIC_HARDEN_FROM_SOC:-}" ]; then
   CONFIG="${WORK#$FLOW/}/.generated_${DERIVED_DESIGN}.yaml"
   echo "### deriving $CONFIG from $MOSAIC_HARDEN_FROM_SOC"
   # `python3 -m harness` only resolves from the repo root: harness.core imports
-  # util.xheep_gen, which is deliberately not a package, so cwd is what puts it
+  # util.mosaic_gen, which is deliberately not a package, so cwd is what puts it
   # on sys.path. This script has already cd'd to $FLOW.
   ( cd "$(cd "$FLOW/../.." && pwd)" && python3 -m harness physical-intent harden \
       --config "$MOSAIC_HARDEN_FROM_SOC" --design "$DERIVED_DESIGN" \
@@ -114,7 +114,7 @@ REPO="$(cd "$FLOW/../.." && pwd)"
 MANIFEST="${MOSAIC_MANIFEST:-}"
 if [ -z "$MANIFEST" ]; then
   # Absolute paths: this script runs from flow/librelane, not the repo root.
-  MANIFEST="$("$REPO/.venv/bin/python" "$REPO/util/xheep_gen/build_manifest.py" locate \
+  MANIFEST="$("$REPO/.venv/bin/python" "$REPO/util/mosaic_gen/build_manifest.py" locate \
       --config "${MOSAIC_CFG:-$REPO/configs/mosaic_tapeout_ultra.yaml}" \
       --base-config "$REPO/configs/general.hjson" \
       --pads-cfg "$REPO/configs/pad_cfg.py" \

@@ -57,10 +57,10 @@ PADS_CONFIG = "configs/pad_cfg.py"
 @contextlib.contextmanager
 def _generator(repo_root: Path) -> Generator[None, None, None]:
     """Import the generator the way mcu_gen does: bare module names from
-    util/xheep_gen, cwd at the repo root. The generator prints its pad table on
+    util/mosaic_gen, cwd at the repo root. The generator prints its pad table on
     stdout; swallow it so `--json` output and the MCP stdio channel stay clean.
     ponytail: chdir is process-global; callers are single-threaded today."""
-    gen = str(repo_root / "util" / "xheep_gen")
+    gen = str(repo_root / "util" / "mosaic_gen")
     if gen not in sys.path:
         sys.path.insert(0, gen)
     old = os.getcwd()
@@ -161,7 +161,7 @@ def _instantiated(name: str, xheep) -> bool:
 
 
 def _cores(xheep) -> List[Dict[str, Any]]:
-    from util.xheep_gen.core_registry import CORE_SPECS
+    from util.mosaic_gen.core_registry import CORE_SPECS
     out = []
     for g in xheep.cpus():
         ip = g.cpu.name

@@ -1,18 +1,18 @@
-# Packaging for the oh-my-soc harness ONLY (the RTL generator keeps its own
+# Packaging for the mosaic harness ONLY (the RTL generator keeps its own
 # flow: make venv + util/python-requirements.txt). Install into the project
 # venv for a PATH entry point:
 #
 #   .venv/bin/python -m pip install -e .
-#   oh-my-soc config-author presets
+#   mosaic config-author presets
 #
-# The ./oh-my-soc launcher works without any install.
+# The ./mosaic launcher works without any install.
 
 [build-system]
 requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "oh-my-soc"
+name = "mosaic-soc"
 version = "0.3.0"
 description = "MOSAIC-SoC agentic harness: visible model/tool loop over deterministic EDA gates"
 requires-python = ">=3.10"
@@ -29,7 +29,7 @@ dependencies = [
 netlist = ["najaeda"]
 
 [project.scripts]
-oh-my-soc = "harness.__main__:main"
+mosaic = "harness.__main__:main"
 
 [tool.setuptools]
 # Explicit list, never auto-discovery: test/ and refs/ must not be packaged.
@@ -39,7 +39,7 @@ oh-my-soc = "harness.__main__:main"
 # harness.evidence.gate_guard at module load — with zero evidence modules.
 # test_pyproject_lists_every_harness_subpackage keeps this honest.
 #
-# `util.xheep_gen` is here because `harness.core` imports its `core_registry`:
+# `util.mosaic_gen` is here because `harness.core` imports its `core_registry`:
 # the single source of core capabilities and config validation, shared so the
 # generator and the harness accept exactly the same configs. An earlier comment
 # here claimed util/ was "not part of the app"; that was wrong, and the
@@ -53,7 +53,7 @@ oh-my-soc = "harness.__main__:main"
 # bundled with a packaging fix.
 packages = [
     "harness", "harness.skills", "harness.evidence", "harness.physical",
-    "util", "util.xheep_gen",
+    "util", "util.mosaic_gen",
 ]
 
 [tool.setuptools.package-data]

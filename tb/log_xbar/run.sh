@@ -26,10 +26,10 @@ XCI=hw/vendor/xheep/cluster_interconnect/rtl
 TPLS=$(mosaic_templates)
 
 gen () {  # $1 = mosaic config
-  $PY util/xheep_gen/mcu_gen.py --mosaic_config "$1" \
+  $PY util/mosaic_gen/mcu_gen.py --mosaic_config "$1" \
       --base_config configs/general.hjson --pads_cfg configs/pad_cfg.py \
       --outtpl "$TPLS" --externaltpl "" >/dev/null
-  MANIFEST=$($PY util/xheep_gen/build_manifest.py locate --config "$1" \
+  MANIFEST=$($PY util/mosaic_gen/build_manifest.py locate --config "$1" \
       --base-config configs/general.hjson --pads-cfg configs/pad_cfg.py \
       --repo-root "$REPO")
   GENERATED_ROOT=$($PY -c \

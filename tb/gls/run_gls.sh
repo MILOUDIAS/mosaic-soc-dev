@@ -74,7 +74,7 @@ SDF_ARG=""
 # GLS_VCD=<path> captures switching activity for workload power. The window is
 # bounded because this netlist is ~200k cells and a full-boot dump runs to tens
 # of gigabytes: GLS_VCD_START/GLS_VCD_CYCLES select the region of interest.
-# `oh-my-soc physical-intent power` then feeds the VCD to OpenSTA.
+# `mosaic physical-intent power` then feeds the VCD to OpenSTA.
 VCD_ARG=""
 if [ -n "${GLS_VCD:-}" ]; then
   VCD_ARG="+vcd=${GLS_VCD} +vcd_start=${GLS_VCD_START:-100} +vcd_cycles=${GLS_VCD_CYCLES:-1000}"

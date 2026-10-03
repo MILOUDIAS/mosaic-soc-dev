@@ -68,7 +68,7 @@ until upstream implements OBI error responses and recovery.
 ## Background: the iDMA bugs this fixed
 
 The vendored iDMA was non-buildable; bringing it up required:
-1. **Wrapper rewrite** — `idma_xheep_wrapper.sv` was written against a different
+1. **Wrapper rewrite** — `idma_mosaic_wrapper.sv` was written against a different
    iDMA version (wrong `IDMA_TYPEDEF_*` arity, wrong submodule param/pin names).
    It was rewritten against the **latest iDMA 0.6.5** modules: build the 1D/ND
    request types + OBI meta channels, instantiate `idma_reg32_3d` + `id_gen` +

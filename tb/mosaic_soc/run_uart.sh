@@ -32,11 +32,11 @@ NCO=$(( (1 << 20) / TB_BAUD_DIVISOR ))
 
 echo "### [1/4] generating RTL ($MOSAIC_CFG) ..."
 TPLS=$(mosaic_templates)
-"$PY" util/xheep_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" \
+"$PY" util/mosaic_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" \
     --base_config configs/general.hjson --pads_cfg configs/pad_cfg.py \
     --output-root build/mosaic --outtpl "$TPLS" --externaltpl "" >/dev/null 2>&1 \
     || { echo "RTL gen failed"; exit 1; }
-MANIFEST="$("$PY" util/xheep_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
+MANIFEST="$("$PY" util/mosaic_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
     --base-config configs/general.hjson --pads-cfg configs/pad_cfg.py \
     --repo-root "$REPO")" || exit 1
 GEN_ROOT="$("$PY" -c \

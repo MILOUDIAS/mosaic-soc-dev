@@ -1,4 +1,4 @@
-"""Typed, bounded tools exposed to the built-in oh-my-soc agent loop."""
+"""Typed, bounded tools exposed to the built-in mosaic agent loop."""
 
 from __future__ import annotations
 
@@ -522,7 +522,7 @@ class AgentToolRegistry:
                     skill=name,
                     summary=f"flow '{flow}' requires explicit approval",
                     errors=["rerun agent with --allow-physical, or have a "
-                            "person run `oh-my-soc approve <scope>`"],
+                            "person run `mosaic approve <scope>`"],
                 )
             return FlowRunner(self.repo_root).run(
                 flow,
@@ -599,7 +599,7 @@ class AgentToolRegistry:
                     skill=name,
                     summary="wrapper apply requires explicit integration approval",
                     errors=["rerun agent with --allow-integration, or have a "
-                            "person run `oh-my-soc approve integration`"],
+                            "person run `mosaic approve integration`"],
                 )
             return WrapperSmith(self.repo_root).scaffold(
                 str(arguments["core"]),
@@ -651,7 +651,7 @@ class AgentToolRegistry:
                     ok=False,
                     skill=name,
                     summary="tb-matrix above the validate tier requires explicit approval",
-                    errors=["have a person run `oh-my-soc approve simulation`"],
+                    errors=["have a person run `mosaic approve simulation`"],
                 )
 
             return TbMatrix(self.repo_root).run(

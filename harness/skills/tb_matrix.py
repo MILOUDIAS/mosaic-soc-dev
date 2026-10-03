@@ -3,7 +3,7 @@
 tb-smith proves ONE core; tb-matrix proves the SPACE. Every axis of the
 integration matrix (which cores, in which roles, at which counts, on which
 fabric, with which ISA/parameter variants, scheduler modes, memory sizes and
-peripheral sets) is derived live from util/xheep_gen/core_registry.py — a core
+peripheral sets) is derived live from util/mosaic_gen/core_registry.py — a core
 added through wrapper-smith automatically enters the matrix with no edits here.
 
 Combination strategy (full cartesian product is astronomically large):
@@ -38,7 +38,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from ..core import SkillResult, REPO_ROOT, dump_yaml, log
-from util.xheep_gen.core_registry import (
+from util.mosaic_gen.core_registry import (
     CORE_SPECS,
     VALID_BUS,
     VALID_PERIPHERALS,

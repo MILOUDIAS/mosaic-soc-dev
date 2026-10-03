@@ -32,7 +32,7 @@ VERILOG_SOURCES = \
   $(IDMA)/rtl/idma_reg32_3d_reg_pkg.sv \
   $(IDMA)/rtl/idma_pkg.sv \
   $(IDMA)/rtl/idma_reg_top.sv \
-  $(IDMA)/idma_xheep_wrapper.sv \
+  $(IDMA)/idma_mosaic_wrapper.sv \
   $(TB)/tb_idma_mem.sv \
   $(TB)/tb_idma_xbar_mem.sv \
   $(TB)/idma_tb_top.sv \

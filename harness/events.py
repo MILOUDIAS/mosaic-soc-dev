@@ -192,7 +192,7 @@ class TerminalRenderer:
 
     def __call__(self, event: AgentEvent) -> None:
         if event.kind == "session_start":
-            self._write(self._paint("╭─ oh-my-soc agent", "bold"))
+            self._write(self._paint("╭─ mosaic agent", "bold"))
             self._write(f"│  {event.message}")
             return
         if event.kind == "plan":

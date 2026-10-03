@@ -7,7 +7,7 @@
 // cv32a6_mosaic_config_pkg.sv (cv32a65x derivative: XLEN=32, M-mode only,
 // WT D$, fully-uncached data side, CVXIF off, RVA off) and converts its
 // single AXI4 port to a unified OBI master through the burst-capable
-// xheep_axi_burst_to_obi bridge (64-bit AXI data -> 32-bit OBI).
+// mosaic_axi_burst_to_obi bridge (64-bit AXI data -> 32-bit OBI).
 //
 // CVA6 remains EXCLUDED from the GF180 tapeout (area) — this integration is
 // for simulation/architecture exploration. Debug is disabled in the config
@@ -142,7 +142,7 @@ module cva6_sci #(
         .noc_resp_i   (noc_resp)
     );
 
-    xheep_axi_burst_to_obi #(
+    mosaic_axi_burst_to_obi #(
         .obi_req_t  (obi_pkg::obi_req_t),
         .obi_resp_t (obi_pkg::obi_resp_t),
         .axi_req_t  (noc_req_t),

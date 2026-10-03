@@ -14,7 +14,7 @@ PY="$REPO/.venv/bin/python"
 
 echo "### [1/4] generating topology-generic RTL ($MOSAIC_CFG) ..."
 TPLS=$(mosaic_templates)
-"$PY" util/xheep_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" \
+"$PY" util/mosaic_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" \
     --base_config configs/general.hjson --pads_cfg configs/pad_cfg.py \
     --output-root build/mosaic --outtpl "$TPLS" --externaltpl "" >/dev/null 2>&1 \
     || { echo "RTL gen failed"; exit 1; }
@@ -30,7 +30,7 @@ if [ -n "${MOSAIC_MANIFEST:-}" ]; then
   [ -f "$MANIFEST" ] || { echo "MOSAIC_MANIFEST does not exist: $MANIFEST"; exit 1; }
   echo "###       manifest pinned: $MANIFEST"
 else
-MANIFEST="$("$PY" util/xheep_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
+MANIFEST="$("$PY" util/mosaic_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
     --base-config configs/general.hjson --pads-cfg configs/pad_cfg.py \
     --repo-root "$REPO")" || exit 1
 fi

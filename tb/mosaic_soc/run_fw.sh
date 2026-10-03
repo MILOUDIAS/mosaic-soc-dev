@@ -37,16 +37,16 @@ PY="$REPO/.venv/bin/python"
 
 echo "### [1/4] generating RTL ($MOSAIC_CFG) ..."
 TPLS=$(mosaic_templates)
-"$PY" util/xheep_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" --base_config configs/general.hjson \
+"$PY" util/mosaic_gen/mcu_gen.py --mosaic_config "$MOSAIC_CFG" --base_config configs/general.hjson \
     --pads_cfg configs/pad_cfg.py --output-root build/mosaic --outtpl "$TPLS" --externaltpl "" >/dev/null 2>&1 || { echo "RTL gen failed"; exit 1; }
-MANIFEST="$("$PY" util/xheep_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
+MANIFEST="$("$PY" util/mosaic_gen/build_manifest.py locate --config "$MOSAIC_CFG" \
     --base-config configs/general.hjson --pads-cfg configs/pad_cfg.py --repo-root "$REPO")" || exit 1
 MOSAIC_GENERATED_ROOT="$("$PY" -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["generated_root"])' \
     "$MANIFEST")" || exit 1
 [ -f "$MOSAIC_GENERATED_ROOT/sw/make/mosaic_isa.mk" ] \
     || { echo "generated software contract missing"; exit 1; }
-"$PY" util/xheep_gen/software_gen.py \
+"$PY" util/mosaic_gen/software_gen.py \
     --validate-production-demo "$MOSAIC_GENERATED_ROOT/sw/boot_images.json" \
     --isa-makefile "$MOSAIC_GENERATED_ROOT/sw/make/mosaic_isa.mk" \
     || exit 1

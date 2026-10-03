@@ -158,7 +158,7 @@ def check_bundle(config_yaml: Optional[Path], repo_root: Path,
     try:
         import sys
         sys.path.insert(0, str(repo_root / "util"))
-        from xheep_gen.build_manifest import compute_identity
+        from mosaic_gen.build_manifest import compute_identity
         _, key, _ = compute_identity(
             str(config_yaml), str(repo_root / "configs/general.hjson"),
             str(repo_root / "configs/pad_cfg.py"), str(repo_root))

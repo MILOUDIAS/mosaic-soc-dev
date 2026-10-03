@@ -101,7 +101,7 @@ export
 ## @param X_HEEP_CFG=[configs/general.hjson(default),<path-to-config-file>]
 ## @param PYTHON_X_HEEP_CFG=[<path-to-python-config-file>]
 mcu-gen:
-	$(PYTHON) util/xheep_gen/mcu_gen.py --config $(X_HEEP_CFG) --python_config $(PYTHON_X_HEEP_CFG) --pads_cfg $(PADS_CFG) --outtpl "$(MCU_GEN_TEMPLATES)" --externaltpl "$(EXTERNAL_MCU_GEN_TEMPLATES)" --cpu $(CPU) --bus $(BUS) --memorybanks $(MEMORY_BANKS) --memorybanks_il $(MEMORY_BANKS_IL)
+	$(PYTHON) util/mosaic_gen/mcu_gen.py --config $(X_HEEP_CFG) --python_config $(PYTHON_X_HEEP_CFG) --pads_cfg $(PADS_CFG) --outtpl "$(MCU_GEN_TEMPLATES)" --externaltpl "$(EXTERNAL_MCU_GEN_TEMPLATES)" --cpu $(CPU) --bus $(BUS) --memorybanks $(MEMORY_BANKS) --memorybanks_il $(MEMORY_BANKS_IL)
 
 	@echo "### MCU-GEN completed! Running FuseSoC register generators..."	
 	# NOTE: use the refs-excluding cores-root helper. A bare `--cores-root .`
@@ -119,9 +119,9 @@ mcu-gen:
 ## @param BASE_CFG=[configs/general.hjson(default),<base-xheep-hjson-for-peripherals>]
 ## @param PADS_CFG=[configs/pad_cfg.py(default),<pad-config>]
 mosaic-gen:
-	$(PYTHON) util/xheep_gen/mcu_gen.py --mosaic_config $(MOSAIC_CFG) --base_config $(BASE_CFG) --pads_cfg $(PADS_CFG) --output-root $(MOSAIC_OUTPUT_ROOT) --outtpl "$(MCU_GEN_TEMPLATES)" --externaltpl "$(EXTERNAL_MCU_GEN_TEMPLATES)"
+	$(PYTHON) util/mosaic_gen/mcu_gen.py --mosaic_config $(MOSAIC_CFG) --base_config $(BASE_CFG) --pads_cfg $(PADS_CFG) --output-root $(MOSAIC_OUTPUT_ROOT) --outtpl "$(MCU_GEN_TEMPLATES)" --externaltpl "$(EXTERNAL_MCU_GEN_TEMPLATES)"
 	@set -e; \
-		manifest="$$($(PYTHON) util/xheep_gen/build_manifest.py locate \
+		manifest="$$($(PYTHON) util/mosaic_gen/build_manifest.py locate \
 			--config "$(MOSAIC_CFG)" --base-config "$(BASE_CFG)" \
 			--pads-cfg "$(PADS_CFG)" --repo-root "$(mkfile_path)" \
 			--output-root "$(MOSAIC_OUTPUT_ROOT)")"; \
@@ -136,7 +136,7 @@ mosaic-gen:
 
 ## Display mcu_gen.py help
 mcu-gen-help:
-	$(PYTHON) util/xheep_gen/mcu_gen.py -h
+	$(PYTHON) util/mosaic_gen/mcu_gen.py -h
 
 ## Runs verible formatting
 verible: | .check-verible
@@ -144,10 +144,10 @@ verible: | .check-verible
 
 ## Runs black formatting for python files
 format-python:
-	$(PYTHON) -m black util/xheep_gen
+	$(PYTHON) -m black util/mosaic_gen
 	$(PYTHON) -m black util/periph_structs_gen
 	$(PYTHON) -m black util/waiver-gen.py
-	$(PYTHON) -m black test/test_x_heep_gen
+	$(PYTHON) -m black test/test_mosaic_gen
 	$(PYTHON) -m black configs
 
 ## @section Simulation
@@ -171,7 +171,7 @@ verilator-waves: .check-gtkwave
 ## Runs the Python test suite
 .PHONY: test
 test:
-	$(PYTHON) -m pytest test/test_x_heep_gen -q
+	$(PYTHON) -m pytest test/test_mosaic_gen -q
 
 ## @section Vendored IPs
 ## Update the vendored IPs based on the .vendor.hjson description files

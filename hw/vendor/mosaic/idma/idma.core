@@ -9,7 +9,7 @@ license: SHL-0.51
 # SPDX-License-Identifier: SHL-0.51
 
 filesets:
-  # Macro includes (idma/typedef.svh is `included by idma_xheep_wrapper.sv; the
+  # Macro includes (idma/typedef.svh is `included by idma_mosaic_wrapper.sv; the
   # obi typedef macros come from the pulp-platform.org::obi dependency).
   includes:
     files:
@@ -46,7 +46,7 @@ filesets:
       - rtl/idma_reg32_3d_reg_top.sv
       - rtl/idma_reg_top.sv
       # x-heep-compatible wrapper (drop-in replacement for dma_subsystem)
-      - idma_xheep_wrapper.sv
+      - idma_mosaic_wrapper.sv
     file_type: systemVerilogSource
 
 targets:

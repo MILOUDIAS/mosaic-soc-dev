@@ -43,17 +43,17 @@ OPENCODE_API_KEY is set
 ## Stage 2 — select the built-in API driver
 
 ```bash
-./oh-my-soc setup \
+./mosaic setup \
   --driver api \
   --api-kind opencode-go \
   --non-interactive
-./oh-my-soc setup show
+./mosaic setup show
 ```
 
 Expected key lines:
 
 ```text
-[OK] driver 'api' saved to ~/.config/oh-my-soc/config.json
+[OK] driver 'api' saved to ~/.config/mosaic/config.json
 [OK] driver: api
 ```
 
@@ -89,7 +89,7 @@ An OpenCode `/connect` login is separate: the harness does not import
 Start with an analysis-only boundary:
 
 ```bash
-./oh-my-soc agent \
+./mosaic agent \
   "inspect tutorial/configs/tutorial_soc.yaml and explain its topology" \
   --driver api \
   --require-evidence analysis
@@ -98,7 +98,7 @@ Start with an analysis-only boundary:
 Model wording varies, but the event shape should resemble:
 
 ```text
-╭─ oh-my-soc agent
+╭─ mosaic agent
 ◇ model turn 1: choosing the next evidence step
 → request_scope {"scope":"analysis", ...}
 ✓ request_scope: request scope: analysis
@@ -123,7 +123,7 @@ When you want the API agent to author and simulate a new configuration, say so
 explicitly and lock the evidence level:
 
 ```bash
-./oh-my-soc agent \
+./mosaic agent \
   "build and verify an SoC with one cv32e20 controller, two picorv32 workers, 64KB sram, a tdu and a uart" \
   --driver api \
   --require-evidence simulation
@@ -146,7 +146,7 @@ The preset defaults to raw API model ID `kimi-k2.7-code`. To choose another
 documented OpenAI-compatible Go model:
 
 ```bash
-./oh-my-soc setup \
+./mosaic setup \
   --driver api \
   --api-kind opencode-go \
   --model glm-5.2 \

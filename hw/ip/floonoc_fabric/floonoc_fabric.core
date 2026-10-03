@@ -2,7 +2,7 @@ CAPI=2:
 
 # GENERATED FlooNoC fabric top for the MOSAIC `bus: floonoc` option.
 # The two files below are produced by `make mosaic-gen` (floogen via
-# util/xheep_gen/floonoc_gen.py) — real NoC RTL for floonoc configs, minimal
+# util/mosaic_gen/floonoc_gen.py) — real NoC RTL for floonoc configs, minimal
 # stubs otherwise — and are gitignored (never commit generated .sv).
 name: mosaic:ip:floonoc_fabric:0.1.0
 description: floogen-generated MOSAIC NoC top (floo_mosaic_noc + pkg)

@@ -2,7 +2,7 @@
 
 WHAT THIS FIXES
 ---------------
-`oh-my-soc agent --driver claude` used to be a `subprocess.call`: the external
+`mosaic agent --driver claude` used to be a `subprocess.call`: the external
 agent received a prompt and then acted with no scope ceiling, no evidence
 binding and no completion gate. Every one of those rules existed in
 `AgentRunner` and applied to nothing the external drivers did. A prompt asking
@@ -16,21 +16,21 @@ call is what a later call is gated against.
 
 TWO WAYS TO SET THE CEILING
 ---------------------------
-LOCKED. `--request` (or OH_MY_SOC_REQUEST) is the user's actual request. The
+LOCKED. `--request` (or MOSAIC_REQUEST) is the user's actual request. The
 ceiling is derived from it with the same `classify_request_scope` the built-in
-loop uses and locked before the client connects. `oh-my-soc agent --driver
+loop uses and locked before the client connects. `mosaic agent --driver
 claude|omp` launches it this way.
 
 PLUGIN. A host that loads us as a plugin starts the server before anyone has
 typed anything, so there is no request to derive from. The ceiling is then a
-standing allowlist the user writes into the host config (OH_MY_SOC_SCOPES,
+standing allowlist the user writes into the host config (MOSAIC_SCOPES,
 default: everything except integration and physical). The model binds each
 request with `session_new` and picks a scope inside the allowlist. Because the
 request text is model-supplied in this mode, the classifier is only a hint.
 
 In both modes, selecting `physical` or `integration`, running an
 approval-declared flow, and applying a wrapper need a person's approval token
-(`oh-my-soc approve <scope>`, TTY only). See harness/approvals.py.
+(`mosaic approve <scope>`, TTY only). See harness/approvals.py.
 
 WHAT IT DELIBERATELY DOES NOT DO
 --------------------------------
@@ -63,7 +63,7 @@ from .core import REPO_ROOT, SkillResult
 #: answer with ours and the client decides (MCP lifecycle negotiation).
 SUPPORTED_PROTOCOL_VERSIONS = ("2025-06-18", "2025-03-26", "2024-11-05")
 PROTOCOL_VERSION = SUPPORTED_PROTOCOL_VERSIONS[0]
-SERVER_NAME = "oh-my-soc"
+SERVER_NAME = "mosaic"
 
 
 def default_scope_allowlist() -> FrozenSet[str]:
@@ -74,7 +74,7 @@ def default_scope_allowlist() -> FrozenSet[str]:
 
 
 def parse_scope_allowlist(text: Optional[str]) -> FrozenSet[str]:
-    """OH_MY_SOC_SCOPES: a comma list; unset or blank means the default.
+    """MOSAIC_SCOPES: a comma list; unset or blank means the default.
 
     An unknown name is an error, not an ignored typo: a typo in an
     authorization list silently changes what runs.
@@ -87,7 +87,7 @@ def parse_scope_allowlist(text: Optional[str]) -> FrozenSet[str]:
     unknown = names - REQUEST_SCOPES
     if unknown:
         raise ValueError(
-            f"OH_MY_SOC_SCOPES has unknown scope(s) {sorted(unknown)}; "
+            f"MOSAIC_SCOPES has unknown scope(s) {sorted(unknown)}; "
             f"valid: {sorted(REQUEST_SCOPES)}")
     return frozenset(names)
 
@@ -218,7 +218,7 @@ class GatedSession:
 
         tail = (" Selecting physical or integration, running an approval-"
                 "gated flow and applying a wrapper need a person to run "
-                "`oh-my-soc approve <scope>` in a terminal first; you cannot "
+                "`mosaic approve <scope>` in a terminal first; you cannot "
                 "grant it. Call session_status before claiming success: "
                 "success requires deterministic evidence.")
         if self.locked:

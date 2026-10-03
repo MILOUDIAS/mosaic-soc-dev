@@ -6,7 +6,7 @@
 # tools are other versions (2026.09: Magic 8.3.684, KLayout 0.30.12, Netgen
 # 1.5.323, Yosys 0.69, Verilator 5.052 -- nix-eda 6.11 has 8.3.623, 0.30.7,
 # 1.5.316, 0.62, and the sims pin 5.050). So the container exports
-# MOSAIC_TOOLCHAIN=iic:<tag>: `oh-my-soc doctor` reports it and the evidence
+# MOSAIC_TOOLCHAIN=iic:<tag>: `mosaic doctor` reports it and the evidence
 # store keys any run recorded there apart from nix-made runs.
 #
 #   tools/iic-osic.sh                       interactive shell (needs a TTY)

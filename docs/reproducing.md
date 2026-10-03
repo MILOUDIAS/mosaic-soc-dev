@@ -4,7 +4,7 @@ Two runtimes are supported. **Nix is the reference**: every signoff and
 simulation result the project reports is produced there. The IIC-OSIC-TOOLS
 container is a convenience runtime, and its results are labelled as such.
 
-`oh-my-soc doctor` checks a machine against the pins and tells you what to fix.
+`mosaic doctor` checks a machine against the pins and tells you what to fix.
 
 ## Nix (reference)
 
@@ -58,7 +58,7 @@ The runners used to default to paths that exist on one machine, then fall back
 to whatever was on `PATH`. That is how a 5.047-devel Verilator can silently
 decide a verdict.
 
-`oh-my-soc flow-runner run <flow>` enters `nix develop <repo>#sim` by itself
+`mosaic flow-runner run <flow>` enters `nix develop <repo>#sim` by itself
 when it is not already inside a nix shell. It does not do this for three flows:
 - `harden-*`, where LibreLane brings its own environment;
 - `pytest`, which runs the harness's own Python;
@@ -93,7 +93,7 @@ It is not the reference because its tools are other versions:
 | Verilator | 5.052 | 5.050 |
 
 Different signoff tools can give different DRC/LVS verdicts. So:
-- `oh-my-soc doctor` reports the `iic:<tag>` runtime.
+- `mosaic doctor` reports the `iic:<tag>` runtime.
 - The evidence store folds the runtime into the tool digest
   (`harness/evidence/store.py`), so a run recorded there never shares a key
   with a nix-made run.
@@ -104,8 +104,8 @@ claims from Nix runs only.
 ## Checking a machine
 
 ```bash
-oh-my-soc doctor           # human-readable
-oh-my-soc --json doctor    # for scripts; exits 1 when a required tool is off-pin
+mosaic doctor           # human-readable
+mosaic --json doctor    # for scripts; exits 1 when a required tool is off-pin
 ```
 
 `doctor` reports:

@@ -165,7 +165,7 @@ Per the roadmap's own truth rules (§12.3, §14), fidelity is stated explicitly:
 
 **XIP already exists, and it is TITAN-only. That is the whole answer.**
 
-`util/xheep_gen/pack_flash.py` packs a bootable SPI-flash image and emits
+`util/mosaic_gen/pack_flash.py` packs a bootable SPI-flash image and emits
 
 ```json
 "boot_mode": "spi-memio-xip-titan-load-workers",

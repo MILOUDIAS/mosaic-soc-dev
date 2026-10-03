@@ -55,7 +55,7 @@ def audit_core_matrix() -> "SkillResult":
     module reference out of an elaboration log.
     """
     from ..core import REPO_ROOT, SkillResult
-    from util.xheep_gen.core_integration import audit
+    from util.mosaic_gen.core_integration import audit
 
     rows = audit(REPO_ROOT)
     gaps = {n: r for n, r in rows.items() if not r.complete}
@@ -227,7 +227,7 @@ def _ports_yosys(files: List[Path], top: str) -> Optional[List[Port]]:
     # treats semicolons as command separators; a crafted filename could inject
     # commands (including plugin loading). Copy sources to generated safe names
     # and run a generated script containing only those names.
-    with tempfile.TemporaryDirectory(prefix="oh-my-soc-yosys-") as temp:
+    with tempfile.TemporaryDirectory(prefix="mosaic-yosys-") as temp:
         temp_dir = Path(temp)
         safe_files = []
         for index, source in enumerate(files):
@@ -471,8 +471,8 @@ class WrapperSmith:
             "todos": todos,
             "checklist": [
                 {"touchpoint": t, "status": "pending"} for t in (
-                    "util/xheep_gen/cpu/cpu.py AVAILABLE_CPUS",
-                    "util/xheep_gen/core_registry.py CORE_SPECS",
+                    "util/mosaic_gen/cpu/cpu.py AVAILABLE_CPUS",
+                    "util/mosaic_gen/core_registry.py CORE_SPECS",
                     "hw/sci/<core>_sci.sv wrapper",
                     "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl branch",
                     "hw/sci/sci.core files list",
@@ -739,7 +739,7 @@ class WrapperSmith:
             _stage(wrapper_rel, self._render_wrapper(core, family, a))
 
         # (1) x-heep's runtime CPU constructor still gates names separately.
-        cpu_rel = "util/xheep_gen/cpu/cpu.py"
+        cpu_rel = "util/mosaic_gen/cpu/cpu.py"
         cpu_text = (self.repo_root / cpu_rel).read_text()
         if re.search(rf'"{re.escape(core)}"', cpu_text):
             skipped.append(f"{cpu_rel} (AVAILABLE_CPUS)")
@@ -762,7 +762,7 @@ class WrapperSmith:
 
         # (2) CORE_SPECS is authoritative. SCI_CORES/VALID_CORE_IPS are derived
         # from it; mosaic_config imports them and must never be patched.
-        registry_rel = "util/xheep_gen/core_registry.py"
+        registry_rel = "util/mosaic_gen/core_registry.py"
         registry_text = (self.repo_root / registry_rel).read_text()
         try:
             registered = _mapping_has_string_key(registry_text, "CORE_SPECS", core)

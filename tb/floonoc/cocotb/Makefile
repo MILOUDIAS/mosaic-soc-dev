@@ -20,8 +20,8 @@ VERILOG_SOURCES = \
   $(CC)/src/cf_math_pkg.sv \
   $(AXI)/src/axi_pkg.sv \
   $(INC)/obi_pkg.sv \
-  $(AOB)/xheep_obi_to_axi.sv \
-  $(AOB)/xheep_axi_to_obi.sv \
+  $(AOB)/mosaic_obi_to_axi.sv \
+  $(AOB)/mosaic_axi_to_obi.sv \
   $(TB)/tb_bridge_top.sv
 
 # Stage 2 additionally needs the FlooNoC library + the GENERATED fabric

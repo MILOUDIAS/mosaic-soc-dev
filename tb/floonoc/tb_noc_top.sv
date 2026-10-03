@@ -3,9 +3,9 @@
 //
 // tb_noc_top.sv — stage-2 smoke test for the MOSAIC FlooNoC fabric:
 //
-//   cocotb OBI master -> xheep_obi_to_axi -> hart0 chimney -> router
-//        -> mem chimney    -> xheep_axi_to_obi -> OBI memory   ([0, 0x8000))
-//        -> periph chimney -> xheep_axi_to_obi -> pattern slave (above)
+//   cocotb OBI master -> mosaic_obi_to_axi -> hart0 chimney -> router
+//        -> mem chimney    -> mosaic_axi_to_obi -> OBI memory   ([0, 0x8000))
+//        -> periph chimney -> mosaic_axi_to_obi -> pattern slave (above)
 //
 // Requires the GENERATED fabric (make mosaic-gen / mcu_gen with
 // configs/mosaic_floonoc.yaml) — the stub files will not elaborate here.
@@ -45,7 +45,7 @@ module tb_noc_top (
 
   assign tieoff_req = '0;
 
-  xheep_obi_to_axi #(
+  mosaic_obi_to_axi #(
       .obi_req_t (obi_pkg::obi_req_t),
       .obi_resp_t(obi_pkg::obi_resp_t),
       .axi_req_t (axi_axi_in_req_t),
@@ -77,7 +77,7 @@ module tb_noc_top (
       .periph_axi_out_rsp_i(periph_rsp)
   );
 
-  xheep_axi_to_obi #(
+  mosaic_axi_to_obi #(
       .obi_req_t (obi_pkg::obi_req_t),
       .obi_resp_t(obi_pkg::obi_resp_t),
       .axi_req_t (axi_axi_out_req_t),
@@ -92,7 +92,7 @@ module tb_noc_top (
       .obi_resp_i(obi_mem_resp)
   );
 
-  xheep_axi_to_obi #(
+  mosaic_axi_to_obi #(
       .obi_req_t (obi_pkg::obi_req_t),
       .obi_resp_t(obi_pkg::obi_resp_t),
       .axi_req_t (axi_axi_out_req_t),

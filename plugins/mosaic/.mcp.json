@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mosaic": {
+      "command": "python3",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/launch_mcp.py"],
+      "env": {
+        "MOSAIC_SCOPES": "${MOSAIC_SCOPES:-}"
+      }
+    }
+  }
+}

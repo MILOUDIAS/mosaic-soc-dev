@@ -289,7 +289,7 @@ FLOWS: Dict[str, Dict[str, Any]] = {
         "timeout": 7200,
     },
     "pytest": {
-        "cmd": ["python3", "-m", "pytest", "test/test_x_heep_gen", "-q"],
+        "cmd": ["python3", "-m", "pytest", "test/test_mosaic_gen", "-q"],
         "description": "Config-system + harness pytest suites",
         "effect": "execute",
         "cost": "minutes",

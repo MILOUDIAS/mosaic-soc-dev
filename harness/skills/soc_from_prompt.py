@@ -1,6 +1,6 @@
 """soc-from-prompt skill — deterministic natural-language → SoC pipeline.
 
-The no-LLM fallback path of the oh-my-soc prompt→SoC story (and the CI-able
+The no-LLM fallback path of the mosaic prompt→SoC story (and the CI-able
 demo): a small, ordered regex grammar extracts core groups, memory, bus,
 scheduler and peripherals from a prompt; every match is recorded with
 provenance (`matched`) and every leftover content token is surfaced

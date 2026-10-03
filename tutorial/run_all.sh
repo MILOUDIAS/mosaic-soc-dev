@@ -44,16 +44,16 @@ export COMPILER_PREFIX="${COMPILER_PREFIX:-${tc_name%elf}}"
 "${RISCV_TC}-gcc" --version | sed -n '1p'
 
 echo "### [3/6] validating config and semantic topology"
-./oh-my-soc config-author validate "$CFG"
-./oh-my-soc topo-viz check "$CFG"
+./mosaic config-author validate "$CFG"
+./mosaic topo-viz check "$CFG"
 mkdir -p build/tutorial
-./oh-my-soc topo-viz render "$CFG" -o "$TOPOLOGY"
+./mosaic topo-viz render "$CFG" -o "$TOPOLOGY"
 
 echo "### [4/6] generating RTL and software contracts"
 make mosaic-gen MOSAIC_CFG="$CFG"
 
 echo "### [5/6] inspecting the generated content-addressed build"
-MANIFEST="$(./.venv/bin/python util/xheep_gen/build_manifest.py locate \
+MANIFEST="$(./.venv/bin/python util/mosaic_gen/build_manifest.py locate \
   --config "$CFG" \
   --base-config configs/general.hjson \
   --pads-cfg configs/pad_cfg.py \

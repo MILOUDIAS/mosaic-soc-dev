@@ -20,10 +20,10 @@ if [ "${1:-}" = "stage2" ]; then
   echo "### generating the FlooNoC fabric (configs/mosaic_floonoc.yaml) ..."
   ( cd "$REPO"
     TPLS=$(mosaic_templates)
-    python3 util/xheep_gen/mcu_gen.py --mosaic_config configs/mosaic_floonoc.yaml \
+    python3 util/mosaic_gen/mcu_gen.py --mosaic_config configs/mosaic_floonoc.yaml \
         --base_config configs/general.hjson --pads_cfg configs/pad_cfg.py \
         --outtpl "$TPLS" --externaltpl "" >/dev/null ) || { echo "fabric gen failed"; exit 1; }
-  MANIFEST=$(cd "$REPO" && python3 util/xheep_gen/build_manifest.py locate \
+  MANIFEST=$(cd "$REPO" && python3 util/mosaic_gen/build_manifest.py locate \
       --config configs/mosaic_floonoc.yaml --base-config configs/general.hjson \
       --pads-cfg configs/pad_cfg.py --repo-root "$REPO") || exit 1
   GENERATED_ROOT=$(python3 -c \

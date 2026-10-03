@@ -1,0 +1,9 @@
+{
+  "name": "mosaic",
+  "version": "0.4.0",
+  "description": "MOSAIC-SoC generator tools over a gated MCP server: plan, generate, verify and harden multi-core RISC-V SoCs from YAML or natural language. Runs against the MOSAIC checkout the session is opened in.",
+  "author": {
+    "name": "MOSAIC-SoC team"
+  },
+  "keywords": ["soc", "risc-v", "eda", "mcp", "librelane"]
+}
