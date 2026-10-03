@@ -1,0 +1,31 @@
+CAPI=2:
+
+name: pulp-platform.org::obi:0.1.2
+description: "OBI (Open Bus Interface) — pulp-platform, vendored for the iDMA backend"
+
+# Copyright 2023 ETH Zurich and University of Bologna.
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+
+filesets:
+  rtl:
+    files:
+      - include/obi/typedef.svh: {is_include_file: true}
+      - include/obi/assign.svh: {is_include_file: true}
+      # NOTE: src/obi_pkg.sv is intentionally NOT compiled. The iDMA backend only
+      # needs the OBI typedef *macros* above (it builds local request/response
+      # types and takes x-heep's obi_req_t/obi_resp_t as module parameters); it
+      # never imports pulp's obi_pkg, and nothing in the SoC references its
+      # symbols (atop_t, obi_cfg_t, …). Compiling it would define a SECOND
+      # package named `obi_pkg`, colliding with x-heep's
+      # hw/core-v-mini-mcu/include/obi_pkg.sv (which defines the obi_req_t/
+      # obi_resp_t used SoC-wide) — a duplicate-package error in any flattened
+      # build (FuseSoC/Verilator sim and the Librelane sv2v/Yosys GDS flow).
+      # Re-add it ONLY if a pulp OBI module that imports obi_pkg is integrated,
+      # and then namespace it to avoid the collision.
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - rtl

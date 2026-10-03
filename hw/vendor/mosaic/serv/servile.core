@@ -1,0 +1,22 @@
+CAPI=2:
+
+name: mosaic:ip:servile
+description: "servile — convenience wrapper for SERV (MOSAIC-SoC vendored copy)"
+license: ISC
+
+filesets:
+  rtl:
+    depend:
+      - mosaic:ip:serv
+    files:
+      - servile/servile_rf_mem_if.v
+      - servile/servile_mux.v
+      - servile/servile_arbiter.v
+      - servile/servile.v
+    file_type: verilogSource
+
+targets:
+  default:
+    filesets:
+      - rtl
+    toplevel: servile

@@ -1,0 +1,238 @@
+# Recorded signoff waivers.
+#
+# A waiver here accepts a KNOWN defect at its MEASURED size, for ONE design,
+# until a stated date. It is not an exemption: `accepted_max` is a ceiling, so
+# a regression past the waived count fails the gate again. See
+# harness/evidence/waivers.py for the rules enforced at load time, and
+# docs/prompt_to_gds_path.md for why this one exists.
+#
+# Adding a waiver is a decision about silicon, not a way to make a run green.
+# If you are tempted to add one to unblock yourself, close the violation instead.
+#
+# ---- TWO SLEW WAIVERS RETIRED 2026-08-16 -------------------------------------
+# This file used to carry `design__max_slew_violation__count` waivers accepting
+# 56 on mosaic_block_a and 49 on mosaic_block_c. Both are GONE, and not because
+# the counts were argued down: the metric now reads ZERO on all three designs.
+#
+# They were never violations of anything the library objects to. max_transition
+# is declared per input pin AND per corner in GF180 -- 4.0 ns at tt_025C_5v00,
+# 7.0 ns at ss_125C_4v50, 2.6 ns at ff_n40C_5v50, 836 declarations per library
+# file -- while MAX_TRANSITION_CONSTRAINT: 4 emitted
+# `set_max_transition 4.0 [current_design]`, applying the TYPICAL corner's
+# number at all nine. Every violation ever counted here was at an ss_125C_4v50
+# corner, where the pins are rated to 7.0 ns:
+#
+#     shipped SDC        _56916_/ZN  limit 4.00  slew 5.664  -1.664  VIOLATED
+#     library per-pin    _56916_/ZN  limit 7.00  slew 5.664  +1.34   MET
+#
+# The fix was NOT to drop the constraint. That was tried (runs/blocka_libtran)
+# and is wrong: it is an optimisation target, so removing it costs 3.10% of
+# cell area and the design then degrades past the LIBRARY's own limits --
+# 7.1998 ns against a 7.0 ns pin rating, plus 5 max-capacitance violations
+# against per-cell liberty limits. The area repair spends is what keeps the
+# design qualified.
+#
+# The fix was to split PNR_SDC_FILE from SIGNOFF_SDC_FILE: PnR still targets
+# 4.0 ns, signoff checks each pin against its own liberty limit. Measured, one
+# differing config key in each case:
+#
+#     design          baseline run     netlist md5    max-slew   adverse
+#     mosaic_block_a  blocka_slew32 -> blocka_sdc   IDENTICAL   56 -> 0   2 -> 1
+#     mosaic_block_b  blockb_slew32 -> blockb_sdc   IDENTICAL   17 -> 0   2 -> 1
+#     mosaic_block_c  blockc_ant8   -> blockc_sdc   IDENTICAL   49 -> 0   2 -> 1
+#
+# Byte-identical netlists and setup/hold slack equal to the last printed digit:
+# the silicon did not change, only the number it is measured against. That is
+# why this is a retirement and not a relaxation.
+#
+# It is also not a blinded gate. The same library-limit check CAUGHT the
+# degraded blocka_libtran netlist (10 slew + 5 cap). It stopped reporting
+# non-defects; it still reports defects.
+#
+# ---- WHY THE SAME ARGUMENT DOES NOT RETIRE THE FANOUT WAIVER -----------------
+# Checked, rather than assumed by symmetry: the GF180 standard-cell libraries
+# declare NO max_fanout at all -- zero occurrences, and no default_max_fanout,
+# in every corner file. So MAX_FANOUT_CONSTRAINT: 10 has no library counterpart
+# being overridden. There is no truer limit to defer to, and dropping it would
+# remove the check rather than correct it. The violation below is a real
+# violation of a rule this project chose, and it stays waived on its merits.
+
+waivers:
+  - metric: design__max_fanout_violation__count
+    design: mosaic_block_a
+    accepted_max: 2
+    review_by: 2026-11-30
+    recorded_by: MILOUDIAS
+    evidence: flow/librelane/integration/runs/blocka_d15_rstsync
+    expected_violators:
+      - clkbuf_0_i_core_v_mini_mcu.cpu_subsystem_i.cpu_1_0.clk_i/Z
+      - clkbuf_0_i_core_v_mini_mcu.memory_subsystem_i.clk_cg/Z
+    preconditions:
+      design__max_slew_violation__count: 0
+      design__max_cap_violation__count: 0
+    justification: >
+      RE-BASED 2026-09-24 onto runs/blocka_d15_rstsync, the run that ships:
+      Block A with the reset synchronizer, hardened against the integrator's
+      D15 DEF (flow/librelane/integration). It measures TWO of the four
+      root buffers below, the same class at the same numbers (limit 10,
+      fanout 16, slack -6), so the ceiling tightens from 4 to 2 and the two
+      that no longer violate are no longer accepted. The run is otherwise
+      signed off on its own terms: every hard check zero (the eleven
+      disconnected pad readbacks waived by name in the record below), setup
+      +2.199 ns and hold +0.054 ns on a 50 ns period, max-slew 0, max-cap 0,
+      82.9% utilisation on the 1110 um die, and GLS EXIT SUCCESS through the
+      padframe model (tb/gls/mosaic_block_a_padwrap.sv), 12,404 cycles,
+      status 0x00, recorded at runs/blocka_d15_rstsync/gls.log. Post-PnR
+      netlist md5 b87a3e17084615c00a71870361b03e15.
+
+      The history below argues the class; it cites blocka_1110_ndr, the
+      previous evidence run.
+
+      Four clock-tree root buffers each drive 16 sinks against a limit of 10:
+      limit 10, fanout 16, slack -6 on every one, identically at all nine
+      corners. They are the first-stage buffers of the four largest clock nets --
+      cpu_0_0.clk_i (1386 sinks), cpu_1_0.clk_i (1215), memory_subsystem clk_cg
+      (1062) and peripheral_subsystem clk_cg (467) -- and CTS builds them that
+      way because CTS_ROOT_BUFFER is clkbuf_16.
+
+      Re-based 2026-09-21 from runs/blocka_sdc onto runs/blocka_1110_ndr,
+      because blocka_sdc CANNOT SHIP: it is a 1117.5 um die and 1110 um is the
+      A-block maximum. Every 1117.5 um run measures one violator and every
+      1110 um run measures four; the count rose because the design was squeezed
+      onto the mandated die, not because anything degraded. The single net waived
+      until now (memory_subsystem clk_cg/Z) is one of these same four.
+
+      Why four is still acceptable, argued on the merits rather than by
+      precedent. GF180's standard-cell libraries declare no max_fanout at all,
+      so 10 is a rule this project chose and there is no truer library limit to
+      defer to. What the library DOES declare for these pins is max_transition
+      and max_capacitance, and both measure ZERO violations at all nine corners
+      on this run -- stated above as preconditions, so a regression in either
+      withdraws this waiver automatically rather than leaving it to cover a
+      design it was never argued for. The electrical risk a fanout rule stands
+      in for is therefore measured directly and absent.
+
+      The evidence run is signed off on its own terms: every hard check zero
+      (Magic DRC, KLayout DRC, LVS, XOR, routing DRC, antenna, disconnected
+      pins, power grid), setup +6.066 ns on a 50 ns period, hold +0.075 ns,
+      max-slew 0, max-cap 0, at 85.4% utilisation on the 1110 um die. GLS EXIT
+      SUCCESS, 12400 cycles, status 0x00, recorded per-run at
+      runs/blocka_1110_ndr/gls.log. Post-PnR netlist md5
+      1d7d2fa4cec3b45426c86296e68182fa.
+
+      Raising the constraint instead was TRIED and is worse: runs/blocka_fanout16
+      sets MAX_FANOUT_CONSTRAINT 16 and measures 12 violating nets with gates
+      failing, so it removes the check rather than correcting it -- the same
+      reasoning that kept this rule when the slew waivers were retired.
+
+      NOT waived by this record: a fifth violating net, or any of these four
+      moving to a different pin -- expected_violators pins the identities, so a
+      violation elsewhere fails the gate even at the same count; any other
+      design; and any max-slew, max-capacitance, DRC, LVS, XOR or antenna
+      finding, all of which are zero on this run and have no waiver to fall back
+      on.
+
+      Closing it properly is a CTS question, not a waiver question: the root
+      buffer would need to drive fewer branches. That is the next submission's
+      work, and review_by is before the December deadline so this record cannot
+      outlive the decision.
+
+      WHY IT IS ACCEPTED. MAX_FANOUT_CONSTRAINT: 10 is a rule this project
+      chose. The GF180 standard-cell libraries declare no max_fanout and no
+      default_max_fanout in any corner file, so there is no library limit being
+      exceeded. Fanout is a proxy for load, and what it proxies for is measured
+      here and passes: these four nets appear in neither the max-slew nor the
+      max-capacitance violator list at any of the nine corners, on a run where
+      both counts are ZERO. Clock skew is 3.598 ns at max_ss against 3.644 ns on
+      the larger die, so the tighter die did not degrade it, and hold closes at
+      +0.0754 ns with TNS 0. Gate-level simulation reaches EXIT SUCCESS in
+      12,400 cycles.
+
+      WHY NOT FIXED. The levers were tried and measured on this design, and
+      every blanket one made things worse: CTS_MAX_CAP 0.15 took max-cap 27 ->
+      35 by concentrating load on these same gated-clock roots; bufz_8 on the
+      QSPI pads took max-slew 591 -> 785; and repair margins slew 45 + cap 40
+      took slew 6 -> 43 and cap 2 -> 24 by inserting 1283 buffers, which raised
+      utilisation 1.35 points and wirelength 6%. CTS_SINK_CLUSTERING_SIZE
+      governs leaf clusters, not roots, so it does not reach these.
+
+      NOT waived by this record: a fifth violating net, since `accepted_max: 4`
+      is a ceiling; any of these four appearing in the max-slew or
+      max-capacitance lists, which is the condition this argument rests on; any
+      other design; and any DRC, LVS, XOR, antenna or timing finding, all of
+      which are zero on runs/blocka_1110_ndr and have no waiver to fall back on.
+
+# ---- ON THE SUBMITTED DIE ----------------------------------------------------
+# THE SUBMITTED DESIGN IS NOW 1110 x 1110 um AT 20 MHz (runs/blocka_1110_ndr).
+# 1110 is a MANDATE: @d-m-bailey reported that the A block's maximum is
+# 1110 x 1110 and that our 1117.5 um PR boundary exceeded it, which is why the
+# padframe generator fell back to the next valid block size. Everything above is
+# measured on the smaller die.
+#
+# 20 MHz rather than 25 is a measured choice, not a retreat. On this die 25 MHz
+# also closes with every check clean (runs/blocka_1110_25_ndr) but at +0.089 ns
+# of setup, 0.22% of the period. For scale, changes made during this work moved
+# setup by 0.245 ns and 0.693 ns, and a wrapper rewrite to drive the pad control
+# terminals is still ahead. 20 MHz holds +6.066 ns, 12.13%.
+#
+# The GDS that was actually taped out (runs/blocka_signoff) predates every flow
+# fix in this file's history, AND is on the oversized 1117.5 um die. Checked against the CURRENT configuration it
+# would report 591 max-slew violations -- against the old blanket 4.0 ns limit,
+# so most of those were the same non-defects retired above, but it also predates
+# the post-GRT repair fix and the antenna iteration fix, which were real. It is
+# not re-measured here and no waiver covers it.
+#
+# NO WAIVER IS RECORDED FOR mosaic_block_b OR FOR mosaic_block_c's max-fanout.
+# Block B measures 1 violating net and Block C measures 4, both unwaived and
+# both therefore reported as adverse. That is deliberate: neither design is
+# being submitted, and a waiver for a design nobody is taping out would be
+# ceremony that makes a dashboard green. Record one if either is ever
+# submitted, with its own measurement.
+
+  - metric: design__disconnected_pin__count
+    design: mosaic_block_a
+    accepted_max: 11
+    review_by: 2026-11-30
+    recorded_by: MILOUDIAS
+    evidence: flow/librelane/integration/runs/blocka_d15_rstsync
+    expected_violators:
+      - spi_flash_cs_o_IN
+      - spi_flash_sck_o_IN
+      - status_o_IN[0]
+      - status_o_IN[1]
+      - status_o_IN[2]
+      - status_o_IN[3]
+      - status_o_IN[4]
+      - status_o_IN[5]
+      - status_o_IN[6]
+      - status_valid_o_IN
+      - uart_tx_o_IN
+    preconditions:
+      design__critical_disconnected_pin__count: 0
+    justification: >
+      The D15 padframe gives every pad an _IN terminal carrying the pad's
+      input buffer back into the block. On the eleven OUTPUT-ONLY pads
+      (flash CS and SCK, the 7-bit status bus, status_valid, UART TX) the
+      block drives the pad and never reads it back, so those eleven _IN
+      terminals are block inputs with no load. The integrator's interface
+      (D15_A_interface.yaml) defines all 167 terminals, so the ports must
+      exist, and LVS at chip level connects them.
+
+      This is the only disconnected-pin waiver and it is pinned: the gate
+      compares the run's recorded disconnected pins (full_disconnected_pins
+      _table.txt) to this list and applies the waiver only on an EXACT match.
+      A twelfth pin, or any of these swapped for another, fails the hard
+      check even at count 11. That matters because LibreLane counts a
+      top-level port as CRITICAL only when every input (or every output) is
+      disconnected, so one undriven status_o bit would read as non-critical;
+      a count-only waiver would hide exactly that defect.
+
+      NOT waived by this record: any disconnected pin not named above, any
+      named pin going missing (the set must match exactly), any critical
+      disconnected pin (precondition), any other design, and every other hard
+      check, which have no waiver to fall back on.
+
+      Precondition: zero critical disconnected pins. Evidence re-based
+      2026-09-24 onto blocka_d15_rstsync (the synchronizer re-harden), which
+      records exactly these eleven names; first measured on
+      blocka_padframe_def.

@@ -1,0 +1,50 @@
+# mosaic_sim.yaml — multi-core simulation config for the cocotb/Verilator harness.
+#
+# Serial-core subset of the PoC (SERV + QERV + FazyRV) used by tb/mosaic to
+# exercise the generated multi-core cpu_subsystem in Verilator. cv32e20 (TITAN)
+# is intentionally excluded here: its CV-X-IF SystemVerilog interfaces are left
+# unconnected by the generated cpu_subsystem and can only be elaborated through
+# the full core_v_mini_mcu testharness (which additionally needs boot_rom + a
+# RISC-V GCC toolchain). The novel MOSAIC integration risk — the SCI wrappers
+# and the per-hart OBI fabric — lives in these serial cores and is what this
+# harness verifies. Scale the counts up toward the full PoC as sim time allows.
+
+soc:
+  name: mosaic_sim
+  pdk: gf180mcu
+  profile: testbench       # worker-only: hart 0 is a testbench bootstrap, never a production policy
+
+  cores:
+    - ip: serv             # bit-serial, unified-OBI SCI wrapper (W=1)
+      isa: rv32i
+      count: 1
+      role: nano
+
+    - ip: qerv             # nibble-serial via serv_sci W=4, unified OBI
+      isa: rv32i
+      count: 1
+      role: nano
+
+    - ip: fazyrv           # chunk-serial, Wishbone→OBI, split I/D
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

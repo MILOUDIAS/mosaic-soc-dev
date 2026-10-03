@@ -1,0 +1,51 @@
+# mosaic_berkeley.yaml — the combined Berkeley-cores demo (SIM-ONLY):
+# a Rocket worker and a BOOM v3 worker side by side under a cv32e20 TITAN.
+#
+# Same 3-hart shape as mosaic_wake_demo.yaml so run.sh / linker are reused;
+# both RV64 tiles come from ONE chipyard elaboration (MosaicRocketBoomConfig),
+# so their module namespaces cannot collide in this single Verilator build.
+# TITAN wakes both via the TDU; each writes its sentinel through the uncached
+# CLINT-range window (→ 0x3004 / 0x3008), which TITAN polls natively.
+#
+# Rocket and BOOM are EXCLUDED from the GF180MCU tapeout — simulation only.
+
+soc:
+  name: mosaic_berkeley
+  pdk: gf180mcu
+  profile: testbench
+
+  cores:
+    - ip: cv32e20         # TITAN — orchestrator; boots from the boot ROM (hart 0)
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: rocket          # ATLAS worker (hart 1) — RocketTile, dormant until wake
+      isa: rv64imc
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # SRAM reset PC; tile boots at 0x8000_1000 (alias)
+
+    - ip: boom            # NANO worker (hart 2) — BoomTile, dormant until wake
+      isa: rv64imc
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # SRAM reset PC; tile boots at 0x8000_2000 (alias)
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

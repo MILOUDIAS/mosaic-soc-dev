@@ -1,0 +1,46 @@
+# mosaic_picorv32.yaml — PicoRV32 bring-up config for the full-SoC TDU wake demo.
+#
+# Same 3-hart shape as mosaic_wake_demo.yaml (1 titan + 1 atlas@0x1000 +
+# 1 nano@0x2000) so tb/mosaic_soc/run.sh, the demo firmware and the linker
+# script are reused unchanged — but BOTH workers are PicoRV32, verifying the
+# picorv32_sci wrapper twice per run (two independent instances).
+
+soc:
+  name: mosaic_picorv32
+  pdk: gf180mcu
+
+  cores:
+    - ip: cv32e20         # TITAN — orchestrator; boots from the boot ROM (hart 0)
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: picorv32        # ATLAS worker (hart 1) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # reset PC in RAM0 — its own program
+
+    - ip: picorv32        # NANO worker (hart 2) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # reset PC in RAM0 — its own program
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

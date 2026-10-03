@@ -1,0 +1,33 @@
+soc:
+  name: mosaic_serv_only
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  - ip: serv
+    count: 1
+    role: titan
+    isa: rv32ic      # C is required to execute the boot ROM
+    with_csr: 1
+    compressed: 1
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40010000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40011000
+  memory:
+    sram_kb: 0
+    scratchpad_bytes: 512
+    boot_rom_kb: 1
+  dma: none
+  debug: false
+  plic: false
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals: [uart, spi, gpio]

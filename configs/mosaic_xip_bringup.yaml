@@ -1,0 +1,37 @@
+# XIP-only bring-up: no on-chip SRAM, no external RAM, no memory controller.
+#
+# Every hart executes in place from the memory-mapped SPI-flash window. Code is
+# read-only and non-volatile, so nothing has to be staged anywhere and there is
+# no bootstrapping problem to solve — which is exactly why this is the first
+# step of Option C (docs/external_memory_boot_design.md).
+#
+# The consequence is that NOTHING may write to memory: no stack, no .data, no
+# .bss. Liveness has to be observable through peripheral registers.
+soc:
+  name: mosaic_xip_bringup
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  - ip: cv32e20
+    count: 1
+    role: titan
+    isa: rv32imc
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40010000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40011000
+  memory:
+    sram_kb: 0
+    boot_rom_kb: 1
+  dma: idma
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals: [uart, spi, gpio]

@@ -1,0 +1,73 @@
+CAPI=2:
+
+name: mosaic:ip:hazard3
+description: "Hazard3 (RP2350 core) — RV32IMC, 2-port AHB-Lite; wrapper-smith vendored"
+
+# Vendored by `wrapper-smith scaffold hazard3 --vendor-from` from:
+#   https://github.com/Wren6991/Hazard3 @ 8af992930f71a69b0e06c38734c1094f41a05ca0
+#   License: Apache-2.0 (upstream LICENSE)
+# hdl/ copied verbatim to rtl/ (no divergences). Integrated via
+# hw/sci/hazard3_sci.sv (family ahb_split: per-port AHB->OBI converters,
+# EXTENSION_A=0, DEBUG_SUPPORT=0, NUM_IRQS=1). TAPEOUT-ELIGIBLE.
+
+filesets:
+  core:
+    files:
+      # Headers FIRST, and declared -- every rtl/*.v `include`s these. They
+      # were missing entirely, so FuseSoC never copied them into build/src and
+      # the full-SoC elaboration died with "Cannot find include file:
+      # 'hazard3_config.vh'". The standalone TB hid it: tb_smith adds the
+      # include path itself, so tb/sci/hazard3 passed while the SoC build did
+      # not. is_include_file also puts rtl/ on the +incdir+ path.
+      - rtl/hazard3_config.vh:
+          is_include_file: true
+      - rtl/hazard3_config_inst.vh:
+          is_include_file: true
+      - rtl/hazard3_ops.vh:
+          is_include_file: true
+      - rtl/hazard3_width_const.vh:
+          is_include_file: true
+      - rtl/hazard3_csr_addr.vh:
+          is_include_file: true
+      - rtl/rv_opcodes.vh:
+          is_include_file: true
+      - rtl/hazard3_rvfi_monitor.vh:
+          is_include_file: true
+      - rtl/hazard3_rvfi_standalone_defs.vh:
+          is_include_file: true
+      - rtl/arith/hazard3_alu.v
+      - rtl/arith/hazard3_branchcmp.v
+      - rtl/arith/hazard3_mul_fast.v
+      - rtl/arith/hazard3_muldiv_seq.v
+      - rtl/arith/hazard3_onehot_encode.v
+      - rtl/arith/hazard3_onehot_priority.v
+      - rtl/arith/hazard3_onehot_priority_dynamic.v
+      - rtl/arith/hazard3_priority_encode.v
+      - rtl/arith/hazard3_shift_barrel.v
+      - rtl/debug/cdc/hazard3_apb_async_bridge.v
+      - rtl/debug/cdc/hazard3_reset_sync.v
+      - rtl/debug/cdc/hazard3_sync_1bit.v
+      - rtl/debug/dm/hazard3_dm.v
+      - rtl/debug/dm/hazard3_sbus_to_ahb.v
+      - rtl/debug/dtm/hazard3_ecp5_jtag_dtm.v
+      - rtl/debug/dtm/hazard3_jtag_dtm.v
+      - rtl/debug/dtm/hazard3_jtag_dtm_core.v
+      - rtl/debug/dtm/hazard3_xilinx7_jtag_dtm.v
+      - rtl/hazard3_core.v
+      - rtl/hazard3_cpu_1port.v
+      - rtl/hazard3_cpu_2port.v
+      - rtl/hazard3_csr.v
+      - rtl/hazard3_decode.v
+      - rtl/hazard3_frontend.v
+      - rtl/hazard3_instr_decompress.v
+      - rtl/hazard3_irq_ctrl.v
+      - rtl/hazard3_pmp.v
+      - rtl/hazard3_power_ctrl.v
+      - rtl/hazard3_regfile_1w2r.v
+      - rtl/hazard3_triggers.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - core

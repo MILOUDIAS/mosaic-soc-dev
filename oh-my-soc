@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""oh-my-soc — launcher for the MOSAIC-SoC agentic harness.
+
+Zero-install: works from any cwd for anyone who cloned the repo
+(`./oh-my-soc <skill> <command> ...`). For a PATH-installed entry point use
+`pip install -e .` in the project venv instead (console script `oh-my-soc`).
+
+Equivalent to `python3 -m harness ...` run from the repo root.
+"""
+
+import os
+import sys
+
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
+
+from harness.__main__ import main  # noqa: E402
+
+if __name__ == "__main__":
+    # Skills resolve paths via harness.core.REPO_ROOT (derived from the
+    # package location), so no chdir is needed — but a stable cwd keeps
+    # relative user arguments (configs/foo.yaml) working from anywhere.
+    if os.getcwd() != REPO_ROOT:
+        os.chdir(REPO_ROOT)
+    main()

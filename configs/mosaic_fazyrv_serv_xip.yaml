@@ -1,0 +1,47 @@
+# FazyRV (1-bit) + 2x SERV, execute-in-place, minimal scratchpad.
+#
+# The cores asked for, in the only shape that can currently reach a physical
+# flow: no SRAM macro. A 16 KiB on-chip SRAM would need hash-checked GDS/LEF/
+# LIB/Verilog views that this repo does not have (see flow/librelane/README.md
+# and docs/area_study_gf180_min_soc.md), whereas a 512 B scratchpad is a
+# behavioural tc_sram that synthesises to flops.
+#
+# A TITAN is structurally required and FazyRV cannot be one -- it has neither
+# mhartid nor interrupts, and does not implement the boot-ROM execution
+# contract (docs/area_study_gf180_min_soc.md §7). cv32e20 is the smallest
+# mhartid-capable core in the registry.
+soc:
+  name: mosaic_fazyrv_serv_xip
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  - ip: cv32e20
+    count: 1
+    role: titan
+    isa: rv32imc
+  - ip: fazyrv          # the 1-bit serial configuration
+    count: 1
+    role: atlas
+    isa: rv32i
+    chunksize: 1
+    boot_addr: 0x40010000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40011000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40012000
+  memory:
+    sram_kb: 0
+    scratchpad_bytes: 512
+    boot_rom_kb: 1
+  dma: idma
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals: [uart, spi, gpio]

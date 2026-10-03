@@ -1,0 +1,41 @@
+CAPI=2:
+
+name: "example:ip:dlc"
+description: "digital level crossing block"
+
+# Copyright 2024 EPFL
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+
+filesets:
+  files_rtl:
+    depend:
+      - x-heep::packages
+      - xheep:util:reg-generator
+    files:
+    - rtl/dlc.sv
+    file_type: systemVerilogSource
+
+  verilator-waiver:
+    files:
+    - dlc.vlt
+    file_type: vlt
+
+generate:
+  dlc:
+    generator: regtool
+    parameters:
+      config:           data/dlc.hjson
+      name:             dlc
+      rtl_dir:          rtl
+      sw_path:          ../../../sw/device/lib/drivers/dlc/dlc.h
+      doc_path:         ../../../sw/device/lib/drivers/dlc/dlc.md
+
+targets:
+  default:
+    filesets:
+    - files_rtl
+    - tool_verilator ? (verilator-waiver)
+    generate:
+    - dlc

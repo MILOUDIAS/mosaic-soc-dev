@@ -1,0 +1,40 @@
+soc:
+  name: mosaic_min_area
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  # A TITAN must expose mhartid + interrupts; fazyrv/serv/qerv/picorv32 do not.
+  # cv32e20 is the smallest mhartid-capable core in the registry.
+  - ip: cv32e20
+    count: 1
+    role: titan
+    isa: rv32imc
+  # FazyRV in its 1-bit serial configuration.
+  - ip: fazyrv
+    count: 1
+    role: atlas
+    isa: rv32i
+    chunksize: 1
+    boot_addr: 0x1000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x1800
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x2000
+  memory:
+    sram_kb: 16
+    boot_rom_kb: 1
+  dma: idma
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals:
+  - uart
+  - spi
+  - gpio

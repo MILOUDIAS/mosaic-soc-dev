@@ -1,0 +1,23 @@
+# Resource profile for a memory-constrained host. NOT design intent.
+#
+#   MOSAIC_RESOURCE_CONFIG=experimental/resources_lowmem.yaml ./run_signoff.sh ...
+#
+# run_signoff.sh appends this to the resolved config and rejects the file if it
+# contains anything other than a *_THREADS key. Thread counts change how long a
+# check takes, never whether it passes, so this profile cannot alter a verdict.
+#
+# Why it exists: KLayout DRC on mosaic_block_c was killed by the OOM killer
+# twice on an 11 GB machine whose /tmp is a tmpfs (3.7 GB resident during
+# runs). The GF180 deck defaults `threads($thr)` to Etc.nprocessors -- 8 here --
+# and each thread carries its own copy of the layout hierarchy.
+#
+#   default (8 threads)  3.5 GB then 3006 MB  -> SIGKILL, twice
+#   2 threads            peak 3207 MB         -> completed
+#
+# The deck also offers run_mode `tiling`, which would cut memory much harder.
+# It is not used: the deck marks it "for testing purpose only", and a clean DRC
+# obtained in a not-for-production mode is not evidence of anything.
+#
+# On a larger host, do not pass this file at all -- LibreLane's default (one
+# thread per core) is faster and correct.
+KLAYOUT_DRC_THREADS: 2

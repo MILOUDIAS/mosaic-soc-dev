@@ -1,0 +1,66 @@
+# mosaic_all_cores.yaml — MOSAIC-SoC all-cores generation acceptance test.
+#
+# Instantiates every feasible core type to verify the generator wires each SCI
+# branch: cv32e20 (native), ibex (req/gnt→OBI), fazyrv (Wishbone→OBI),
+# qerv (SERV W=4, unified OBI) and serv (unified OBI).
+#
+# CVA6 is absent HERE because this config feeds tapeout-oriented acceptance:
+# cva6 is supported for SIMULATION ONLY (32-bit, AXI→OBI bridged — see
+# configs/mosaic_cva6.yaml / mosaic_new_cores.yaml) and stays excluded from
+# the GF180MCU 1.249 mm² tapeout budget (~80 kGE + caches).
+# picorv32 and snitch (2026-07 additions) are exercised by their own
+# bring-up configs (mosaic_picorv32.yaml / mosaic_snitch.yaml).
+# rocket and boom (RV64 chipyard tiles, 2026-07) are likewise SIM-ONLY and
+# absent here — see mosaic_rocket.yaml / mosaic_boom.yaml / mosaic_berkeley.yaml.
+#
+# Run:  make mosaic-gen MOSAIC_CFG=configs/mosaic_all_cores.yaml
+
+soc:
+  name: mosaic_all_cores
+  pdk: gf180mcu
+  profile: testbench       # build-closure acceptance, not one firmware image
+
+  cores:
+    - ip: cv32e20          # native CVE2 — TITAN orchestrator
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: ibex             # lowRISC Ibex via req/gnt→OBI SCI wrapper
+      isa: rv32imc
+      count: 1
+      role: atlas
+
+    - ip: fazyrv           # chunk-serial, Wishbone→OBI SCI wrapper
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+
+    - ip: qerv             # SERV-family W=4, unified-OBI SCI wrapper
+      isa: rv32i
+      count: 1
+      role: nano
+
+    - ip: serv             # bit-serial W=1, unified-OBI SCI wrapper
+      isa: rv32i
+      count: 1
+      role: nano
+
+  memory:
+    sram_kb: 64
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

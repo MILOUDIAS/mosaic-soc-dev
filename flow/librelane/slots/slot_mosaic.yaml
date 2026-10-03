@@ -1,0 +1,110 @@
+# MOSAIC-SoC floorplan + pad map (GF180MCU).
+#
+# ############################################################################
+# NOT THE TAPEOUT TARGET. This is the CHIP-LEVEL path: a standalone die with
+# its own 68-pad ring. The Chipathon 2026 submission is the Block A MACRO --
+# 1117.5 um square, 22 pins, no pad ring, because an MPW block inherits the
+# shared ring from the integrator.
+#
+# The frozen tapeout config is configs/mosaic_tapeout_ultra.yaml and it does
+# NOT read this file. See docs/rtl_freeze_blocka.md.
+#
+# A schematic reviewer correctly flagged the die size here as inconsistent
+# with the declared 22-pin Block A target. The two are different targets;
+# this header is the reconciliation.
+# ############################################################################
+#
+# Starting point: the wafer.space 1x1 MPW die envelope (3932 x 5122 um incl.
+# 26 um sealring per side). Resize CORE_AREA once the placed SoC area is known
+# (PoC target ~1.249 mm2). Pad instance names match the generate labels in
+# src/chip_top.sv; lists are read CLOCKWISE FROM THE SW CORNER and regex-escaped.
+#
+# This is a balanced starting distribution of the 68 pads (clk + rst + 8 input
+# + 50 bidir + 4 dvdd + 4 dvss). Refine the ORDER to match board/bonding needs
+# and keep it consistent with the bit-index binding in src/mosaic_soc_core.sv.
+
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 3932, 5122]
+CORE_AREA: [442, 442, 3490, 4680]
+
+VERILOG_DEFINES: ["SLOT_MOSAIC"]
+
+PAD_SOUTH: [
+    clk_pad,
+    rst_n_pad,
+    "dvss_pads\\[0\\].pad",
+    "bidir\\[0\\].pad",
+    "bidir\\[1\\].pad",
+    "bidir\\[2\\].pad",
+    "bidir\\[3\\].pad",
+    "bidir\\[4\\].pad",
+    "bidir\\[5\\].pad",
+    "bidir\\[6\\].pad",
+    "dvdd_pads\\[0\\].pad",
+    "bidir\\[7\\].pad",
+    "bidir\\[8\\].pad",
+    "bidir\\[9\\].pad",
+    "bidir\\[10\\].pad",
+    "bidir\\[11\\].pad",
+    "bidir\\[12\\].pad",
+]
+
+PAD_EAST: [
+    "dvss_pads\\[1\\].pad",
+    "bidir\\[13\\].pad",
+    "bidir\\[14\\].pad",
+    "bidir\\[15\\].pad",
+    "bidir\\[16\\].pad",
+    "bidir\\[17\\].pad",
+    "bidir\\[18\\].pad",
+    "dvdd_pads\\[1\\].pad",
+    "bidir\\[19\\].pad",
+    "bidir\\[20\\].pad",
+    "bidir\\[21\\].pad",
+    "bidir\\[22\\].pad",
+    "bidir\\[23\\].pad",
+    "bidir\\[24\\].pad",
+]
+
+PAD_NORTH: [
+    "dvss_pads\\[2\\].pad",
+    "bidir\\[25\\].pad",
+    "bidir\\[26\\].pad",
+    "bidir\\[27\\].pad",
+    "bidir\\[28\\].pad",
+    "bidir\\[29\\].pad",
+    "bidir\\[30\\].pad",
+    "dvdd_pads\\[2\\].pad",
+    "bidir\\[31\\].pad",
+    "bidir\\[32\\].pad",
+    "bidir\\[33\\].pad",
+    "bidir\\[34\\].pad",
+    "bidir\\[35\\].pad",
+    "bidir\\[36\\].pad",
+]
+
+PAD_WEST: [
+    "dvss_pads\\[3\\].pad",
+    "bidir\\[37\\].pad",
+    "bidir\\[38\\].pad",
+    "bidir\\[39\\].pad",
+    "bidir\\[40\\].pad",
+    "bidir\\[41\\].pad",
+    "bidir\\[42\\].pad",
+    "dvdd_pads\\[3\\].pad",
+    "bidir\\[43\\].pad",
+    "bidir\\[44\\].pad",
+    "bidir\\[45\\].pad",
+    "bidir\\[46\\].pad",
+    "bidir\\[47\\].pad",
+    "bidir\\[48\\].pad",
+    "bidir\\[49\\].pad",
+    "inputs\\[0\\].pad",
+    "inputs\\[1\\].pad",
+    "inputs\\[2\\].pad",
+    "inputs\\[3\\].pad",
+    "inputs\\[4\\].pad",
+    "inputs\\[5\\].pad",
+    "inputs\\[6\\].pad",
+    "inputs\\[7\\].pad",
+]

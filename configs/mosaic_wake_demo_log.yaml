@@ -1,0 +1,57 @@
+# mosaic_wake_demo_log.yaml — the 3-core TDU wake-and-run demo on the bus:log
+# fabric (two-tier logarithmic interconnect).
+#
+# Identical topology to mosaic_wake_demo.yaml (1 cv32e20 TITAN + 1 fazyrv ATLAS
+# + 1 serv NANO, per-worker boot addresses), but the system bus is the LOG
+# fabric: a fixed-latency tcdm_interconnect over 16 word-interleaved SRAM banks
+# (11 bus masters -> next pow2 = 16) plus the variable-latency crossbar for the
+# non-memory tier. Run with:
+#   MOSAIC_CFG=configs/mosaic_wake_demo_log.yaml tb/mosaic_soc/run.sh
+
+soc:
+  name: mosaic_wake_demo_log
+  pdk: gf180mcu
+
+  cores:
+    - ip: cv32e20         # TITAN — orchestrator; boots from the boot ROM (hart 0)
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: fazyrv          # ATLAS worker (hart 1) — boots dormant, woken by the TDU
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # reset PC in RAM — its own program
+
+    - ip: serv            # NANO worker (hart 2) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # reset PC in RAM — its own program
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: log               # two-tier: LIC over banked SRAM + varlat periph tier
+  bus_opts:
+    log:
+      topology: lic
+      # 13 SoC masters would auto-bank to 16, but the x-heep TESTHARNESS adds
+      # EXT_XBAR_NMASTER=8 external masters to the same crossbar, and the LIC
+      # requires banks >= total masters (13+8=21) -> 32 banks x 1 KB.
+      num_banks: 32
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

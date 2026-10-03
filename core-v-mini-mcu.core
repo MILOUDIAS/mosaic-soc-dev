@@ -1,0 +1,668 @@
+CAPI=2:
+
+# Copyright 2022 OpenHW Group
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+name: openhwgroup.org:systems:core-v-mini-mcu:1.0.5
+description: CORE-V MINI-MCU Top.
+
+filesets:
+  files_rtl_generic:
+    depend:
+    - x-heep::packages
+    - pulp-platform.org:ip:gpio
+    - pulp-platform.org::common_cells
+    - pulp-platform.org::axi:0.39.8
+    - pulp-platform.org::riscv_dbg
+    - pulp-platform.org::register_interface
+    - pulp-platform.org::serial_link
+    - openhwgroup.org:ip:soc_ctrl
+    - lowrisc:ip:uart:0.1
+    - lowrisc:ip:rv_plic_example:0.1
+    - lowrisc:ip:rv_timer:0.1
+    - lowrisc:ip:spi_host:1.0
+    - lowrisc:ip:i2c:0.1
+    - yosyshq:picorv32_spimemio:0-r1
+    - x-heep:ip:obi_spimemio
+    - x-heep:ip:boot_rom
+    - x-heep:ip:dma
+    - x-heep:ip:dma_subsystem
+    - x-heep:ip:i2s
+    - x-heep:ip:spi
+    - x-heep:ip:cluster_interconnect
+    - x-heep:ip:power_manager
+    - x-heep:ip:fast_intr_ctrl
+    - x-heep:ip:obi_fifo
+    - x-heep:ip:pdm2pcm
+    - x-heep:ip:serial_link_xheep_wrapper
+    - esl_epfl:ip:obi_spi_slave
+    - x-heep:ip:w25q128jw_controller
+    # MOSAIC-SoC: Task Dispatch Unit (multi-core scheduler assist)
+    - x-heep:ip:tdu
+    # MOSAIC-SoC: iDMA (modular DMA engine, replaces x-heep simple DMA)
+    - mosaic:ip:idma
+    files:
+    # FuseSoC otherwise exports the include files themselves without the
+    # parent search roots required by `include "idma/..." and "obi/...".
+    - hw/vendor/mosaic/idma/rtl/include/idma/typedef.svh:
+        is_include_file: true
+        include_path: hw/vendor/mosaic/idma/rtl/include
+    - hw/vendor/pulp_platform/obi/include/obi/typedef.svh:
+        is_include_file: true
+        include_path: hw/vendor/pulp_platform/obi/include
+    # core_v_mini_mcu imports these four APU sizing constants even when the
+    # selected CPU is not CV32E40P. Carry the tiny standalone package without
+    # importing the complete CV32E40P/fpnew implementation closure.
+    - hw/vendor/openhwgroup/cv32e40p/rtl/include/cv32e40p_apu_core_pkg.sv
+    # The x-heep top/testharness always expose the legacy CV-X-IF interface,
+    # including for cores that tie it off.  Keep only its type package and
+    # compatibility interface in the common closure, not the CV32E40X core.
+    - hw/vendor/openhwgroup/cv32e40x/rtl/include/cv32e40x_pkg.sv
+    - hw/vendor/openhwgroup/if_xif_compat.sv
+    - hw/core-v-mini-mcu/core_v_mini_mcu.sv
+    - hw/core-v-mini-mcu/cpu_subsystem.sv
+    - hw/core-v-mini-mcu/memory_subsystem.sv
+    - hw/core-v-mini-mcu/xbar_varlat_one_to_n.sv
+    - hw/core-v-mini-mcu/xbar_varlat_n_to_one.sv
+    - hw/core-v-mini-mcu/system_bus.sv
+    - hw/core-v-mini-mcu/system_xbar.sv
+    - hw/core-v-mini-mcu/debug_subsystem.sv
+    - hw/core-v-mini-mcu/peripheral_subsystem.sv
+    - hw/core-v-mini-mcu/ao_peripheral_subsystem.sv
+    file_type: systemVerilogSource
+
+  # Native x-heep cores are selected per resolved MOSAIC config.  Keeping
+  # them out of files_rtl_generic prevents an Ibex-only config from also
+  # importing the CVE2/OpenTitan primitive closure (and vice versa).
+  files_rtl_native_legacy:
+    depend:
+    - openhwgroup.org:ip:cv32e40p
+    - openhwgroup.org:ip:cv32e40x
+    - openhwgroup:cve2:cve2_top
+    - x-heep:ip:cv32e40px
+    files:
+    - hw/core-v-mini-mcu/cve2_xif_wrapper.sv
+    - hw/core-v-mini-mcu/cv32e40px_xif_wrapper.sv
+    file_type: systemVerilogSource
+
+  files_rtl_cv32e20:
+    depend:
+    - openhwgroup:cve2:cve2_top
+    files:
+    - hw/core-v-mini-mcu/cve2_xif_wrapper.sv
+    file_type: systemVerilogSource
+
+  files_rtl_cv32e40p:
+    depend:
+    - openhwgroup.org:ip:cv32e40p
+
+  files_rtl_cv32e40px:
+    depend:
+    - x-heep:ip:cv32e40px
+    files:
+    - hw/core-v-mini-mcu/cv32e40px_xif_wrapper.sv
+    file_type: systemVerilogSource
+
+  files_rtl_cv32e40x:
+    depend:
+    - openhwgroup.org:ip:cv32e40x
+
+  files_rtl_floonoc:
+    depend:
+    - mosaic:ip:axi_obi
+    - mosaic:ip:floonoc_fabric
+
+  # MOSAIC-SoC: Standard Core Interface (SCI) wrappers for heterogeneous
+  # cores. Depends on the vendored FazyRV and SERV cores.
+  files_rtl_mosaic_sci:
+    depend:
+    - mosaic:ip:sci
+    file_type: systemVerilogSource
+
+  rtl-simulation:
+    depend:
+    - pulp-platform.org::tech_cells_generic
+    - x-heep:sim:sram_wrapper
+    - x-heep:sim:pad_cells
+
+  x_heep_system:
+    depend:
+    - x-heep::packages
+    - x-heep:ip:pad_control
+    - x-heep:ip:pad-ring
+    files:
+    - hw/system/x_heep_system.sv
+    file_type: systemVerilogSource
+
+  tb-utils:
+    depend:
+    - x-heep::tb-utils
+    - x-heep::tb-fpu-utils
+
+  files_verilator_waiver:
+    depend:
+    - openhwgroup.org:ip:verilator_waiver
+    files:
+    - hw/core-v-mini-mcu/core_v_mini_mcu.vlt
+    - hw/ip/soc_ctrl/soc_ctrl.vlt
+    - hw/ip/obi_spimemio/obi_spimemio.vlt
+    - hw/ip/dma_subsystem/dma_subsystem.vlt
+    - hw/ip/pdm2pcm/pdm2pcm.vlt
+    - hw/ip/power_manager/power_manager.vlt
+    - hw/ip/fast_intr_ctrl/fast_intr_ctrl.vlt
+    - hw/ip/serial_link_xheep_wrapper/serial_link_xheep_wrapper.vlt
+    - hw/system/pad_control/pad_control.vlt
+    - hw/system/x_heep_system.vlt
+    file_type: vlt
+
+  rtl-fpga:
+    depend:
+    - x-heep:x-heep:x-heep-fpga-support
+    files:
+    - hw/fpga/xilinx_core_v_mini_mcu_wrapper.sv
+    file_type: systemVerilogSource
+
+  ip-asic:
+    depend:
+    - technology::prim_mytech
+
+  rtl-sky130:
+    files:
+    - hw/asic/sky130/sram_wrapper.sv
+    - hw/vendor/openhwgroup/cv32e20/bhv/cve2_sim_clock_gate.sv #as for now use the simulation clk gating
+    - hw/vendor/openhwgroup/cv32e40p/bhv/cv32e40p_sim_clock_gate.sv
+    - hw/vendor/pulp_platform/tech_cells_generic/src/deprecated/pulp_clk_cells.sv #as for now use the simulation clk cells
+    - hw/vendor/pulp_platform/tech_cells_generic/src/deprecated/cluster_clk_cells.sv #as for now use the simulation clk cells
+    - hw/vendor/pulp_platform/tech_cells_generic/src/rtl/tc_clk.sv #as for now use the simulation clk cells
+    file_type: systemVerilogSource
+
+  lib-sky130:
+    files:
+      - hw/asic/sky130/sky130_sram_4kbyte_1rw_32x1024_8_TT_1p8V_25C.lib : { copyto: lib/sky130_sram_4kbyte_1rw_32x1024_8_TT_1p8V_25C.lib }
+
+  # GF180MCU macro-backed scratchpad. Swaps the flip-flop sram_wrapper for real
+  # gf180mcu_fd_ip_sram cuts (four per 32-bit bank -- every GF180 cut is 8 bits
+  # wide). The blackbox views are what synthesis needs; the macro is a hard
+  # block, so its area does NOT appear in a `yosys stat` and must be added
+  # separately. See hw/asic/gf180/sram_wrapper.sv for the cut-size table.
+  rtl-gf180:
+    files:
+    - hw/asic/gf180/sram_wrapper.sv
+    file_type: systemVerilogSource
+
+  # Scripts for hooks
+  post_build_modelsim_scripts:
+    files:
+    - scripts/sim/modelsim/post_build_modelsim_vopt.sh
+    file_type: user
+
+  pre_build_remote_bitbang:
+    files:
+    - scripts/sim/compile_remote_bitbang.sh
+    file_type: user
+
+  pre_build_uartdpi:
+    files:
+    - scripts/sim/compile_uart_dpi.sh
+    file_type: user
+
+  cfile_uartdpi:
+    files:
+    - ./hw/vendor/lowrisc/opentitan/hw/dv/dpi/uartdpi/uartdpi.c
+    - ./hw/vendor/lowrisc/opentitan/hw/dv/dpi/uartdpi/uartdpi.h: { is_include_file: true }
+    file_type: cSource
+
+  pre_patch_modelsim_Makefile:
+    files:
+    - scripts/sim/modelsim/patch_modelsim_Makefile.py
+    file_type: user
+
+  pre_patch_vcs_ams_Makefile:
+    files:
+    - scripts/sim/vcs/patch_vcs_ams_Makefile.py
+    file_type: user
+
+  tb-verilator:
+    files:
+    - tb/XHEEP_CmdLineOptions.hh: { is_include_file: true }
+    - tb/XHEEP_CmdLineOptions.cpp
+    - tb/tb_top.cpp
+    file_type: cppSource
+
+  tb-sv:
+    files:
+    - tb/tb_top.sv
+    file_type: systemVerilogSource
+
+  tb-sc-verilator:
+    files:
+    - tb/XHEEP_CmdLineOptions.hh: { is_include_file: true }
+    - tb/XHEEP_CmdLineOptions.cpp
+    - tb/tb_sc_top.cpp
+    file_type: cppSource
+
+  openroad_base_files:
+    files:
+      - flow/OpenROAD-flow-scripts/flow/Makefile : {file_type: Makefile}
+    depend:
+      - core-v-mini:util:sv2v
+
+  openroad_sky130_files:
+    files:
+      - hw/asic/sky130/config.mk : {file_type: configFile}
+      - hw/asic/sky130/constraint.sdc : {file_type: SDC}
+
+parameters:
+  JTAG_DPI:
+    datatype: int
+    paramtype: vlogparam
+    description: |
+      Enables testbench JTAG DIPs. Admitted values: 1|0.
+    default: 0
+  USE_EXTERNAL_DEVICE_EXAMPLE:
+    datatype: int
+    paramtype: vlogparam
+    description: |
+      Enables testbench modules compilation. Admitted values: 1|0.
+    default: 1
+  USE_UPF:
+    datatype: bool
+    paramtype: vlogdefine
+    description: |
+      Enables simulation with UPF with Modelsim/VCS
+  REMOVE_OBI_FIFO:
+    datatype: bool
+    paramtype: vlogdefine
+    description: |
+      Remove the FIFO between the BUS and the peripherals subsystems
+  SYNTHESIS:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  VERILATOR: #used by SV2V
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  SIM_SYSTEMC:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  FPGA_SYNTHESIS:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  FPGA_NEXYS:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  FPGA_ZCU104:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  FPGA_ZCU102:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  FPGA_AUP_ZU3:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  FPGA_GENESYS2:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  NO_DDR_CLK_PORTS:
+    datatype: bool
+    paramtype: vlogdefine
+    default: false
+  PRIM_DEFAULT_IMPL:
+    datatype: str
+    paramtype: vlogdefine
+    description: Primitives implementation to use, e.g. "prim_pkg::ImplGeneric".
+    default: prim_pkg::ImplGeneri
+  COMMON_CELLS_ASSERTS_OFF:
+    datatype: bool
+    description: Turn off asserts for PULP common cells
+    paramtype: vlogdefine
+    default: false
+  ASSERTS_OFF:
+    datatype: bool
+    description: Turn off asserts for PULP common cells
+    paramtype: vlogdefine
+    default: false
+
+scripts:
+  # Build utils
+  post_build_modelsim_scripts:
+    cmd:
+    - sh
+    - ../../../scripts/sim/modelsim/post_build_modelsim_vopt.sh
+  pre_build_remote_bitbang:
+    cmd:
+    - sh
+    - ../../../scripts/sim/compile_remote_bitbang.sh
+  pre_build_uartdpi:
+    cmd:
+    - sh
+    - ../../../scripts/sim/compile_uart_dpi.sh
+  pre_patch_modelsim_Makefile:
+    cmd:
+    - python
+    - ../../../scripts/sim/modelsim/patch_modelsim_Makefile.py
+  pre_patch_vcs_ams_Makefile:
+    cmd:
+    - python
+    - ../../../scripts/sim/vcs/patch_vcs_ams_Makefile.py
+
+  # Simulation utils
+  remove_uart_log:
+    cmd: [sh, -c, rm -f uart0.log]
+  print_uart_log:
+    cmd: [sh, -c, cat uart0.log]
+
+targets:
+  default: &default_target
+    filesets:
+    - files_rtl_generic
+    - "!mosaic_configured? (files_rtl_native_legacy)"
+    - mosaic_cv32e20? (files_rtl_cv32e20)
+    - mosaic_cv32e40p? (files_rtl_cv32e40p)
+    - mosaic_cv32e40px? (files_rtl_cv32e40px)
+    - mosaic_cv32e40x? (files_rtl_cv32e40x)
+    - mosaic_configured? (files_rtl_mosaic_sci)
+    - "!mosaic_configured? (files_rtl_floonoc)"
+    - mosaic_floonoc? (files_rtl_floonoc)
+    - target_sim ? (tool_verilator? (files_verilator_waiver))
+    - target_sim_sc ? (tool_verilator? (files_verilator_waiver))
+    toplevel: [core_v_mini_mcu]
+
+  sim:
+    <<: *default_target
+    default_tool: modelsim
+    filesets_append:
+    - tb-utils
+    - rtl-simulation
+    - tool_modelsim? (pre_build_remote_bitbang)
+    - tool_modelsim? (pre_build_uartdpi)
+    - tool_modelsim? (pre_patch_modelsim_Makefile)
+    - tool_vcs? (cfile_uartdpi)
+    - tool_vcs? (pre_build_remote_bitbang)
+    - tool_xcelium? (pre_build_remote_bitbang)
+    - tool_xcelium? (pre_build_uartdpi)
+    - tool_verilator? (tb-verilator)
+    - tool_modelsim? (tb-sv)
+    - tool_vcs? (tb-sv)
+    - tool_xcelium? (tb-sv)
+    - "!integrated_heep? (x_heep_system)"
+    toplevel:
+    - tool_modelsim? (tb_top)
+    - tool_vcs? (tb_top)
+    - tool_xcelium? (tb_top)
+    - tool_verilator? (testharness)
+    hooks:
+      pre_build:
+        - tool_modelsim? (pre_build_uartdpi)
+        - tool_modelsim? (pre_build_remote_bitbang)
+        - tool_modelsim? (pre_patch_modelsim_Makefile) # this is required by Questa 2020 on
+        - ams_sim? (pre_patch_vcs_ams_Makefile)
+        - tool_xcelium? (pre_build_uartdpi)
+        - tool_xcelium? (pre_build_remote_bitbang)
+      pre_run:
+        - remove_uart_log
+      post_run:
+        - print_uart_log
+    parameters:
+    - JTAG_DPI
+    - USE_EXTERNAL_DEVICE_EXAMPLE
+    - USE_UPF
+    - REMOVE_OBI_FIFO
+    - COMMON_CELLS_ASSERTS_OFF
+    - ASSERTS_OFF
+    tools:
+      modelsim:
+        vlog_options:
+        - -override_timescale 1ns/1ps
+        - -suppress vlog-2583
+        - -suppress vlog-2577
+        - -suppress vlog-2720
+        - -pedanticerrors
+        - -define MODELSIM
+        vsim_options:
+        - -sv_lib ../../../hw/vendor/lowrisc/opentitan/hw/dv/dpi/uartdpi/uartdpi
+        - -sv_lib ../../../hw/vendor/pulp_platform/pulpissimo/rtl/tb/remote_bitbang/librbs
+        - -voptargs=+acc=npr
+      vcs:
+        vcs_options:
+         - -override_timescale=1ns/1ps
+         - -assert disable_cover
+         - -assert svaext
+         - -debug_access+all+dmptf
+         - -fgp
+         - -full64
+         - -kdb
+         - -notice
+         - -ntb_opts error
+         - -race=all
+         - -xlrm uniq_prior_final
+         - -CFLAGS "-std=c++14 -pthread"
+         - -LDFLAGS "-pthread -lutil"
+         - +lint=TFIPC-L
+         - -V
+      xcelium:
+        xrun_options:
+        - -vtimescale 1ns/10ps
+        - -sv_lib ../../../hw/vendor/lowrisc/opentitan/hw/dv/dpi/uartdpi/uartdpi.so
+        - -sv_lib ../../../hw/vendor/pulp_platform/pulpissimo/rtl/tb/remote_bitbang/librbs.so
+        - -define XCELIUM
+      verilator:
+        mode: cc
+        verilator_options:
+          - '--sv'
+          - '--cc'
+          - '--trace'
+          - '--trace-fst'
+          - '--trace-structs'
+          - '--trace-params'
+          - '--trace-max-array 1024'
+          - '--x-assign unique'
+          - '--x-initial unique'
+          - '--exe tb_top.cpp'
+          - '-CFLAGS "-Wall -fpermissive"'
+          - '-LDFLAGS "-pthread -lutil -lelf"'
+          - "-Wall"
+
+  sim_sc:
+    <<: *default_target
+    default_tool: verilator
+    filesets_append:
+    - tb-utils
+    - rtl-simulation
+    - tool_verilator? (tb-sc-verilator)
+    - "!integrated_heep? (x_heep_system)"
+    toplevel:
+    - tool_verilator? (testharness)
+    parameters:
+    - JTAG_DPI
+    - USE_EXTERNAL_DEVICE_EXAMPLE
+    - USE_UPF
+    - REMOVE_OBI_FIFO
+    - SIM_SYSTEMC=true
+    hooks:
+      pre_run:
+        - remove_uart_log
+      post_run:
+        - print_uart_log
+    tools:
+      verilator:
+        mode: sc
+        verilator_options:
+          - '--sc'
+          - '--trace'
+          - '--trace-fst'
+          - '--trace-structs'
+          - '--trace-params'
+          - '--trace-max-array 1024'
+          - '--x-assign unique'
+          - '--x-initial unique'
+          - '--exe tb_sc_top.cpp'
+          - '-CFLAGS "-Wall -fpermissive"'
+          - '-LDFLAGS "-pthread -lutil -lelf"'
+          - "-Wall"
+
+  nexys-a7-100t:
+    <<: *default_target
+    default_tool: vivado
+    description: Digilent Nexys-A7-100T Board
+    filesets_append:
+    - x_heep_system
+    - rtl-fpga
+    parameters:
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    - FPGA_SYNTHESIS=true
+    - FPGA_NEXYS=true
+    - NO_DDR_CLK_PORTS=true
+    tools:
+      vivado:
+        part: xc7a100tcsg324-1
+        board_part: digilentinc.com:nexys-a7-100t:part0:1.3
+        board_repo_paths: [../../../hw/fpga/xheep_fpga_support/board_files/esl_epfl_nexys_a7_100t_board_files]
+    toplevel: [xilinx_core_v_mini_mcu_wrapper]
+
+  pynq-z2:
+    <<: *default_target
+    default_tool: vivado
+    description: TUL Pynq-Z2 Board
+    filesets_append:
+    - x_heep_system
+    - rtl-fpga
+    parameters:
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    - FPGA_SYNTHESIS=true
+    tools:
+      vivado:
+        part: xc7z020clg400-1
+        board_part: tul.com.tw:pynq-z2:part0:1.0
+        board_repo_paths: [../../../hw/fpga/xheep_fpga_support/board_files/esl_epfl_pynq_z2_board_files]
+    toplevel: [xilinx_core_v_mini_mcu_wrapper]
+
+  zcu104:
+    <<: *default_target
+    default_tool: vivado
+    description: ZCU104 Evaluation Board
+    filesets_append:
+    - x_heep_system
+    - rtl-fpga
+    parameters:
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    - FPGA_SYNTHESIS=true
+    - FPGA_ZCU104=true
+    - NO_DDR_CLK_PORTS=true
+    tools:
+      vivado:
+        part: xczu7ev-ffvc1156-2-e
+        board_part: xilinx.com:zcu104:part0:1.0
+        board_repo_paths: [../../../hw/fpga/xheep_fpga_support/board_files/esl_epfl_zcu104_board_files]
+    toplevel: [xilinx_core_v_mini_mcu_wrapper]
+
+  zcu102:
+    <<: *default_target
+    default_tool: vivado
+    description: ZCU102 Evaluation Board
+    filesets_append:
+    - x_heep_system
+    - rtl-fpga
+    parameters:
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    - FPGA_SYNTHESIS=true
+    - FPGA_ZCU102=true
+    - NO_DDR_CLK_PORTS=true
+    tools:
+      vivado:
+        part: xczu9eg-ffvb1156-2-e
+        board_part: xilinx.com:zcu102:part0:3.3
+        board_repo_paths: [../../../hw/fpga/xheep_fpga_support/board_files/zcu102]
+    toplevel: [xilinx_core_v_mini_mcu_wrapper]
+
+  aup-zu3:
+    <<: *default_target
+    default_tool: vivado
+    description: RD aup-zu3 Board
+    filesets_append:
+    - x_heep_system
+    - rtl-fpga
+    parameters:
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    - FPGA_SYNTHESIS=true
+    - FPGA_AUP_ZU3=true
+    - NO_DDR_CLK_PORTS=true
+    tools:
+      vivado:
+        part: xczu3eg-sfvc784-2-e
+        board_part: realdigital.org:aup-zu3-8gb:part0:1.0
+        board_repo_paths: [../../../hw/fpga/xheep_fpga_support/board_files/aup-zu3-8gb/1.0]
+    toplevel: [xilinx_core_v_mini_mcu_wrapper]
+
+  genesys2:
+    <<: *default_target
+    default_tool: vivado
+    description: Genesys2 Evaluation Board
+    filesets_append:
+    - x_heep_system
+    - rtl-fpga
+    parameters:
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    - FPGA_SYNTHESIS=true
+    - FPGA_GENESYS2=true
+    - NO_DDR_CLK_PORTS=true
+    tools:
+      vivado:
+        part: xc7k325tffg900-2
+        board_part: digilentinc.com:genesys2:part0:1.1
+        board_repo_paths: [../../../hw/fpga/xheep_fpga_support/board_files/genesys2]
+    toplevel: [xilinx_core_v_mini_mcu_wrapper]
+
+  asic_synthesis:
+    <<: *default_target
+    default_tool: design_compiler
+    description: Design Compiler Script
+    parameters:
+    - PRIM_DEFAULT_IMPL=prim_pkg::your_target_technology
+    - SYNTHESIS=true
+    - REMOVE_OBI_FIFO
+    filesets_append:
+    - ip-asic
+    toplevel: [core_v_mini_mcu]
+    tools:
+      design_compiler:
+        script_dir:
+        - ../../../scripts/synthesis/dc_shell
+        report_dir:
+        - report
+        dc_script:
+        - dc_script.tcl
+
+  asic_yosys_synthesis:
+    <<: *default_target
+    default_tool: openroad
+    description: yosys
+    parameters:
+      - SYNTHESIS=true
+      - VERILATOR=true
+      - REMOVE_OBI_FIFO
+    filesets_append:
+      - use_sky130? (rtl-sky130)
+      - lib-sky130
+      - openroad_base_files
+      - openroad_sky130_files
+    toplevel: [core_v_mini_mcu]
+    tools:
+      openroad:
+        flow_path: flow/OpenROAD-flow-scripts/flow
+        make_target: synth

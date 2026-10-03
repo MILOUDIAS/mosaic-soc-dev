@@ -1,0 +1,55 @@
+# mosaic_new_cores.yaml — the three 2026-07 core additions running TOGETHER
+# in the full-SoC TDU wake-and-run demo.
+#
+#   hart 0  cva6      TITAN  — 32-bit cv32a65x derivative (SIM-ONLY, AXI→OBI
+#                              bridged; excluded from the GF180 tapeout),
+#                              orchestrates the TDU
+#   hart 1  snitch    ATLAS  — bare mempool-flavor integer core (reqrsp→OBI)
+#   hart 2  picorv32  NANO   — YosysHQ PicoRV32 (native mem→OBI)
+#
+# Exactly the 3-hart shape of mosaic_wake_demo.yaml, so tb/mosaic_soc/run.sh,
+# the demo firmware and the linker script are reused unchanged:
+#   run:  MOSAIC_CFG=configs/mosaic_new_cores.yaml tb/mosaic_soc/run.sh
+#   pass: "EXIT SUCCESS" — CVA6 wakes both workers via the TDU, each runs its
+#         own program and reports its sentinel through the shared bus.
+
+soc:
+  name: mosaic_new_cores
+  pdk: gf180mcu
+  profile: testbench
+
+  cores:
+    - ip: cva6            # TITAN — orchestrator (hart 0)
+      isa: rv32imc
+      count: 1
+      role: titan
+
+    - ip: snitch          # ATLAS worker (hart 1) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # reset PC in RAM0 — its own program
+
+    - ip: picorv32        # NANO worker (hart 2) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # reset PC in RAM0 — its own program
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

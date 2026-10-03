@@ -1,0 +1,21 @@
+# Python dependencies of the generator, the harness and the test suite.
+# Pinned to the versions the recorded simulation and signoff results ran on.
+hjson==3.1.0
+pyyaml==6.0.3
+mako==1.3.12
+jsonref==1.1.0
+black==26.5.1
+pytest==8.4.2
+# OpenTitan regtool imports pkg_resources, which setuptools 81 removed.
+setuptools==80.10.2
+# Imported by the vendored OpenTitan register tools.
+tabulate==0.10.0
+numpy==2.5.1
+
+# FuseSoC with the OpenTitan-specific changes x-heep relies on.
+git+https://github.com/x-heep/fusesoc.git@c36dffc854241740cf2f96c14522d05830677549#egg=fusesoc
+edalize==0.6.8
+
+# FlooNoC topology generator (bus: floonoc), pinned to the commit the
+# vendored RTL under hw/vendor/mosaic/floonoc was taken from.
+git+https://github.com/pulp-platform/FlooNoC.git@d534a2135cfb6db2fa245b7b5dc383b4cf2301a1

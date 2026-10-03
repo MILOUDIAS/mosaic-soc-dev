@@ -1,0 +1,38 @@
+soc:
+  schema: mosaic/v1
+  name: mosaic_blockc_4hart
+  pdk: gf180mcu
+  target: rtl
+  cores:
+  - ip: serv
+    count: 1
+    role: titan
+    isa: rv32ic
+    with_csr: 1
+    compressed: 1
+  - ip: serv
+    count: 3
+    role: atlas
+    isa: rv32i
+    with_csr: 0
+    boot_addr: 1073807360
+  memory:
+    sram_kb: 0
+    boot_rom_kb: 1
+    scratchpad_bytes: 128
+  dma: none
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals:
+  - uart
+  debug: false
+  plic: false
+  spi_mode: xip_only
+  multicore_timer: false
+  gpio_ao: false
+  ao_rv_timer: false
+  ao_fast_intr: false
+  objectives:
+    target_clock_mhz: 10

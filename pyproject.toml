@@ -1,0 +1,66 @@
+# Packaging for the oh-my-soc harness ONLY (the RTL generator keeps its own
+# flow: make venv + util/python-requirements.txt). Install into the project
+# venv for a PATH entry point:
+#
+#   .venv/bin/python -m pip install -e .
+#   oh-my-soc config-author presets
+#
+# The ./oh-my-soc launcher works without any install.
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oh-my-soc"
+version = "0.3.0"
+description = "MOSAIC-SoC agentic harness: visible model/tool loop over deterministic EDA gates"
+requires-python = ">=3.10"
+dependencies = [
+    "PyYAML",
+    "Mako",
+]
+
+[project.optional-dependencies]
+# Structural netlist analysis (`physical-intent netlist-diff`). Optional
+# because the rest of the harness does not need it and PEP 668 blocks
+# installing into a system interpreter; the command degrades with a clear
+# message when it is absent.
+netlist = ["najaeda"]
+
+[project.scripts]
+oh-my-soc = "harness.__main__:main"
+
+[tool.setuptools]
+# Explicit list, never auto-discovery: test/ and refs/ must not be packaged.
+#
+# Every harness subpackage must be listed. `harness.evidence` was missing, so a
+# built wheel shipped harness/skills/flow_runner.py — which imports
+# harness.evidence.gate_guard at module load — with zero evidence modules.
+# test_pyproject_lists_every_harness_subpackage keeps this honest.
+#
+# `util.xheep_gen` is here because `harness.core` imports its `core_registry`:
+# the single source of core capabilities and config validation, shared so the
+# generator and the harness accept exactly the same configs. An earlier comment
+# here claimed util/ was "not part of the app"; that was wrong, and the
+# consequence was that `pip install .` produced a package whose console script
+# died on `ModuleNotFoundError: No module named 'util'` before doing anything.
+#
+# KNOWN COMPROMISE: this ships a top-level `util` package, a generic name that
+# could collide in a shared site-packages. Acceptable for a project venv, and
+# the real fix is to move core_registry somewhere both sides import by a
+# non-generic name — a refactor with real risk to the RTL generator, so not
+# bundled with a packaging fix.
+packages = [
+    "harness", "harness.skills", "harness.evidence", "harness.physical",
+    "util", "util.xheep_gen",
+]
+
+[tool.setuptools.package-data]
+# family heuristics + wrapper/tb templates ship with the package
+harness = ["templates/**/*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: regression that builds or runs an RTL simulator",
+]

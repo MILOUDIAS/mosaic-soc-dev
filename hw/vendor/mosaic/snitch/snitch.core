@@ -1,0 +1,33 @@
+CAPI=2:
+
+name: mosaic:ip:snitch
+description: "Snitch — bare single-issue RV32 integer core (MOSAIC-SoC vendored copy)"
+license: SHL-0.51
+
+# Vendored from the mempool snapshot of pulp-platform snitch:
+#   refs/IP_SoCs_Catalog/mempool/hardware/deps/snitch/src/
+# Bare integer core only (no FP subsystem / IPU / read-only cache / AXI pkg).
+# Local divergence: snitch_pkg.sv hardcodes XPULPIMG/ZFINX/ZQUARTERINX/XDIVSQRT
+# to 0 (upstream defaults them to 1'bX via `ifdef`, which X-poisons derived
+# localparams when built standalone) — see the header comment in that file.
+# fpnew_pkg is a compile-time dependency of snitch.sv's port types even with
+# no FPU; cf_math_pkg + registers.svh come from common_cells.
+
+filesets:
+  core:
+    depend:
+      - pulp-platform.org::common_cells:1.38.0
+      - pulp-platform.org::fpnew
+    files:
+      - rtl/riscv_instr.sv
+      - rtl/snitch_pkg.sv
+      - rtl/snitch_regfile_ff.sv
+      - rtl/snitch_lsu.sv
+      - rtl/snitch.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - core
+    toplevel: snitch

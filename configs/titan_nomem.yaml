@@ -1,0 +1,16 @@
+soc:
+  name: titan_nomem
+  pdk: gf180mcu
+  cores:
+  - ip: cv32e20
+    count: 1
+    role: titan
+    isa: rv32emc
+  memory:
+    sram_kb: 4
+    boot_rom_kb: 2
+  bus: obi
+  scheduler:
+    tdu: false
+    mode: static
+  peripherals: []

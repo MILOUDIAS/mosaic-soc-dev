@@ -1,0 +1,49 @@
+# mosaic_wake_demo.yaml — minimal 3-core config for the full-SoC TDU wake-and-run demo.
+#
+# 1 TITAN (cv32e20, hart 0) + 1 ATLAS (fazyrv, hart 1) + 1 NANO (serv, hart 2).
+# Each worker is given a DISTINCT boot address so it runs its own program when woken.
+# Used by tb/mosaic_soc/run.sh to demonstrate, in the full SoC, TITAN booting and then
+# waking the workers via the TDU (write 0x6 to WAKE_REQ @ 0x200A000C) — each woken worker
+# then runs its own program and writes a unique sentinel through the shared system bus.
+# (The full 1x cv32e20 + 2x fazyrv + 4x serv PoC lives in the canonical mosaic.yaml.)
+
+soc:
+  name: mosaic_wake_demo
+  pdk: gf180mcu
+
+  cores:
+    - ip: cv32e20         # TITAN — orchestrator; boots from the boot ROM (hart 0)
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: fazyrv          # ATLAS worker (hart 1) — boots dormant, woken by the TDU
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # reset PC in RAM0 — its own program
+
+    - ip: serv            # NANO worker (hart 2) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # reset PC in RAM0 — its own program
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

@@ -1,0 +1,48 @@
+# mosaic.yaml — MOSAIC-SoC Phase 1 Configuration
+# Single config file governing the entire SoC generation flow.
+
+soc:
+  name: mosaic_poc_alpha
+  pdk: gf180mcu
+  # NOT 'tapeout'. This 7-hart PoC is the RTL/simulation reference topology and
+  # has no physical evidence behind it. The qualified physical part is the
+  # Chipathon Block A design in configs/mosaic_tapeout_ultra.yaml, which is what
+  # core_registry.TAPEOUT_* now describes. A schematic reviewer correctly
+  # flagged that this file claiming 'tapeout' while being far larger than the
+  # 22-pin Block A budget made the repository contradict itself.
+  target: simulation
+
+  cores:
+    - ip: cv32e20         # big core — CVE2, 2-stage, RV32E/M
+      isa: rv32emc
+      count: 1
+      role: titan         # orchestrator tier
+
+    - ip: fazyrv          # little cores — chunk-serial datapath
+      isa: rv32i
+      chunksize: 8        # per-core-type parameter
+      count: 2
+      role: atlas         # signal-processing tier
+      boot_addr: 0x1000   # reset PC in RAM — atlas_worker (mosaic_link.ld)
+
+    - ip: serv            # tiny cores — bit-serial, ~200 GE each
+      isa: rv32i
+      count: 4
+      role: nano          # always-on sensor polling tier
+      boot_addr: 0x2000   # reset PC in RAM — nano_worker (mosaic_link.ld)
+
+  memory:
+    sram_kb: 32           # total SRAM; distributed across banks
+    boot_rom_kb: 2
+
+  bus: obi                # Open Bus Interface — native to Ibex/x-heep
+
+  scheduler:
+    tdu: true             # Task Dispatch Unit: <100 GE hardware assist
+    mode: dynamic         # static | dynamic | power-aware
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

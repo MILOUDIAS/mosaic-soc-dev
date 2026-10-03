@@ -1,0 +1,128 @@
+# Python
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
+
+# Build output and generated bundles
+build/
+*.log
+*.o
+*.so
+*.hex
+*.elf
+*.dis
+*.map
+*_reg_gen.cache
+
+# Simulator build directories and waveforms
+obj_dir*/
+obj_diag*/
+sim_build/
+results.xml
+*.vcd
+*.fst
+trace_hart_*.dasm
+
+# RTL, headers and file lists rendered from templates. Only the .tpl sources
+# and the generator are versioned; `make mosaic-gen` writes bundles to build/.
+tb/tb_util.svh
+tb/testharness.sv
+tb/testharness_pkg.sv
+tb/mosaic_soc/tb_util.svh
+tb/mosaic_soc/soc.f
+tb/mosaic_soc/soc_diag.f
+tb/mosaic_soc/icarus_files.txt
+hw/ip/floonoc_fabric/floo_mosaic_noc_pkg.sv
+hw/ip/floonoc_fabric/floo_mosaic_noc.sv
+hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv
+hw/core-v-mini-mcu/core_v_mini_mcu.sv
+hw/core-v-mini-mcu/system_bus.sv
+hw/core-v-mini-mcu/system_xbar.sv
+hw/core-v-mini-mcu/ao_peripheral_subsystem.sv
+hw/core-v-mini-mcu/cpu_subsystem.sv
+hw/core-v-mini-mcu/memory_subsystem.sv
+hw/core-v-mini-mcu/peripheral_subsystem.sv
+hw/core-v-mini-mcu/spi_subsystem.sv
+hw/system/x_heep_system.sv
+hw/system/pad_ring.sv
+hw/system/pad_control/data/pad_control.hjson
+hw/system/pad_control/rtl/pad_control.sv
+hw/system/pad_control/rtl/pad_control_reg_pkg.sv
+hw/system/pad_control/rtl/pad_control_reg_top.sv
+hw/ip/soc_ctrl/data/soc_ctrl.hjson
+hw/ip/soc_ctrl/rtl/soc_ctrl_reg_top.sv
+hw/ip/soc_ctrl/rtl/soc_ctrl_reg_pkg.sv
+hw/ip/power_manager/data/power_manager.hjson
+hw/ip/power_manager/rtl/power_manager.sv
+hw/ip/power_manager/rtl/power_manager_reg_top.sv
+hw/ip/power_manager/rtl/power_manager_reg_pkg.sv
+hw/ip/pdm2pcm/data/pdm2pcm.hjson
+hw/ip/pdm2pcm/rtl/pdm2pcm.sv
+hw/ip/pdm2pcm/rtl/pdm_core.sv
+hw/ip/pdm2pcm/rtl/pdm2pcm_reg_top.sv
+hw/ip/pdm2pcm/rtl/pdm2pcm_reg_pkg.sv
+hw/ip/boot_rom/boot_rom.sv
+hw/ip/boot_rom/boot_rom.dump
+hw/vendor/xheep/spi/rtl/spi_subsystem.sv
+sw/device/lib/runtime/core_v_mini_mcu.h
+sw/device/lib/runtime/core_v_mini_mcu_memory.h
+sw/device/lib/drivers/soc_ctrl/soc_ctrl_regs.h
+sw/device/lib/drivers/soc_ctrl/soc_ctrl_structs.h
+sw/device/lib/drivers/soc_ctrl/soc_ctrl_regs.md
+sw/device/lib/drivers/power_manager/power_manager_regs.h
+sw/device/lib/drivers/power_manager/power_manager_structs.h
+sw/device/lib/drivers/power_manager/power_manager_regs.md
+sw/device/lib/drivers/pdm2pcm/pdm2pcm_regs.h
+sw/device/lib/drivers/pdm2pcm/pdm2pcm_structs.h
+sw/device/lib/drivers/pdm2pcm/pdm2pcm_regs.md
+sw/device/lib/drivers/pad_control/pad_control_regs.h
+sw/device/lib/drivers/pad_control/pad_control_regs.md
+
+# Physical flow: the PDK clone, run trees and layout binaries are never
+# versioned. Signoff results are published as release assets.
+/flow/librelane/gf180mcu/
+/flow/librelane/*/runs/*/*
+!/flow/librelane/*/runs/*/final/
+/flow/librelane/*/runs/*/final/*
+# Exception: the measured metrics that the area model, the waivers and the
+# status tables cite. Small text, no layout data.
+!/flow/librelane/*/runs/*/final/metrics.json
+!/flow/librelane/*/runs/*/*-odb-reportdisconnectedpins/
+/flow/librelane/*/runs/*/*-odb-reportdisconnectedpins/*
+!/flow/librelane/*/runs/*/*-odb-reportdisconnectedpins/full_disconnected_pins_table.txt
+/flow/librelane/**/final_*/
+/flow/librelane/experimental/.generated_*.yaml
+/flow/librelane/experimental/.resolved_*.yaml
+/flow/librelane/experimental/.filelist_*.yaml
+*.gds
+*.odb
+*.spef
+*.sdf
+*.mag
+
+# Gate-level simulation artefacts, regenerated per netlist
+/tb/gls/gls_powerup_init.svh
+/tb/gls/gf180mcu_cells_cvc.v
+/tb/gls/obj/
+/tb/gls/*.exe
+/tb/gls/*.vvp
+
+# Configs written by the demo and by tests
+/configs/prompted_demo.yaml
+/configs/agent_probe.yaml
+/configs/mcp_plugin_sim_*
+
+# Equivalence-check droppings written to the working directory
+/miter_log_*.txt
+/naja_sv_diagnostics.log
+
+# Local reference checkouts, editors and agent state
+refs/
+private/
+.vscode/
+.idea/
+.DS_Store
+.claude/worktrees/
+.claude/settings.local.json
+.commandcode/

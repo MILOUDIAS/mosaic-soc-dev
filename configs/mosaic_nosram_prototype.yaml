@@ -1,0 +1,31 @@
+soc:
+  name: mosaic_nosram
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  - ip: cv32e20
+    count: 1
+    role: titan
+    isa: rv32imc
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0xF0001000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0xF0002000
+  memory:
+    sram_kb: 0
+    boot_rom_kb: 1
+    external:
+      base: 0xF0000000
+      size_kb: 64
+  dma: idma
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals: [uart, spi, gpio]

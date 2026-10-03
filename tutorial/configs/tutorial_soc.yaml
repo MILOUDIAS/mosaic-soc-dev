@@ -1,0 +1,46 @@
+# tutorial_soc.yaml — small, fully verified heterogeneous MOSAIC-SoC.
+#
+# hart 0 boots as the TITAN controller. Harts 1 and 2 remain dormant until the
+# TDU targets and wakes them. Distinct worker boot addresses give each role its
+# own SRAM image and make the generated hardware/software contract explicit.
+
+soc:
+  name: tutorial_soc
+  pdk: gf180mcu
+  target: simulation
+
+  cores:
+    - ip: cv32e20
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: fazyrv
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+      boot_addr: 0x1000
+
+    - ip: serv
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi
+

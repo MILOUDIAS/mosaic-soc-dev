@@ -1,0 +1,23 @@
+CAPI=2:
+
+name: "x-heep:ip:tdu"
+description: "MOSAIC-SoC Task Dispatch Unit"
+
+# Copyright MOSAIC-SoC
+# SPDX-License-Identifier: SHL-0.51
+
+filesets:
+  files_rtl:
+    depend:
+      - x-heep:rtl:structs
+      - pulp-platform.org::common_cells
+    files:
+    - rtl/tdu_pkg.sv
+    - rtl/tdu.sv
+    - rtl/mosaic_clint.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+    - files_rtl

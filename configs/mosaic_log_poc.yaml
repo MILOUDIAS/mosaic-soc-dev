@@ -1,0 +1,53 @@
+# mosaic_log_poc.yaml — the full PoC topology on the bus:log fabric.
+#
+# 1x cv32e20 + 2x fazyrv + 4x serv = 7 harts; with debug plus two iDMA
+# read/write stream pairs that is 19 bus masters, so the LIC needs 32 banks.
+# sram_kb is raised to 64 to keep the banks at a sane 2 KB each — with the
+# default 32 KB they would shrink to 1 KB (32 SRAM macros on GF180 is a
+# physical-design decision, not a simulation one; this config is for full-size
+# generation + lint).
+
+soc:
+  name: mosaic_log_poc
+  pdk: gf180mcu
+
+  cores:
+    - ip: cv32e20         # big core — CVE2, 2-stage, RV32E/M
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: fazyrv          # little cores — chunk-serial datapath
+      isa: rv32i
+      chunksize: 8
+      count: 2
+      role: atlas
+      boot_addr: 0x1000
+
+    - ip: serv            # tiny cores — bit-serial, ~200 GE each
+      isa: rv32i
+      count: 4
+      role: nano
+      boot_addr: 0x2000
+
+  memory:
+    sram_kb: 64           # 32 banks x 2 KB (see header)
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: log
+  bus_opts:
+    log:
+      topology: lic
+      num_banks: auto     # -> 32
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

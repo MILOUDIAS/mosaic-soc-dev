@@ -1,0 +1,51 @@
+# mosaic_log.yaml — bus:log (logarithmic interconnect) simulation config.
+#
+# Same serial-core subset as mosaic_sim.yaml but with the two-tier LOG fabric:
+# a fixed-latency tcdm_interconnect (LIC) over word-interleaved SRAM banks plus
+# the variable-latency crossbar for the non-memory tier. 3 harts + debug +
+# 2 iDMA streams x 2 OBI ports = 11 bus masters, so the generator auto-banks the 32 KB
+# SRAM as 16 interleaved banks x 2 KB (banks >= masters, power of two).
+
+soc:
+  name: mosaic_log
+  pdk: gf180mcu
+  profile: testbench       # worker-only: hart 0 is a testbench bootstrap, never a production policy
+
+  cores:
+    - ip: serv             # bit-serial, unified-OBI SCI wrapper (W=1)
+      isa: rv32i
+      count: 1
+      role: nano
+
+    - ip: qerv             # nibble-serial via serv_sci W=4, unified OBI
+      isa: rv32i
+      count: 1
+      role: nano
+
+    - ip: fazyrv           # chunk-serial, Wishbone→OBI, split I/D
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: log               # two-tier: LIC over banked SRAM + varlat periph tier
+  bus_opts:
+    log:
+      topology: lic      # current tcdm backend topology
+      num_banks: auto    # auto = next_pow2(bus masters) -> 16 here
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

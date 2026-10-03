@@ -1,0 +1,49 @@
+# mosaic_cva6.yaml — CVA6 bring-up config for the full-SoC TDU wake demo.
+#
+# CVA6 (32-bit cv32a65x derivative, SIM-ONLY — excluded from the GF180
+# tapeout) is the TITAN orchestrator on hart 0: it boots from the boot ROM
+# at the shared BOOT_ADDR, programs the TDU and wakes the two known-good
+# workers (fazyrv + serv). Same 3-hart shape as mosaic_wake_demo.yaml so
+# tb/mosaic_soc/run.sh and the demo firmware are reused unchanged.
+
+soc:
+  name: mosaic_cva6
+  pdk: gf180mcu
+  profile: testbench
+
+  cores:
+    - ip: cva6            # TITAN — orchestrator (hart 0); AXI→OBI bridged, sim-only
+      isa: rv32imc
+      count: 1
+      role: titan
+
+    - ip: fazyrv          # ATLAS worker (hart 1) — boots dormant, woken by the TDU
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # reset PC in RAM0 — its own program
+
+    - ip: serv            # NANO worker (hart 2) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # reset PC in RAM0 — its own program
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

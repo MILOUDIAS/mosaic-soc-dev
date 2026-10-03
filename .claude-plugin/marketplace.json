@@ -1,0 +1,14 @@
+{
+  "name": "mosaic-soc",
+  "description": "Agent-host plugins for the MOSAIC-SoC multi-core RISC-V SoC generator.",
+  "owner": {
+    "name": "MOSAIC-SoC team"
+  },
+  "plugins": [
+    {
+      "name": "oh-my-soc",
+      "source": "./plugins/oh-my-soc",
+      "description": "Gated MCP tools for the MOSAIC-SoC generator (YAML or natural language to verified SoC)."
+    }
+  ]
+}

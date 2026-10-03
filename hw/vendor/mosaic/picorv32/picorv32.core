@@ -1,0 +1,25 @@
+CAPI=2:
+
+name: mosaic:ip:picorv32
+description: "PicoRV32 — size-optimized RV32 core (MOSAIC-SoC vendored copy)"
+license: ISC
+
+# Vendored from https://github.com/YosysHQ/picorv32.git
+# @ f00a88c36eaab478b64ee27d8162e421049bcc66 — the same upstream pin as
+# hw/vendor/xheep/spi/vendor/yosyshq_picorv32.lock.hjson (which vendors only
+# the picosoc spimemio flash controller; this copy adds the CPU itself).
+# Only picorv32.v is vendored; the file also contains the axi/wb adapters and
+# pcpi coprocessors, which are unused here (the SCI wrapper drives the native
+# mem_valid/mem_ready interface of `module picorv32` directly).
+
+filesets:
+  core:
+    files:
+      - picorv32.v
+    file_type: verilogSource
+
+targets:
+  default:
+    filesets:
+      - core
+    toplevel: picorv32

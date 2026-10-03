@@ -1,0 +1,68 @@
+# mosaic-technology: ihp-sg13g2
+# IHP sg13g2 signoff template -- DELIBERATELY MINIMAL AND UNQUALIFIED.
+#
+# This is the second PDK. Nothing has been hardened on it, so this file is a
+# starting point for the first run, not a signoff recipe. It is NOT a copy of
+# signoff_template.yaml: that file's value is ~600 lines of GF180-specific
+# reasoning -- why MAX_TRANSITION_CONSTRAINT is what it is, which corner a
+# limit came from, which settings were measured inert -- and none of that
+# reasoning transfers. Copying it would move the numbers and leave the
+# justification behind, which is how a wrong value acquires a confident
+# comment.
+#
+# What is here comes from the PDK's own librelane config
+# (ihp-sg13g2/libs.tech/librelane/config.tcl), read rather than guessed:
+#
+#   corners      nom_typ_1p20V_25C (default), max_slow_1p08V_125C,
+#                min_fast_1p32V_m40C -- a 1.2 V process, not GF180's 5 V
+#   site         CoreSite, 0.48 x 3.78 um
+#   power pins   SCL_POWER_PINS VDD / SCL_GROUND_PINS VSS, but the PDK also
+#                declares VDD_PIN VPWR / GND_PIN VGND -- an unresolved
+#                difference from GF180 that the first run will expose
+#
+# NOT set on purpose:
+#   MAX_TRANSITION_CONSTRAINT -- GF180 taught that a blanket limit is the
+#     typical corner's number applied at every corner. Leave it unset so each
+#     pin is checked against its own liberty max_transition. If IHP needs an
+#     override, the first run's slew report is the evidence for it.
+#   any repair margin -- GRT_DESIGN_REPAIR_MAX_SLEW_PCT 45 was chosen from a
+#     GF180 measurement of estimate-to-extracted error. That ratio is a
+#     property of the metal stack. Measure it here before setting it.
+
+PNR_CORNERS:
+  - nom_typ_1p20V_25C
+  - max_slow_1p08V_125C
+  - min_fast_1p32V_m40C
+
+# Synthesis: no elaborate strategy until there is a reason for one.
+SYNTH_STRATEGY: "AREA 0"
+
+# Routing/placement left at LibreLane defaults. Every GF180 override in the
+# other template was bought with a measurement; none of them are earned here.
+RUN_HEURISTIC_DIODE_INSERTION: true
+GRT_ALLOW_CONGESTION: false
+
+# Keep the run honest about what it is: nothing here is signed off.
+RUN_LINTER: true
+
+# ---- design- and tool-level, carried over because they are NOT process facts
+meta:
+  version: 3
+  flow: Classic
+CLOCK_PORT: clk_i
+USE_SLANG: true
+SLANG_ARGUMENTS: ['--allow-use-before-declare', '--relax-enum-conversions', '--relax-string-conversions', '--allow-hierarchical-const', '--compat', 'vcs', '--ignore-assertions']
+ERROR_ON_SYNTH_CHECKS: true
+ERROR_ON_LINTER_WARNINGS: false
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+VDD_NETS: ['VDD']
+GND_NETS: ['VSS']
+
+# ---- NOT carried over, and the reason matters -------------------------------
+# The GF180 template also sets PDN_VPITCH/HPITCH/widths/spacings, a core ring
+# geometry, MAGIC_GDS_FLATGLOB with GF180 device names (nmos_5p0*, pmos_5p0*)
+# and KLAYOUT_FILLER_OPTIONS keyed on Metal2. Every one of those is a property
+# of GF180's metal stack or its device library. Copying them onto a different
+# process would be the exact mistake this file exists to avoid, so PDN and fill
+# are left at LibreLane's defaults for the first run. What that run reports is
+# the evidence for setting them.

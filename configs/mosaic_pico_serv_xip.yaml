@@ -1,0 +1,65 @@
+# picoRV32 TITAN + 2x SERV, execute-in-place, minimal scratchpad.
+#
+# The smallest WORKING 3-core config measured so far. Cores only, GF180
+# tt/25C/5v00, yosys synthesis (see docs/area_study_gf180_min_soc.md):
+#
+#   picorv32 rv32imc   0.317 mm2   <- TITAN
+#   SERV rv32i         0.021 mm2   x2
+#   ----------------------------------
+#   total              0.360 mm2   (vs 0.508 mm2 with a cv32e20 TITAN)
+#
+# WHY picorv32 IS THE TITAN. A TITAN must execute the boot ROM, and the boot
+# ROM contains COMPRESSED instructions, so the TITAN needs the C extension.
+# picorv32 offers it only as rv32imc, which drags in mul/div: 0.317 mm2
+# against 0.248 mm2 for a hypothetical rv32ic. That is the price of the
+# boot-ROM contract, not of picorv32 itself.
+#
+# WHY NOT FazyRV OR SERV AS TITAN. Neither can run the boot ROM
+# (docs/area_study_gf180_min_soc.md 7). Also, FazyRV is not small: at
+# chunksize=1 it is 0.183 mm2, 8.6x a SERV, because its register file
+# synthesises to flops. For minimum area SERV wins as a worker.
+soc:
+  name: mosaic_pico_serv_xip
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  - ip: picorv32
+    count: 1
+    role: titan
+    isa: rv32imc      # C is required to execute the boot ROM
+    compressed: 1
+    mul: 1
+    div: 1
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40010000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40011000
+  memory:
+    sram_kb: 0
+    scratchpad_bytes: 512
+    boot_rom_kb: 1
+  # No DMA. Nothing in this config uses one: the peripherals are UART/SPI/GPIO,
+  # the liveness firmware never touches it, and XIP boot goes through spi_memio,
+  # not the DMA. Measured whole-SoC saving 0.355 mm2 = 9.1% of the die
+  # (3.903 -> 3.548): the 0.319 mm2 engine plus four crossbar master ports.
+  # That is very close to the area of all three CPU cores put together.
+  dma: none
+
+  # No JTAG/debug-module and no PLIC. This part boots from flash and is woken
+  # by the TDU over CLINT software interrupts; nothing routes an external
+  # peripheral interrupt to a hart, and bring-up is via the boot ROM only.
+  # Both are pure area here. Reverting either is a one-line change.
+  debug: false
+  plic: false
+
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals: [uart, spi, gpio]

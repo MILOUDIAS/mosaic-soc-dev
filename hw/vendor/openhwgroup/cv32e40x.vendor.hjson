@@ -1,0 +1,23 @@
+// Copyright 2020 ETH Zurich and University of Bologna.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{
+  name: "cv32e40x",
+  target_dir: "cv32e40x",
+
+  upstream: {
+    url: "https://github.com/openhwgroup/cv32e40x.git",
+    rev: "d952cd63bc1b4eb58cd893c28ef8283c781e345e", # master 2025 (post-0.10 bugfixes)
+  },
+
+  patch_dir: "../patches/openhwgroup_cv32e40x",
+
+  exclude_from_upstream: [
+    ".github",
+    "CONTRIBUTING.md",
+    ".dir-locals.el",
+    "cv32e40x_manifest.flist",
+    "docs",
+  ]
+
+}

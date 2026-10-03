@@ -1,0 +1,144 @@
+# MOSAIC minimum-area tapeout candidate -- ULTRA variant.
+# Everything mosaic_tapeout_min cuts, plus: one fewer worker core (the SCI
+# wrapper around a SERV costs 0.162 mm2, 7.7x the 0.021 mm2 core itself) and
+# a 256 B scratchpad instead of 512 B.
+#
+# Every knob in this file is set for area, and each one costs something real.
+# The measured progression from the 3.903 mm2 starting point is in
+# docs/area_study_gf180_min_soc.md sections 8b through 8f.
+#
+# What this part can still do: boot from external QSPI flash, execute in place,
+# run two harts scheduled by the TDU, and talk over UART.
+# What it cannot do: be debugged over JTAG, take an external peripheral
+# interrupt, move bulk data with a DMA, or drive SPI as a general-purpose host.
+soc:
+  # The schema these values were authored against. A frozen tapeout config that
+  # cannot say which rules accepted it is not fully self-describing: the
+  # validator's key set evolves, so "this file validated" is only a claim about
+  # some unnamed version. `mosaic/v1` names it, and an unknown version is
+  # refused by name rather than diagnosed as a wall of unknown keys.
+  schema: mosaic/v1
+  name: mosaic_tapeout_ultra
+  pdk: gf180mcu
+  # The generator's own fail-closed gate now describes THIS part, not the old
+  # 7-hart PoC (core_registry.TAPEOUT_*). Declaring 'tapeout' is therefore a
+  # checkable claim: validation rejects the config if any core, memory size or
+  # platform knob differs from what was actually hardened and signed off.
+  target: tapeout
+
+  # TWO SERV cores: one TITAN, one worker. (An earlier revision of this file
+  # had three and its comments were not updated with the core list -- the kind
+  # of drift a reviewer is right to catch. Two is what is frozen.)
+  # Core choice is the SMALLEST lever in this design: measured 2.910 mm2 for a
+  # SERV TITAN against 3.036 mm2 for a picoRV32 one, a 4.1% difference, and
+  # both cores together are ~2% of the die. The platform around them is the
+  # area.
+  cores:
+  - ip: serv
+    count: 1
+    role: titan
+    isa: rv32ic        # C is mandatory: the boot ROM contains compressed insns
+    with_csr: 1
+    compressed: 1
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40010000
+    # No CSRs on the worker: 32 registers instead of 36, so SERV's register
+    # file drops 1152 -> 1024 bits. Measured 0.1618 -> 0.1433 mm2 (-11.4%).
+    # This removes the worker's CSR file entirely -- no mtvec/mepc/mstatus, so
+    # it cannot take a trap or an interrupt. It is woken by fetch_enable from
+    # the TDU, not by an interrupt, so the wake path is unaffected. The TITAN
+    # keeps its CSRs; the boot ROM needs them.
+    with_csr: 0
+
+  memory:
+    sram_kb: 0           # no on-chip RAM pool; code is XIP from flash
+    scratchpad_bytes: 128 # flip-flops: the GF180 macro is area-NEGATIVE below 512 B
+    boot_rom_kb: 1
+
+  dma: none              # -0.355 mm2 (engine + 4 crossbar masters)
+  debug: false           # -0.512 mm2 together with plic; NO JTAG BRING-UP
+  plic: false            # no external peripheral interrupt reaches a hart
+
+  # Read-only XIP reader only: obi_spimemio (0.030 mm2) instead of the full
+  # spi_subsystem with its OpenTitan host (0.717 mm2). The part boots and
+  # executes from flash but cannot drive SPI as a general-purpose host and
+  # cannot write to the flash.
+  spi_mode: xip_only
+
+  bus: obi
+
+  scheduler:
+    tdu: true            # 0.068 mm2; this is the wake path, not optional here
+    mode: dynamic
+
+  # UART only. Dropping the user spi_host and gpio; rv_timer is still forced in
+  # by MULTICORE_USER_PERIPHERALS. The flash interface is NOT this list -- it
+  # is the always-on spi_subsystem, reduced to its XIP reader below.
+  peripherals: [uart]
+
+  # Drop the rv_timer that MULTICORE_USER_PERIPHERALS force-adds to every
+  # multi-core config (0.062 mm2). mosaic_clint still supplies per-hart timer
+  # and software interrupts, which is what the TDU wake path actually uses.
+  multicore_timer: false
+
+  # AO diet. Each is pure area for this design:
+  #   gpio_ao      - no GPIO is bonded out
+  #   ao_rv_timer  - mosaic_clint already serves per-hart mtime/mtimecmp
+  #   ao_fast_intr - with plic:false nothing raises an external interrupt
+  gpio_ao: false
+  ao_rv_timer: false
+  ao_fast_intr: false
+
+  # ---- Design intent, not a result -------------------------------------------
+  # The clock belongs here rather than in a hardening config. It was previously
+  # absent, which meant changing the frequency required hand-editing a LibreLane
+  # config. With this set, `physical-intent harden` derives CLOCK_PERIOD and
+  # there is one place to change it.
+  #
+  # 20 MHz, and it is a MEASURED choice rather than a fallback. On the mandated
+  # 1110 um die (the A-block maximum; our 1117.5 exceeded it) both close with
+  # every check clean:
+  #
+  #   25 MHz  runs/blocka_1110_25_ndr   setup +0.089 ns   0.22% of the period
+  #   20 MHz  runs/blocka_1110_ndr      setup +6.066 ns  12.13% of the period
+  #
+  # Both reach max-slew 0 and max-cap 0 at all nine corners, DRC/LVS/XOR/antenna
+  # /power-grid 0, and GLS EXIT SUCCESS. 20 MHz is chosen for the margin: edits
+  # made during this work moved setup by 0.245 ns and 0.693 ns, so 0.089 ns is
+  # inside the noise of the next iteration, and a wrapper rewrite to drive the
+  # padframe control terminals is still ahead of us.
+  #
+  # It remains a REQUEST, not a result: STA decides whether it was met.
+  objectives:
+    target_clock_mhz: 20
+    # Block A ships at 32 while B and C ship at 45. Measured 2026-09-10: at 45
+    # this design reaches 28 max-slew and 14 max-cap on the mandated 1110 um
+    # die, and a re-targeted NDR does not clear them -- it fixed 24 nets, 30
+    # persisted and 6 new ones appeared. It is the densest of the three at
+    # 86.5% utilisation (B 78%, C 68%), which is why only it is affected.
+    # At 32 with its NDR it is 0 and 0, which is the signed-off result.
+    repair_margin_pct: 32
+    # NOT set: die_um. 1110 um IS the mandate -- @d-m-bailey reported it as the
+    # A-block maximum, and our previous 1117.5 exceeded it. It belongs here in
+    # principle. Setting it alone does not work, and the reason is worth
+    # recording because it looks like a bug and is not -- MEASURED against the
+    # current calibration:
+    #
+    #   objectives {clock 20}                       -> DIE_AREA 1114.53 um
+    #   objectives {clock 20, die_um 1110}          -> REFUSED, "design needs a
+    #       1114.5 um die at 81% utilisation but objectives.die_um mandates
+    #       1110.0; it does not fit the slot"
+    #   the same, with target_utilisation 0.823     -> DIE_AREA 1110 um, OK
+    #
+    # The refusal is correct behaviour and the model is not wrong; it is
+    # CONSERVATIVE. It sizes at ~81% while the design achieves 85.37%
+    # (runs/blocka_1110_ndr), so it fits a slot the model says it cannot.
+    # Honouring the mandate needs a utilisation stated too, which
+    # run_signoff.sh passes as MOSAIC_HARDEN_UTIL.
+    #
+    # Left out deliberately: adding die_um without also settling how utilisation
+    # is expressed would make the documented derivation path REFUSE to emit
+    # Block A's config, which reads as a regression. That is its own change.

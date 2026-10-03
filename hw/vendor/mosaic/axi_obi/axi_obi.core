@@ -1,0 +1,24 @@
+CAPI=2:
+
+# MOSAIC OBI <-> AXI4 bridges for the FlooNoC (bus: floonoc) fabric.
+# MOSAIC-owned adaptations of pulp-platform axi_obi's converters: the upstream
+# modules are parameterized by pulp obi_pkg::obi_cfg_t, whose package collides
+# with x-heep's obi_pkg (see hw/vendor/pulp_platform/obi/obi.core). These take
+# the x-heep OBI structs as type parameters instead (idma_xheep_wrapper style).
+name: mosaic:ip:axi_obi:0.1.0
+description: x-heep OBI <-> AXI4 bridges (no atomics, 32/32, single outstanding)
+
+filesets:
+  files_rtl:
+    depend:
+    - pulp-platform.org::axi:0.39.8
+    files:
+    - xheep_obi_to_axi.sv
+    - xheep_axi_to_obi.sv
+    - xheep_axi_burst_to_obi.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+    - files_rtl

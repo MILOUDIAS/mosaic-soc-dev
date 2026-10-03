@@ -1,0 +1,54 @@
+# mosaic_floonoc.yaml — the 3-core TDU wake-and-run demo on the bus:floonoc
+# fabric (floogen-generated single-router AXI NoC + OBI<->AXI bridges).
+#
+# Identical topology to mosaic_wake_demo.yaml (1 cv32e20 TITAN + 1 fazyrv ATLAS
+# + 1 serv NANO, per-worker boot addresses), but the system fabric is FlooNoC:
+# per-hart instr+data merged into one AXI manager endpoint, debug+DMA(+EXT)
+# merged into a `shared` manager endpoint, and two subordinate endpoints (mem,
+# periph) bridged back to OBI. Run with:
+#   MOSAIC_CFG=configs/mosaic_floonoc.yaml tb/mosaic_soc/run.sh
+
+soc:
+  name: mosaic_floonoc
+  pdk: gf180mcu
+
+  cores:
+    - ip: cv32e20         # TITAN — orchestrator; boots from the boot ROM (hart 0)
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: fazyrv          # ATLAS worker (hart 1) — boots dormant, woken by the TDU
+      isa: rv32i
+      chunksize: 8
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # reset PC in RAM — its own program
+
+    - ip: serv            # NANO worker (hart 2) — boots dormant, woken by the TDU
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # reset PC in RAM — its own program
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: floonoc           # floogen AXI NoC + OBI<->AXI bridges
+  bus_opts:
+    floonoc:
+      route_algo: ID     # compact topology is a single ID-table router
+      endpoints: compact # nh+1 managers / 2 subordinates
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

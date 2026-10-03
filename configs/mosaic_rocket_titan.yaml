@@ -1,0 +1,41 @@
+# Singleton Rocket as the simulation controller, plus one dormant SERV worker.
+# The tile boots through its cacheable SRAM alias and reaches shared control,
+# TDU and soc_ctrl only through PMA-uncached translated windows.  This topology
+# is a functional-simulation regression, never a GF180 tapeout configuration.
+
+soc:
+  name: mosaic_rocket_titan
+  pdk: gf180mcu
+  profile: testbench
+  target: simulation
+
+  cores:
+    - ip: rocket
+      isa: rv64imc
+      count: 1
+      role: titan
+      boot_addr: 0x180
+
+    - ip: serv
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x1000
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

@@ -1,0 +1,42 @@
+# mosaic_titan_obi.yaml — all-TITAN 4-core SMP demo on the baseline OBI
+# crossbar (reference/discriminator for the log/floonoc variants).
+#
+# Same topology as mosaic_titan_log.yaml: 2x cv32e20 (harts 0-1) + 2x
+# cv32e40x (harts 2-3), every group role:titan -> all four cores boot
+# free-running at the shared BOOT_ADDR and branch on mhartid
+# (tb/mosaic_soc/prog_titan/titan_smp.S). Run with:
+#   MOSAIC_CFG=configs/mosaic_titan_obi.yaml tb/mosaic_soc/run_titan.sh
+
+soc:
+  name: mosaic_titan_obi
+  pdk: gf180mcu
+  profile: testbench       # shared hand-written assembly spans mixed ABIs
+
+  cores:
+    - ip: cv32e20         # harts 0-1 — hart 0 is the SMP orchestrator
+      isa: rv32emc
+      count: 2
+      role: titan
+
+    - ip: cv32e40x        # harts 2-3 — 4-stage big cores, poll-pop workers
+      isa: rv32imc
+      count: 2
+      role: titan
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi               # baseline N-to-M varlat crossbar
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

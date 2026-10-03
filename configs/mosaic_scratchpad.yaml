@@ -1,0 +1,46 @@
+# Option C, minimal-scratchpad profile — the recommended external-memory shape.
+#
+#   code   -> executes in place from the SPI-flash XIP window (read-only,
+#             non-volatile, valid at reset, so nothing is ever staged)
+#   data   -> 512 B on-chip scratchpad: stack, .data, .bss
+#
+# The scratchpad exists because the C runtime needs a stack before any external
+# memory controller can be brought up — Cheshire's LLC-as-SPM lesson at small
+# scale (docs/external_memory_boot_design.md §2.1, §4).
+#
+# Area: 512 B is one gf180mcu_fd_ip_sram__sram512x8m8wm1 at 0.209 mm², versus
+# 3.350 mm² for the 8 KiB the schema used to demand. Expressing it needs
+# byte granularity — sram_kb is integer KiB, and rounding to 1 KiB would double
+# the macro area to 0.419 mm².
+#
+# NOT YET BUILDABLE: see the generator error. x-heep's Bank(size_k) is integer
+# kiB, so a sub-KiB memory has no representation in the RAM bank pool.
+soc:
+  name: mosaic_scratchpad
+  pdk: gf180mcu
+  target: simulation
+  cores:
+  - ip: cv32e20
+    count: 1
+    role: titan
+    isa: rv32imc
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40010000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40011000
+  memory:
+    sram_kb: 0
+    scratchpad_bytes: 512
+    boot_rom_kb: 1
+  dma: idma
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals: [uart, spi, gpio]

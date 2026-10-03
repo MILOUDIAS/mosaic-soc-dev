@@ -1,0 +1,47 @@
+# mosaic_titan_floonoc.yaml — all-TITAN 4-core SMP demo on the bus:floonoc
+# fabric (floogen-generated single-router AXI NoC + OBI<->AXI bridges).
+#
+# Same topology as mosaic_titan_log.yaml: 2x cv32e20 (harts 0-1) + 2x
+# cv32e40x (harts 2-3), every group role:titan so ALL cores boot free-running
+# at the shared BOOT_ADDR (0x180). The demo program branches on mhartid:
+# hart 0 orchestrates (queues TDU task descriptors), harts 1-3 poll-pop the
+# TDU task FIFO and report per-slot sentinels — all traffic (fetch, data,
+# TDU register accesses, sentinel stores) crosses the NoC.
+#
+# floonoc_gen emits one manager endpoint per hart (hart0..hart3, I+D merged)
+# plus the shared debug/DMA endpoint and mem/periph subordinates. Run with:
+#   MOSAIC_CFG=configs/mosaic_titan_floonoc.yaml tb/mosaic_soc/run_titan.sh
+
+soc:
+  name: mosaic_titan_floonoc
+  pdk: gf180mcu
+  profile: testbench       # shared hand-written assembly spans mixed ABIs
+
+  cores:
+    - ip: cv32e20         # harts 0-1 — hart 0 is the SMP orchestrator
+      isa: rv32emc
+      count: 2
+      role: titan
+
+    - ip: cv32e40x        # harts 2-3 — 4-stage big cores, poll-pop workers
+      isa: rv32imc
+      count: 2
+      role: titan
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: floonoc           # floogen AXI NoC + MOSAIC OBI<->AXI bridges
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

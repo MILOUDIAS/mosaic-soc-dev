@@ -1,0 +1,32 @@
+CAPI=2:
+
+name: mosaic:ip:serv
+description: "SERV — bit-serial RISC-V core (MOSAIC-SoC vendored copy)"
+license: ISC
+
+filesets:
+  core:
+    files:
+      - rtl/serv_bufreg.v
+      - rtl/serv_bufreg2.v
+      - rtl/serv_alu.v
+      - rtl/serv_csr.v
+      - rtl/serv_ctrl.v
+      - rtl/serv_decode.v
+      - rtl/serv_immdec.v
+      - rtl/serv_mem_if.v
+      - rtl/serv_rf_if.v
+      - rtl/serv_rf_ram_if.v
+      - rtl/serv_rf_ram.v
+      - rtl/serv_state.v
+      - rtl/serv_debug.v
+      - rtl/serv_top.v
+      - rtl/serv_rf_top.v
+      - rtl/serv_aligner.v
+      - rtl/serv_compdec.v
+    file_type: verilogSource
+targets:
+  default:
+    filesets:
+      - core
+    toplevel: serv_rf_top

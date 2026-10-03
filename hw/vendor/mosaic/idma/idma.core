@@ -1,0 +1,56 @@
+CAPI=2:
+
+name: mosaic:ip:idma
+description: "iDMA 0.6.5 — modular DMA engine (MOSAIC-SoC vendored, rw_obi backend + reg frontend)"
+license: SHL-0.51
+
+# Copyright 2023 ETH Zurich and University of Bologna.
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+
+filesets:
+  # Macro includes (idma/typedef.svh is `included by idma_xheep_wrapper.sv; the
+  # obi typedef macros come from the pulp-platform.org::obi dependency).
+  includes:
+    files:
+      - rtl/include/idma/typedef.svh: {is_include_file: true}
+      - rtl/include/idma/guard.svh: {is_include_file: true}
+    file_type: systemVerilogSource
+
+  files_rtl:
+    depend:
+      - pulp-platform.org::common_cells
+      - pulp-platform.org::register_interface
+      - pulp-platform.org::axi:0.39.8
+      - pulp-platform.org::obi
+      - x-heep:rtl:structs
+    files:
+      # Package
+      - rtl/idma_pkg.sv
+      # Backend primitives (rw_obi datapath closure)
+      - rtl/backend/idma_channel_coupler.sv
+      - rtl/backend/idma_dataflow_element.sv
+      - rtl/backend/idma_legalizer_page_splitter.sv
+      - rtl/backend/idma_obi_read.sv
+      - rtl/backend/idma_obi_write.sv
+      # Generated backend (rw_obi configuration)
+      - rtl/idma_transport_layer_rw_obi.sv
+      - rtl/idma_legalizer_rw_obi.sv
+      - rtl/idma_backend_rw_obi.sv
+      # Midend (ND)
+      - rtl/midend/idma_nd_midend.sv
+      # Frontend
+      - rtl/frontend/idma_transfer_id_gen.sv
+      # Generated register frontend (memory-mapped 3D descriptors)
+      - rtl/idma_reg32_3d_reg_pkg.sv
+      - rtl/idma_reg32_3d_reg_top.sv
+      - rtl/idma_reg_top.sv
+      # x-heep-compatible wrapper (drop-in replacement for dma_subsystem)
+      - idma_xheep_wrapper.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - includes
+      - files_rtl

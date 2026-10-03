@@ -1,0 +1,125 @@
+CAPI=2:
+
+name: mosaic:ip:cva6
+description: "CVA6 32-bit (cv32a65x-derived, WT cache subset) — MOSAIC-SoC vendored copy, SIM-ONLY"
+license: Apache-2.0 WITH SHL-2.0
+
+# Vendored from refs/IP_Cores_Catalog/cva6 (OpenHW Group CVA6), WT-cache
+# subset per core/Flist.cva6 MINUS: hpdcache tree, cvfpu (in-tree fpnew_pkg
+# suffices with RVF/RVD=0), cvxif example coprocessor (CvxifEn=0), std cache
+# subsystem, fpga-support, instr_tracer, corev_apu. The MOSAIC config package
+# core/include/cv32a6_mosaic_config_pkg.sv declares `cva6_config_pkg` (only
+# one CVA6 config per build). See also cva6.f (the ordered fragment consumed
+# by tb/mosaic_soc/gen_filelist.py for the Verilator sim flow).
+#
+# CVA6 is integrated for SIMULATION ONLY — it remains excluded from the
+# GF180MCU tapeout (area budget). See AGENTS.md §13.
+
+filesets:
+  core:
+    depend:
+      - pulp-platform.org::axi:0.39.8
+      - pulp-platform.org::common_cells:1.38.0
+      - pulp-platform.org::fpnew
+      - pulp-platform.org::tech_cells_generic
+      # cva6_sci.sv bridges CVA6's native AXI4 to OBI with
+      # xheep_axi_burst_to_obi, on EVERY bus -- CVA6 has no OBI port. This
+      # dependency used to be reachable only through core-v-mini-mcu's
+      # `files_rtl_floonoc` fileset, i.e. only when bus == floonoc, so
+      # `bus: obi` builds died with MODMISSING on the bridge. The need belongs
+      # to the core that has it, not to the fabric: mosaic:ip:berkeley
+      # declares mosaic:ip:tl_obi the same way, which is why Rocket/BOOM
+      # always worked.
+      - mosaic:ip:axi_obi
+    files:
+      - core/include/config_pkg.sv
+      - core/include/cv32a6_mosaic_config_pkg.sv
+      - core/include/riscv_pkg.sv
+      - core/include/ariane_pkg.sv
+      - core/include/wt_cache_pkg.sv
+      - core/include/std_cache_pkg.sv
+      - core/include/instr_tracer_pkg.sv
+      - core/include/build_config_pkg.sv
+      - core/include/aes_pkg.sv
+      - core/include/triggers_pkg.sv
+      - core/include/dummy_l15_pkg.sv
+      - core/include/cvxif_types.svh:
+          is_include_file: true
+      - core/include/rvfi_types.svh:
+          is_include_file: true
+      - core/cvxif_example/include/cvxif_instr_pkg.sv
+      - core/cva6.sv
+      - core/cva6_rvfi_probes.sv
+      - core/alu.sv
+      - core/alu_wrapper.sv
+      - core/aes.sv
+      - core/fpu_wrap.sv
+      - core/branch_unit.sv
+      - core/compressed_decoder.sv
+      - core/macro_decoder.sv
+      - core/controller.sv
+      - core/zcmt_decoder.sv
+      - core/csr_buffer.sv
+      - core/csr_regfile.sv
+      - core/trigger_module.sv
+      - core/decoder.sv
+      - core/ex_stage.sv
+      - core/instr_realign.sv
+      - core/id_stage.sv
+      - core/issue_read_operands.sv
+      - core/issue_stage.sv
+      - core/load_unit.sv
+      - core/load_store_unit.sv
+      - core/lsu_bypass.sv
+      - core/mult.sv
+      - core/multiplier.sv
+      - core/serdiv.sv
+      - core/perf_counters.sv
+      - core/ariane_regfile_ff.sv
+      - core/scoreboard.sv
+      - core/raw_checker.sv
+      - core/store_buffer.sv
+      - core/amo_buffer.sv
+      - core/store_unit.sv
+      - core/commit_stage.sv
+      - core/axi_shim.sv
+      - core/cva6_accel_first_pass_decoder_stub.sv
+      - core/acc_dispatcher.sv
+      - core/cva6_fifo_v3.sv
+      - core/cvxif_compressed_if_driver.sv
+      - core/cvxif_issue_register_commit_if_driver.sv
+      - core/cvxif_fu.sv
+      - core/frontend/btb.sv
+      - core/frontend/bht.sv
+      - core/frontend/bht2lvl.sv
+      - core/frontend/ras.sv
+      - core/frontend/instr_scan.sv
+      - core/frontend/instr_queue.sv
+      - core/frontend/frontend.sv
+      - core/cache_subsystem/wt_dcache_ctrl.sv
+      - core/cache_subsystem/wt_dcache_mem.sv
+      - core/cache_subsystem/wt_dcache_missunit.sv
+      - core/cache_subsystem/wt_dcache_wbuffer.sv
+      - core/cache_subsystem/wt_dcache.sv
+      - core/cache_subsystem/cva6_icache.sv
+      - core/cache_subsystem/wt_cache_subsystem.sv
+      - core/cache_subsystem/wt_axi_adapter.sv
+      - core/cache_subsystem/tag_cmp.sv
+      - core/pmp/src/pmp.sv
+      - core/pmp/src/pmp_entry.sv
+      - core/pmp/src/pmp_data_if.sv
+      - core/cva6_mmu/cva6_mmu.sv
+      - core/cva6_mmu/cva6_ptw.sv
+      - core/cva6_mmu/cva6_tlb.sv
+      - core/cva6_mmu/cva6_shared_tlb.sv
+      - common/local/util/tc_sram_wrapper.sv
+      - common/local/util/tc_sram_wrapper_cache_techno.sv
+      - common/local/util/sram.sv
+      - common/local/util/sram_cache.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - core
+    toplevel: cva6

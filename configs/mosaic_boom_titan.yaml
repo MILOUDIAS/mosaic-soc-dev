@@ -1,0 +1,41 @@
+# Singleton BOOM v3 as the simulation controller, plus one dormant SERV worker.
+# This proves the same uncached control-plane windows as Rocket on the larger
+# out-of-order tile.  It is intentionally simulation-only and physically
+# unqualified for the GF180 PoC.
+
+soc:
+  name: mosaic_boom_titan
+  pdk: gf180mcu
+  profile: testbench
+  target: simulation
+
+  cores:
+    - ip: boom
+      isa: rv64imc
+      count: 1
+      role: titan
+      boot_addr: 0x180
+
+    - ip: serv
+      isa: rv32i
+      count: 1
+      role: nano
+      boot_addr: 0x1000
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

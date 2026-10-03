@@ -1,0 +1,61 @@
+# MOSAIC minimum-area tapeout candidate.
+#
+# Every knob in this file is set for area, and each one costs something real.
+# The measured progression from the 3.903 mm2 starting point is in
+# docs/area_study_gf180_min_soc.md sections 8b through 8f.
+#
+# What this part can still do: boot from external QSPI flash, execute in place,
+# run three harts scheduled by the TDU, and talk over UART.
+# What it cannot do: be debugged over JTAG, take an external peripheral
+# interrupt, move bulk data with a DMA, or drive SPI as a general-purpose host.
+soc:
+  name: mosaic_tapeout_min
+  pdk: gf180mcu
+  target: simulation
+
+  # Three SERV cores. Measured 2.910 mm2 against 3.036 mm2 for a picoRV32
+  # TITAN -- a 0.126 mm2 / 4.1% difference. Core choice is the SMALLEST lever
+  # in this design: all three cores together are ~2% of the die.
+  cores:
+  - ip: serv
+    count: 1
+    role: titan
+    isa: rv32ic        # C is mandatory: the boot ROM contains compressed insns
+    with_csr: 1
+    compressed: 1
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40010000
+  - ip: serv
+    count: 1
+    role: atlas
+    isa: rv32i
+    boot_addr: 0x40011000
+
+  memory:
+    sram_kb: 0           # no on-chip RAM pool; code is XIP from flash
+    scratchpad_bytes: 512 # writable data only -- 4x gf180 sram128x8 = 0.4645 mm2
+    boot_rom_kb: 1
+
+  dma: none              # -0.355 mm2 (engine + 4 crossbar masters)
+  debug: false           # -0.512 mm2 together with plic; NO JTAG BRING-UP
+  plic: false            # no external peripheral interrupt reaches a hart
+
+  # Read-only XIP reader only: obi_spimemio (0.030 mm2) instead of the full
+  # spi_subsystem with its OpenTitan host (0.717 mm2). The part boots and
+  # executes from flash but cannot drive SPI as a general-purpose host and
+  # cannot write to the flash.
+  spi_mode: xip_only
+
+  bus: obi
+
+  scheduler:
+    tdu: true            # 0.068 mm2; this is the wake path, not optional here
+    mode: dynamic
+
+  # UART only. Dropping the user spi_host and gpio; rv_timer is still forced in
+  # by MULTICORE_USER_PERIPHERALS. The flash interface is NOT this list -- it
+  # is the always-on spi_subsystem, reduced to its XIP reader below.
+  peripherals: [uart]

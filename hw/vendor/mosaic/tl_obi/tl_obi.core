@@ -1,0 +1,22 @@
+CAPI=2:
+
+name: mosaic:ip:tl_obi
+description: "TileLink-C -> x-heep OBI window bridge (Rocket/BOOM SCI cores)"
+
+# Copyright 2026 MOSAIC-SoC contributors
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+#
+# Takes the x-heep OBI structs as `parameter type`s (never imports an OBI
+# package by name — pulp's obi_pkg collides with x-heep's; same policy as
+# mosaic:ip:axi_obi). Unit TB: tb/tl_obi/run.sh (self-checking, 21 checks).
+
+filesets:
+  core:
+    files:
+      - xheep_tilelink_to_obi.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - core

@@ -1,0 +1,56 @@
+# mosaic_titan_log.yaml — all-TITAN 4-core SMP demo on the bus:log fabric.
+#
+# Four big cores, no serial workers: 2x cv32e20 (harts 0-1) + 2x cv32e40x
+# (harts 2-3), every group role:titan so ALL cores boot free-running from the
+# boot ROM at the shared BOOT_ADDR (0x180). The demo program branches on
+# mhartid: hart 0 orchestrates (queues TDU task descriptors), harts 1-3
+# poll-pop the TDU task FIFO (TASK_POP returns 0 while empty, dequeues
+# atomically otherwise) and report per-slot sentinels — SMP-style cooperation
+# over the TDU instead of the dormant-worker wake pattern.
+#
+# Bus: two-tier logarithmic interconnect — fixed-latency tcdm_interconnect
+# over word-interleaved SRAM banks + the variable-latency crossbar for the
+# non-memory tier. Run with:
+#   MOSAIC_CFG=configs/mosaic_titan_log.yaml tb/mosaic_soc/run_titan.sh
+
+soc:
+  name: mosaic_titan_log
+  pdk: gf180mcu
+  profile: testbench       # shared hand-written assembly spans mixed ABIs
+
+  cores:
+    - ip: cv32e20         # harts 0-1 — hart 0 is the SMP orchestrator
+      isa: rv32emc
+      count: 2
+      role: titan
+
+    - ip: cv32e40x        # harts 2-3 — 4-stage big cores, poll-pop workers
+      isa: rv32imc
+      count: 2
+      role: titan
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: log               # two-tier: LIC over banked SRAM + varlat periph tier
+  bus_opts:
+    log:
+      topology: lic
+      # 13 SoC masters (2*4 harts + debug + 2*2 iDMA) would auto-bank to 16,
+      # but the x-heep TESTHARNESS adds EXT_XBAR_NMASTER=8 external masters
+      # to the same crossbar, and the LIC requires banks >= total masters
+      # (13+8=21) -> 32 banks x 1 KB.
+      num_banks: 32
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

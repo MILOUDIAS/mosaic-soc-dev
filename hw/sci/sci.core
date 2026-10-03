@@ -1,0 +1,108 @@
+CAPI=2:
+
+name: mosaic:ip:sci
+description: "MOSAIC-SoC Standard Core Interface (SCI) wrappers"
+
+# Copyright MOSAIC-SoC
+# SPDX-License-Identifier: SHL-0.51
+
+filesets:
+  # Legacy aggregate retained for direct users of mosaic:ip:sci without a
+  # resolved MOSAIC manifest.
+  files_rtl:
+    depend:
+      - x-heep:rtl:structs
+      - mosaic:ip:fazyrv
+      - mosaic:ip:servile
+      - mosaic:ip:ibex
+      - mosaic:ip:picorv32
+      - mosaic:ip:snitch
+      - mosaic:ip:cva6
+      - mosaic:ip:berkeley
+      - mosaic:ip:hazard3
+    files:
+    - fazyrv_sci.sv
+    - serv_sci.sv
+    - ibex_sci.sv
+    - picorv32_sci.sv
+    - snitch_sci.sv
+    - cva6_sci.sv
+    - rocket_sci.sv
+    - boom_sci.sv
+    - hazard3_sci.sv
+    file_type: systemVerilogSource
+
+  common:
+    depend:
+      - x-heep:rtl:structs
+
+  fazyrv:
+    depend:
+      - mosaic:ip:fazyrv
+    files:
+      - fazyrv_sci.sv
+    file_type: systemVerilogSource
+
+  serv:
+    depend:
+      - mosaic:ip:servile
+    files:
+      - serv_sci.sv
+    file_type: systemVerilogSource
+
+  ibex:
+    depend:
+      - mosaic:ip:ibex
+    files:
+      - ibex_sci.sv
+    file_type: systemVerilogSource
+
+  picorv32:
+    depend:
+      - mosaic:ip:picorv32
+    files:
+      - picorv32_sci.sv
+    file_type: systemVerilogSource
+
+  snitch:
+    depend:
+      - mosaic:ip:snitch
+    files:
+      - snitch_sci.sv
+    file_type: systemVerilogSource
+
+  cva6:
+    depend:
+      - mosaic:ip:cva6
+    files:
+      - cva6_sci.sv
+    file_type: systemVerilogSource
+
+  berkeley:
+    depend:
+      - mosaic:ip:berkeley
+    files:
+      - rocket_sci.sv
+      - boom_sci.sv
+    file_type: systemVerilogSource
+
+  hazard3:
+    depend:
+      - mosaic:ip:hazard3
+    files:
+      - hazard3_sci.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+    - "!mosaic_configured? (files_rtl)"
+    - mosaic_configured? (common)
+    - mosaic_fazyrv? (fazyrv)
+    - mosaic_serv? (serv)
+    - mosaic_ibex? (ibex)
+    - mosaic_picorv32? (picorv32)
+    - mosaic_snitch? (snitch)
+    - mosaic_cva6? (cva6)
+    - mosaic_berkeley? (berkeley)
+    - mosaic_hazard3? (hazard3)

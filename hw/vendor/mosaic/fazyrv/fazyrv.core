@@ -1,0 +1,39 @@
+CAPI=2:
+
+name: mosaic:ip:fazyrv
+description: "FazyRV — chunk-serial RISC-V core (MOSAIC-SoC vendored copy)"
+license: ISC
+
+filesets:
+  core:
+    files:
+      - rtl/fazyrv_hadd.v:
+          file_type: verilogSource
+      - rtl/fazyrv_fadd.v:
+          file_type: verilogSource
+      - rtl/fazyrv_cmp.v:
+          file_type: verilogSource
+      - rtl/fazyrv_alu.sv
+      - rtl/fazyrv_decode.sv
+      - rtl/fazyrv_decode_mem1.sv
+      - rtl/fazyrv_rvc.sv
+      - rtl/fazyrv_align.sv
+      - rtl/fazyrv_shftreg.sv
+      - rtl/fazyrv_ram_dp.sv
+      - rtl/fazyrv_ram_sp.sv
+      - rtl/fazyrv_csr.sv
+      - rtl/fazyrv_rf_lut.sv
+      - rtl/fazyrv_rf.sv
+      - rtl/fazyrv_pc.sv
+      - rtl/fazyrv_cntrl.sv
+      - rtl/fazyrv_spm_a.sv
+      - rtl/fazyrv_spm_d.sv
+      - rtl/fazyrv_core.sv
+      - rtl/fazyrv_top.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - core
+    toplevel: fazyrv_top

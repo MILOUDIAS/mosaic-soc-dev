@@ -1,0 +1,241 @@
+meta:
+  version: 3
+  # SIGNOFF configuration -- runs the FULL flow with NOTHING skipped.
+  #
+  # Every earlier experimental run skipped DRC, LVS, XOR and IR drop to shorten
+  # the loop. This one runs them, because "0 routing DRC" is a router result and
+  # says nothing about the signoff decks. It is still outside the
+  # PHYSICAL_BUNDLE attestation gate, so a clean result here is evidence, not
+  # an attested tapeout input.
+  #
+  # This config still runs OUTSIDE the PHYSICAL_BUNDLE preflight gate
+  # (flow/librelane/scripts/preflight.py), which exists to stop a stale or
+  # unattested RTL blob being mistaken for a tapeout input. Nothing produced
+  # from this file is attested, so a clean DRC/LVS here is evidence about the
+  # layout, not a tapeout sign-off. Use config_classic.yaml + a real bundle for
+  # that.
+  flow: Classic
+
+DESIGN_NAME: mosaic_block_a
+
+# Fed as SystemVerilog through slang rather than a pre-flattened blob: sv2v is
+# broken in this environment and the design elaborates cleanly under slang.
+USE_SLANG: true
+SLANG_ARGUMENTS:
+- --allow-use-before-declare
+- --relax-enum-conversions
+- --relax-string-conversions
+- --allow-hierarchical-const
+- --compat
+- vcs
+# Drops SystemVerilog assertions. Without this, slang emits $check cells (97
+# here, all from pulp rr_arb_tree) that have no physical cell to map to and
+# stall the flow at Checker.YosysUnmappedCells. Note slang already defines
+# SYNTHESIS implicitly (see --no-synthesis-define), so defining it by hand does
+# nothing -- these assertions are not `ifndef SYNTHESIS guarded.
+- --ignore-assertions
+
+# VERILOG_FILES and VERILOG_INCLUDE_DIRS are NOT listed here.
+#
+# They used to be ~526 absolute paths into a content-addressed FuseSoC build
+# directory, which meant two things: they went stale whenever the bundle hash
+# moved (any template or config edit), and on any other machine every one of
+# them pointed at a directory that does not exist -- so this config was not
+# reproducible by anyone but its author.
+#
+# flow/librelane/scripts/gen_filelist.py now resolves both lists from the
+# manifest at run time, exactly as tb/mosaic_soc/gen_filelist.py has always
+# done for the simulation flow. run_signoff.sh calls it and merges the result
+# into the config it hands to LibreLane.
+#
+# To harden by hand, generate the fragment first:
+#   python3 flow/librelane/scripts/gen_filelist.py "$PWD" \
+#       --manifest build/mosaic/<bundle>/manifest.json \
+#       --build-root build/mosaic/<bundle>/runs/fusesoc.*/build \
+#       --output /tmp/files.yaml
+
+# ORFS area script (strash; dch; map; topo; buffer; upsize; dnsize) instead of
+# the default 'AREA 0', whose fraig_store/retime/amap chain ran for over an hour
+# on this ~200k-cell design without finishing. This is a turnaround-time choice,
+# not a quality one -- expect a somewhat larger netlist than AREA 0 would give.
+SYNTH_STRATEGY: AREA 3
+
+# A synth check error fails this run. The fast configs set this false and
+# called the 108 remaining problems "pre-existing x-heep artifacts" -- that was
+# wrong, and turning the gate back on is what proved it. All 108 came from this
+# repo's own knob code (bug 28, 2026-08-01):
+#   107 x rv_timer_tl_h2d used-but-undriven, from the soc.ao_rv_timer: false
+#        branch absorbing h2d into an unused signal instead of tying it off.
+#     1 x a constant 1 conflicting with an $or output, traced to
+#        soc_ctrl_reg_top.sv:65 -- the soc.dma: none branch drove
+#        ao_peripheral_slv_rsp[DMA_CH0_IDX], and DMA_CH0_IDX (a DMA-internal
+#        channel index) is 0, the same slot as SOC_CTRL_IDX. soc_ctrl's read
+#        responses were being overwritten with error=1, rdata=0.
+# Both are fixed in ao_peripheral_subsystem.sv.tpl. The gate stays on so the
+# next one is found here rather than in a GDS.
+ERROR_ON_SYNTH_CHECKS: true
+
+# ---- ELECTRICAL REPAIR (max slew / cap / fanout) -----------------------------
+# The first signoff run closed timing at every corner and still reported 2 889
+# max-slew, 411 max-fanout and 27 max-cap violations. No DRC or LVS deck looks
+# at those, and setup/hold slack does not imply them.
+#
+# Why they matter, concretely: the worst measured slew was 6.07 ns, while every
+# cell in this library declares max_transition 4.0 ns and the largest
+# CHARACTERISED input transition is 4.756 ns. Beyond that the delay numbers are
+# extrapolated, so the timing model stops meaning anything -- which is why the
+# answer is to fix the design up to the library's limit, and to measure against
+# that limit rather than against a blanket default under it (see
+# MAX_TRANSITION_CONSTRAINT / MAX_CAPACITANCE_CONSTRAINT below).
+#
+# Root causes, from the first run's checks.rpt:
+#   * RUN_POST_GRT_DESIGN_REPAIR was FALSE. Repair ran only after global
+#     placement, on estimated wire loads; nothing repaired slew/cap again once
+#     CTS and real routing had happened. This is the main fix.
+#   * every max-fanout violation and the worst max-cap ones are on the CLOCK
+#     tree -- clkbuf leaves driving 16-18 sinks against MAX_FANOUT_CONSTRAINT
+#     10, trunk buffers at 0.47 pF against a 0.2 pF limit. CTS does not honour
+#     the design's fanout/cap constraints unless told, so it is told here.
+RUN_POST_GRT_DESIGN_REPAIR: true
+
+# Cluster at most 10 sinks per clock leaf, matching MAX_FANOUT_CONSTRAINT.
+# This is what took max-fanout violations from 411 to 1.
+CTS_SINK_CLUSTERING_SIZE: 10
+# CTS_MAX_CAP is deliberately NOT set. Forcing 0.15 pF in the previous pass
+# over-constrained the leaves without touching the trunk buffers on gated-clock
+# roots, and made max-cap WORSE (27 -> 35) by concentrating load on them.
+
+# ---- MEASURE AGAINST THE LIBRARY, NOT A BLANKET DEFAULT ----------------------
+# The previous pass chased 2 889 max-slew and 35 max-cap violations with
+# buffers. Most of them were not electrically real. What the PDK actually says:
+#
+#   * every one of the 215 cells declares  max_transition : 4.0 ns
+#   * max_capacitance is PER CELL, from 0.2394 pF (clkbuf_1) to 4.756 pF
+#     (clkbuf_20); clkbuf_16 is 3.813 pF
+#
+# LibreLane's defaults were MAX_TRANSITION_CONSTRAINT 3 ns and a blanket
+# set_max_capacitance of 0.2 pF on the whole design -- the latter tighter than
+# EVERY cell's own limit, including the weakest clock buffer. That is why the
+# worst "violation" was a clkbuf_16 flagged at 0.443 pF while being rated for
+# 3.813 pF: a cell at 12% of its capability, reported as failing.
+#
+# So the constraint is set to the library's own number rather than under it.
+# This is not relaxing a limit to make a report green -- 4.0 ns IS the limit the
+# cells are qualified to, and the previous pass's worst slew of 4.844 ns still
+# violates it. It stops the flow spending area on nets that were never failing,
+# so repair can work on the ones that are.
+MAX_TRANSITION_CONSTRAINT: 4
+# Unset: let each cell's own liberty max_capacitance apply. base.sdc only calls
+# set_max_capacitance `if {[info exists ...]}`, so a null here means per-cell
+# limits govern instead of one blanket number.
+MAX_CAPACITANCE_CONSTRAINT: null
+
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+# 20 MHz. The GF180 SRAM cut specifies Tcyc = 55.6 ns (~18 MHz), so the whole
+# design is paced by the scratchpad, not by the cores. Asking for the 50 MHz of
+# config_classic.yaml here would be asking the tool to close something the
+# macro cannot do.
+CLOCK_PORT: clk_i
+# 10 MHz. Was 50 ns, which is FASTER than the SRAM macro's 55.6 ns Tcyc and
+# failed slow-corner setup (-1.315 ns WNS, -8.129 ns TNS at max_ss_125C_4v50).
+# The macro is gone with lever 1, so nothing forces a tight period; relaxing it
+# lets the optimizer stop spending area on timing-repair buffers, which were
+# 0.326 mm2 -- 24% of all standard-cell area.
+CLOCK_PERIOD: 100
+
+VDD_NETS: [VDD]
+GND_NETS: [VSS]
+
+# Achieved utilization was only 54.7% against a target of 40, so the die was
+# 2.5x the placed area purely by configuration.
+# 65, not 75. FP_CORE_UTIL sizes the die from the PRE-CTS cell area; clock tree
+# and timing repair then add cells inside that fixed die. The previous run grew
+# 0.877 -> 1.346 mm2 (1.53x), so starting at 75% lands near 98% and
+# DPL-0036 "Detailed placement failed" -- the legalizer cannot place them.
+# 65% leaves headroom for the post-CTS growth to land near 75-80%.
+# 70. Path B cut synthesis area 1.061 -> 0.722 mm2, so the same absolute
+# post-CTS growth is a larger fraction of a smaller die. 70 targets ~83% final
+# utilization -- above the 77.8% that legalized last time, so DPL-0036 is a
+# real risk; if it fires, 65 is the safe fallback at ~1.34 mm2 die.
+# Block A is a FIXED slot: a quarter of the 2235 x 2235 um shared project
+# area = 1117.5 um square. Relative sizing gave 1107.9 x 1125.8 um -- the area
+# fitted (1.2473 vs 1.2488 mm2) but the die was 8.3 um too TALL for the slot.
+# An MPW block must match its slot exactly, so size it absolutely.
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 1117.5, 1117.5]
+# 16 um margin on every side for the ring. The DIE is fixed by the Block A slot,
+# so the ring is paid for out of core area -- and the electrical repair below
+# needs somewhere to put its buffers. The ring is narrowed from 5 um to 3 um to
+# fund it (offset 2 + 3 + spacing 2 + 3 = 10 um used of the 16 um margin, the
+# same 6 um clearance the 5 um ring had inside 20 um). Measured worst IR drop
+# was 104 uV on 5 V, so there are four orders of magnitude of margin to spend.
+CORE_AREA: [16, 16, 1101.5, 1101.5]
+PL_TARGET_DENSITY_PCT: 76
+GRT_ALLOW_CONGESTION: true
+
+# Measured hold WNS was +0.33 to +1.53 ns, i.e. margin to give back.
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.05
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.05
+
+PDN_VWIDTH: 5
+PDN_HWIDTH: 5
+PDN_VSPACING: 1
+PDN_HSPACING: 1
+PDN_VPITCH: 75
+PDN_HPITCH: 75
+
+# CORE RING RESTORED -- IR drop cannot be analysed without it.
+#
+# PDN_CORE_RING: false gave OpenROAD PSM no power source: "PSM-0069 Check
+# connectivity failed on VSS", 101354 power-grid violations. Signoff needs the
+# ring back, but the two obvious placements both fail:
+#   Metal2/Metal3 -> inside the router's own layer range (RT_MIN_LAYER Metal2,
+#                    RT_MAX_LAYER Metal5). Every detailed-routing violation
+#                    became a signal-to-VDD short on Metal3 along the ring.
+#   Metal4/Metal5 explicitly via PDN_CORE_{VERTICAL,HORIZONTAL}_LAYER ->
+#                    "PDN-0186 Connect between layers Metal4 and Metal5 already
+#                    exists in stdcell_grid".
+#
+# The fix is to NOT set PDN_CORE_*_LAYER at all. The PDN config script then
+# defaults the ring to PDN_VERTICAL/HORIZONTAL_LAYER (Metal4/Metal5, above the
+# router) and the three extra add_pdn_connect calls stay guarded behind
+# `info exists`, so no duplicate connect is emitted.
+#
+# PDN_CFG IS DELIBERATELY UNSET. Pointing it at ../pdn_cfg.tcl killed the first
+# signoff attempt at step 21 with "[PDN-1028] Either -instances, -cells, or
+# -default must be specified": that file is LibreLane's own script plus a
+# MOSAIC sram_grid appendix whose define_pdn_grid -macro named none of the
+# three. It is fixed now, but Block A binds no macro at all, so the built-in
+# script is both sufficient and one fewer variable. The core-ring logic quoted
+# above is LibreLane's and is identical either way.
+PDN_CORE_RING: true
+PDN_CORE_RING_VWIDTH: 3
+PDN_CORE_RING_HWIDTH: 3
+PDN_CORE_RING_VSPACING: 2
+PDN_CORE_RING_HSPACING: 2
+PDN_CORE_RING_VOFFSET: 2
+PDN_CORE_RING_HOFFSET: 2
+
+# The 256 B scratchpad: four 64x8 cuts, one per byte lane.
+
+# ---- SIGNOFF -----------------------------------------------------------------
+# Magic DRC must fail the flow on a real violation.
+ERROR_ON_MAGIC_DRC: true
+ERROR_ON_LINTER_WARNINGS: false
+
+# Inherited from config_classic.yaml: these suppress GF180 SRAM-macro DRC false
+# positives. This design binds no SRAM macro (128 B scratchpad is flip-flops),
+# so they are inert here -- kept only so a later macro-backed variant does not
+# rediscover them.
+MAGIC_GDS_FLATGLOB:
+- "*_CDNS_*"
+- "*$$*"
+- "nmos_5p0*"
+- "nmos_1p2*"
+- "pmos_5p0*"
+- "pmos_1p2*"
+- "via1_*"
+
+KLAYOUT_FILLER_OPTIONS:
+  Metal2_ignore_active: true

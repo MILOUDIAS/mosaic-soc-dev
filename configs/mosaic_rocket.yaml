@@ -1,0 +1,54 @@
+# mosaic_rocket.yaml — Rocket (RV64, SIM-ONLY) bring-up config for the
+# full-SoC TDU wake demo.
+#
+# Same 3-hart shape as mosaic_wake_demo.yaml (1 titan + 1 atlas@0x1000 +
+# 1 nano@0x2000). BOTH workers are extracted chipyard RocketTiles behind the
+# TileLink→OBI window bridge: they fetch their (rv32i-subset, RV64-compatible)
+# programs through the tile's cacheable DRAM alias 0x8000_0000|boot_addr and
+# write their sentinels through the uncached CLINT-range window
+# (0x0200_0000+off → 0x3000+off), so the demo firmware needs only a
+# rocket-specific worker .S with a different sentinel address constant.
+#
+# Rocket is EXCLUDED from the GF180MCU tapeout — simulation/architecture
+# exploration only (RV64 + caches do not fit the PoC area budget).
+
+soc:
+  name: mosaic_rocket
+  pdk: gf180mcu
+  profile: testbench
+
+  cores:
+    - ip: cv32e20         # TITAN — orchestrator; boots from the boot ROM (hart 0)
+      isa: rv32emc
+      count: 1
+      role: titan
+
+    - ip: rocket          # ATLAS worker (hart 1) — dormant until TDU wake
+      isa: rv64imc        # bridge does not implement A-extension transactions
+      count: 1
+      role: atlas
+      boot_addr: 0x1000   # SRAM reset PC; tile boots at 0x8000_1000 (alias)
+
+    - ip: rocket          # NANO worker (hart 2) — dormant until TDU wake
+      isa: rv64imc
+      count: 1
+      role: nano
+      boot_addr: 0x2000   # SRAM reset PC; tile boots at 0x8000_2000 (alias)
+
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+
+  dma: idma
+
+  bus: obi
+
+  scheduler:
+    tdu: true
+    mode: dynamic
+
+  peripherals:
+    - uart
+    - gpio
+    - timer
+    - spi

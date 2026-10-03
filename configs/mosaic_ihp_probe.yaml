@@ -1,0 +1,38 @@
+# The second-PDK probe. Deliberately the SMALLEST useful design -- one SERV
+# titan, XIP, no SRAM -- because the point is not the SoC, it is finding which
+# code paths have never seen a non-GF180 value.
+#
+# target: simulation, not tapeout. IHP is declarable (VALID_PDKS) and NOT
+# tapeout-qualified (TAPEOUT_PDK), and asking for tapeout here must be refused
+# with a reason -- that refusal is itself part of what this probe checks.
+soc:
+  name: mosaic_ihp_probe
+  pdk: ihp-sg13g2
+  target: simulation
+  cores:
+  - ip: serv
+    count: 1
+    role: titan
+    isa: rv32ic
+    with_csr: 1
+    compressed: 1
+  memory:
+    sram_kb: 0
+    scratchpad_bytes: 512
+    boot_rom_kb: 1
+  dma: none
+  debug: false
+  plic: false
+  bus: obi
+  scheduler:
+    tdu: false
+    mode: static
+  peripherals: [uart, spi]
+  objectives:
+    target_clock_mhz: 10
+    # MANDATED, not derived. Nothing on this technology has been measured, so
+    # the area model cannot choose a die -- it refuses, correctly. A number
+    # supplied here is an input, and the run is what will tell us whether it
+    # was a sane one. 700 um is a guess sized off GF180's 2-hart result with
+    # room to spare; being wrong is the expected outcome and is the point.
+    die_um: 700

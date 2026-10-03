@@ -1,0 +1,158 @@
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃ Macro/Instance ┃ Power Pins ┃ Disconnected ┃ Signal Pins              ┃ Disconnected       ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ mosaic_block_a │ VDD        │              │ boot_select_i            │ spi_flash_cs_o_IN  │
+│                │ VSS        │              │ boot_select_i_PD         │ spi_flash_sck_o_IN │
+│                │            │              │ boot_select_i_PU         │ status_o_IN[0]     │
+│                │            │              │ clk_i                    │ status_o_IN[1]     │
+│                │            │              │ clk_i_PD                 │ status_o_IN[2]     │
+│                │            │              │ clk_i_PU                 │ status_o_IN[3]     │
+│                │            │              │ execute_from_flash_i     │ status_o_IN[4]     │
+│                │            │              │ execute_from_flash_i_PD  │ status_o_IN[5]     │
+│                │            │              │ execute_from_flash_i_PU  │ status_o_IN[6]     │
+│                │            │              │ rst_ni                   │ status_valid_o_IN  │
+│                │            │              │ rst_ni_PD                │ uart_tx_o_IN       │
+│                │            │              │ rst_ni_PU                │                    │
+│                │            │              │ spi_flash_cs_o_CS        │                    │
+│                │            │              │ spi_flash_cs_o_IE        │                    │
+│                │            │              │ spi_flash_cs_o_OE        │                    │
+│                │            │              │ spi_flash_cs_o_OUT       │                    │
+│                │            │              │ spi_flash_cs_o_PD        │                    │
+│                │            │              │ spi_flash_cs_o_PDRV0     │                    │
+│                │            │              │ spi_flash_cs_o_PDRV1     │                    │
+│                │            │              │ spi_flash_cs_o_PU        │                    │
+│                │            │              │ spi_flash_cs_o_SL        │                    │
+│                │            │              │ spi_flash_sck_o_CS       │                    │
+│                │            │              │ spi_flash_sck_o_IE       │                    │
+│                │            │              │ spi_flash_sck_o_OE       │                    │
+│                │            │              │ spi_flash_sck_o_OUT      │                    │
+│                │            │              │ spi_flash_sck_o_PD       │                    │
+│                │            │              │ spi_flash_sck_o_PDRV0    │                    │
+│                │            │              │ spi_flash_sck_o_PDRV1    │                    │
+│                │            │              │ spi_flash_sck_o_PU       │                    │
+│                │            │              │ spi_flash_sck_o_SL       │                    │
+│                │            │              │ spi_flash_sd_io_CS[0]    │                    │
+│                │            │              │ spi_flash_sd_io_CS[1]    │                    │
+│                │            │              │ spi_flash_sd_io_CS[2]    │                    │
+│                │            │              │ spi_flash_sd_io_CS[3]    │                    │
+│                │            │              │ spi_flash_sd_io_IE[0]    │                    │
+│                │            │              │ spi_flash_sd_io_IE[1]    │                    │
+│                │            │              │ spi_flash_sd_io_IE[2]    │                    │
+│                │            │              │ spi_flash_sd_io_IE[3]    │                    │
+│                │            │              │ spi_flash_sd_io_IN[0]    │                    │
+│                │            │              │ spi_flash_sd_io_IN[1]    │                    │
+│                │            │              │ spi_flash_sd_io_IN[2]    │                    │
+│                │            │              │ spi_flash_sd_io_IN[3]    │                    │
+│                │            │              │ spi_flash_sd_io_OE[0]    │                    │
+│                │            │              │ spi_flash_sd_io_OE[1]    │                    │
+│                │            │              │ spi_flash_sd_io_OE[2]    │                    │
+│                │            │              │ spi_flash_sd_io_OE[3]    │                    │
+│                │            │              │ spi_flash_sd_io_OUT[0]   │                    │
+│                │            │              │ spi_flash_sd_io_OUT[1]   │                    │
+│                │            │              │ spi_flash_sd_io_OUT[2]   │                    │
+│                │            │              │ spi_flash_sd_io_OUT[3]   │                    │
+│                │            │              │ spi_flash_sd_io_PDRV0[0] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV0[1] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV0[2] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV0[3] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV1[0] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV1[1] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV1[2] │                    │
+│                │            │              │ spi_flash_sd_io_PDRV1[3] │                    │
+│                │            │              │ spi_flash_sd_io_PD[0]    │                    │
+│                │            │              │ spi_flash_sd_io_PD[1]    │                    │
+│                │            │              │ spi_flash_sd_io_PD[2]    │                    │
+│                │            │              │ spi_flash_sd_io_PD[3]    │                    │
+│                │            │              │ spi_flash_sd_io_PU[0]    │                    │
+│                │            │              │ spi_flash_sd_io_PU[1]    │                    │
+│                │            │              │ spi_flash_sd_io_PU[2]    │                    │
+│                │            │              │ spi_flash_sd_io_PU[3]    │                    │
+│                │            │              │ spi_flash_sd_io_SL[0]    │                    │
+│                │            │              │ spi_flash_sd_io_SL[1]    │                    │
+│                │            │              │ spi_flash_sd_io_SL[2]    │                    │
+│                │            │              │ spi_flash_sd_io_SL[3]    │                    │
+│                │            │              │ status_o_CS[0]           │                    │
+│                │            │              │ status_o_CS[1]           │                    │
+│                │            │              │ status_o_CS[2]           │                    │
+│                │            │              │ status_o_CS[3]           │                    │
+│                │            │              │ status_o_CS[4]           │                    │
+│                │            │              │ status_o_CS[5]           │                    │
+│                │            │              │ status_o_CS[6]           │                    │
+│                │            │              │ status_o_IE[0]           │                    │
+│                │            │              │ status_o_IE[1]           │                    │
+│                │            │              │ status_o_IE[2]           │                    │
+│                │            │              │ status_o_IE[3]           │                    │
+│                │            │              │ status_o_IE[4]           │                    │
+│                │            │              │ status_o_IE[5]           │                    │
+│                │            │              │ status_o_IE[6]           │                    │
+│                │            │              │ status_o_OE[0]           │                    │
+│                │            │              │ status_o_OE[1]           │                    │
+│                │            │              │ status_o_OE[2]           │                    │
+│                │            │              │ status_o_OE[3]           │                    │
+│                │            │              │ status_o_OE[4]           │                    │
+│                │            │              │ status_o_OE[5]           │                    │
+│                │            │              │ status_o_OE[6]           │                    │
+│                │            │              │ status_o_OUT[0]          │                    │
+│                │            │              │ status_o_OUT[1]          │                    │
+│                │            │              │ status_o_OUT[2]          │                    │
+│                │            │              │ status_o_OUT[3]          │                    │
+│                │            │              │ status_o_OUT[4]          │                    │
+│                │            │              │ status_o_OUT[5]          │                    │
+│                │            │              │ status_o_OUT[6]          │                    │
+│                │            │              │ status_o_PDRV0[0]        │                    │
+│                │            │              │ status_o_PDRV0[1]        │                    │
+│                │            │              │ status_o_PDRV0[2]        │                    │
+│                │            │              │ status_o_PDRV0[3]        │                    │
+│                │            │              │ status_o_PDRV0[4]        │                    │
+│                │            │              │ status_o_PDRV0[5]        │                    │
+│                │            │              │ status_o_PDRV0[6]        │                    │
+│                │            │              │ status_o_PDRV1[0]        │                    │
+│                │            │              │ status_o_PDRV1[1]        │                    │
+│                │            │              │ status_o_PDRV1[2]        │                    │
+│                │            │              │ status_o_PDRV1[3]        │                    │
+│                │            │              │ status_o_PDRV1[4]        │                    │
+│                │            │              │ status_o_PDRV1[5]        │                    │
+│                │            │              │ status_o_PDRV1[6]        │                    │
+│                │            │              │ status_o_PD[0]           │                    │
+│                │            │              │ status_o_PD[1]           │                    │
+│                │            │              │ status_o_PD[2]           │                    │
+│                │            │              │ status_o_PD[3]           │                    │
+│                │            │              │ status_o_PD[4]           │                    │
+│                │            │              │ status_o_PD[5]           │                    │
+│                │            │              │ status_o_PD[6]           │                    │
+│                │            │              │ status_o_PU[0]           │                    │
+│                │            │              │ status_o_PU[1]           │                    │
+│                │            │              │ status_o_PU[2]           │                    │
+│                │            │              │ status_o_PU[3]           │                    │
+│                │            │              │ status_o_PU[4]           │                    │
+│                │            │              │ status_o_PU[5]           │                    │
+│                │            │              │ status_o_PU[6]           │                    │
+│                │            │              │ status_o_SL[0]           │                    │
+│                │            │              │ status_o_SL[1]           │                    │
+│                │            │              │ status_o_SL[2]           │                    │
+│                │            │              │ status_o_SL[3]           │                    │
+│                │            │              │ status_o_SL[4]           │                    │
+│                │            │              │ status_o_SL[5]           │                    │
+│                │            │              │ status_o_SL[6]           │                    │
+│                │            │              │ status_valid_o_CS        │                    │
+│                │            │              │ status_valid_o_IE        │                    │
+│                │            │              │ status_valid_o_OE        │                    │
+│                │            │              │ status_valid_o_OUT       │                    │
+│                │            │              │ status_valid_o_PD        │                    │
+│                │            │              │ status_valid_o_PDRV0     │                    │
+│                │            │              │ status_valid_o_PDRV1     │                    │
+│                │            │              │ status_valid_o_PU        │                    │
+│                │            │              │ status_valid_o_SL        │                    │
+│                │            │              │ uart_rx_i                │                    │
+│                │            │              │ uart_rx_i_PD             │                    │
+│                │            │              │ uart_rx_i_PU             │                    │
+│                │            │              │ uart_tx_o_CS             │                    │
+│                │            │              │ uart_tx_o_IE             │                    │
+│                │            │              │ uart_tx_o_OE             │                    │
+│                │            │              │ uart_tx_o_OUT            │                    │
+│                │            │              │ uart_tx_o_PD             │                    │
+│                │            │              │ uart_tx_o_PDRV0          │                    │
+│                │            │              │ uart_tx_o_PDRV1          │                    │
+│                │            │              │ uart_tx_o_PU             │                    │
+│                │            │              │ uart_tx_o_SL             │                    │
+└────────────────┴────────────┴──────────────┴──────────────────────────┴────────────────────┘

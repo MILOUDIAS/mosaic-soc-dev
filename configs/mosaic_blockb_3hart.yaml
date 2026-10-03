@@ -1,0 +1,47 @@
+soc:
+  schema: mosaic/v1
+  name: mosaic_blockb_3hart
+  pdk: gf180mcu
+  target: rtl
+  cores:
+  - ip: serv
+    count: 1
+    role: titan
+    isa: rv32ic
+    with_csr: 1
+    compressed: 1
+  - ip: serv
+    count: 2
+    role: atlas
+    isa: rv32i
+    with_csr: 0
+    boot_addr: 1073807360
+  memory:
+    sram_kb: 0
+    boot_rom_kb: 1
+    scratchpad_bytes: 128
+  dma: none
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals:
+  - uart
+  debug: false
+  plic: false
+  spi_mode: xip_only
+  multicore_timer: false
+  gpio_ao: false
+  ao_rv_timer: false
+  ao_fast_intr: false
+  objectives:
+    # 20 MHz, adopted 2026-09-12 from the optimizer's own search
+    # (`physical-intent optimize`, 5 runs, ~10 h, no person in the loop). It
+    # walked 100 -> 80 -> 66.7 -> 50 ns, each step a single-variable
+    # CLOCK_PERIOD experiment. At a 50 ns target this design closes with
+    # +5.87 ns of setup slack and passes every gate, including DRC and LVS,
+    # for 0.010% more logic area and 0.032% more energy per cycle than the
+    # 10 MHz it used to ask for. The estimated ceiling is 22.66 MHz, and the
+    # achieved path was still falling with the target, so 40 ns is untried.
+    # Evidence: runs/opt_blockb_clock_03. GLS has NOT run at this clock.
+    target_clock_mhz: 20

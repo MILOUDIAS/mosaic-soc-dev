@@ -1,0 +1,32 @@
+soc:
+  name: mosaic_hazard3
+  pdk: gf180mcu
+  target: rtl
+  cores:
+  - ip: cv32e20
+    isa: rv32emc
+    count: 1
+    role: titan
+  - ip: hazard3
+    isa: rv32imc
+    count: 1
+    role: atlas
+    boot_addr: 4096
+  - ip: hazard3
+    isa: rv32imc
+    count: 1
+    role: nano
+    boot_addr: 8192
+  memory:
+    sram_kb: 32
+    boot_rom_kb: 2
+  dma: idma
+  bus: obi
+  scheduler:
+    tdu: true
+    mode: dynamic
+  peripherals:
+  - uart
+  - gpio
+  - timer
+  - spi

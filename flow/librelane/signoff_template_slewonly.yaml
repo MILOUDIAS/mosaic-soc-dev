@@ -1,0 +1,330 @@
+# Signoff hardening TEMPLATE -- the design-INDEPENDENT part.
+#
+# Phase 1 measured which knobs a second design actually needs. Of 41 keys in
+# the Block A signoff config, 35 were byte-identical in Block B's, and the
+# differences were the design name and the floorplan. The PDN geometry, the
+# hold-slack margins, the core-ring arrangement, the slang flags and every
+# check setting carried over untouched and produced a clean result on a design
+# they were never tuned for.
+#
+# So those 35 live here, comments and all, and the five design-specific keys --
+# DESIGN_NAME, CLOCK_PERIOD, FP_SIZING, DIE_AREA, CORE_AREA -- are appended by
+# `oh-my-soc physical-intent harden`, which derives them from the SoC config
+# and its objectives. CLOCK_PERIOD was identical in both designs only because
+# both chose 10 MHz; it is derived, not invariant.
+#
+# Editing a value here changes it for EVERY design. If a knob turns out to be
+# design-specific after all, that is a finding: move it into the derivation
+# rather than forking this file.
+
+meta:
+  version: 3
+  # SIGNOFF configuration -- runs the FULL flow with NOTHING skipped.
+  #
+  # Every earlier experimental run skipped DRC, LVS, XOR and IR drop to shorten
+  # the loop. This one runs them, because "0 routing DRC" is a router result and
+  # says nothing about the signoff decks. It is still outside the
+  # PHYSICAL_BUNDLE attestation gate, so a clean result here is evidence, not
+  # an attested tapeout input.
+  #
+  # This config still runs OUTSIDE the PHYSICAL_BUNDLE preflight gate
+  # (flow/librelane/scripts/preflight.py), which exists to stop a stale or
+  # unattested RTL blob being mistaken for a tapeout input. Nothing produced
+  # from this file is attested, so a clean DRC/LVS here is evidence about the
+  # layout, not a tapeout sign-off. Use config_classic.yaml + a real bundle for
+  # that.
+  flow: Classic
+
+# Fed as SystemVerilog through slang rather than a pre-flattened blob: sv2v is
+# broken in this environment and the design elaborates cleanly under slang.
+USE_SLANG: true
+SLANG_ARGUMENTS:
+- --allow-use-before-declare
+- --relax-enum-conversions
+- --relax-string-conversions
+- --allow-hierarchical-const
+- --compat
+- vcs
+# Drops SystemVerilog assertions. Without this, slang emits $check cells (97
+# here, all from pulp rr_arb_tree) that have no physical cell to map to and
+# stall the flow at Checker.YosysUnmappedCells. Note slang already defines
+# SYNTHESIS implicitly (see --no-synthesis-define), so defining it by hand does
+# nothing -- these assertions are not `ifndef SYNTHESIS guarded.
+- --ignore-assertions
+
+# VERILOG_FILES and VERILOG_INCLUDE_DIRS are NOT listed here.
+#
+# They used to be ~526 absolute paths into a content-addressed FuseSoC build
+# directory, which meant two things: they went stale whenever the bundle hash
+# moved (any template or config edit), and on any other machine every one of
+# them pointed at a directory that does not exist -- so this config was not
+# reproducible by anyone but its author.
+#
+# flow/librelane/scripts/gen_filelist.py now resolves both lists from the
+# manifest at run time, exactly as tb/mosaic_soc/gen_filelist.py has always
+# done for the simulation flow. run_signoff.sh calls it and merges the result
+# into the config it hands to LibreLane.
+#
+# To harden by hand, generate the fragment first:
+#   python3 flow/librelane/scripts/gen_filelist.py "$PWD" \
+#       --manifest build/mosaic/<bundle>/manifest.json \
+#       --build-root build/mosaic/<bundle>/runs/fusesoc.*/build \
+#       --output /tmp/files.yaml
+
+# ORFS area script (strash; dch; map; topo; buffer; upsize; dnsize) instead of
+# the default 'AREA 0', whose fraig_store/retime/amap chain ran for over an hour
+# on this ~200k-cell design without finishing. This is a turnaround-time choice,
+# not a quality one -- expect a somewhat larger netlist than AREA 0 would give.
+SYNTH_STRATEGY: AREA 3
+
+# A synth check error fails this run. The fast configs set this false and
+# called the 108 remaining problems "pre-existing x-heep artifacts" -- that was
+# wrong, and turning the gate back on is what proved it. All 108 came from this
+# repo's own knob code (bug 28, 2026-08-01):
+#   107 x rv_timer_tl_h2d used-but-undriven, from the soc.ao_rv_timer: false
+#        branch absorbing h2d into an unused signal instead of tying it off.
+#     1 x a constant 1 conflicting with an $or output, traced to
+#        soc_ctrl_reg_top.sv:65 -- the soc.dma: none branch drove
+#        ao_peripheral_slv_rsp[DMA_CH0_IDX], and DMA_CH0_IDX (a DMA-internal
+#        channel index) is 0, the same slot as SOC_CTRL_IDX. soc_ctrl's read
+#        responses were being overwritten with error=1, rdata=0.
+# Both are fixed in ao_peripheral_subsystem.sv.tpl. The gate stays on so the
+# next one is found here rather than in a GDS.
+ERROR_ON_SYNTH_CHECKS: true
+
+# ---- ELECTRICAL REPAIR (max slew / cap / fanout) -----------------------------
+# The first signoff run closed timing at every corner and still reported 2 889
+# max-slew, 411 max-fanout and 27 max-cap violations. No DRC or LVS deck looks
+# at those, and setup/hold slack does not imply them.
+#
+# Why they matter, concretely: the worst measured slew was 6.07 ns, while every
+# cell in this library declares max_transition 4.0 ns and the largest
+# CHARACTERISED input transition is 4.756 ns. Beyond that the delay numbers are
+# extrapolated, so the timing model stops meaning anything -- which is why the
+# answer is to fix the design up to the library's limit, and to measure against
+# that limit rather than against a blanket default under it (see
+# MAX_TRANSITION_CONSTRAINT / MAX_CAPACITANCE_CONSTRAINT below).
+#
+# Root causes, from the first run's checks.rpt:
+#   * RUN_POST_GRT_DESIGN_REPAIR was FALSE. Repair ran only after global
+#     placement, on estimated wire loads; nothing repaired slew/cap again once
+#     CTS and real routing had happened. This is the main fix.
+#   * every max-fanout violation and the worst max-cap ones are on the CLOCK
+#     tree -- clkbuf leaves driving 16-18 sinks against MAX_FANOUT_CONSTRAINT
+#     10, trunk buffers at 0.47 pF against a 0.2 pF limit. CTS does not honour
+#     the design's fanout/cap constraints unless told, so it is told here.
+RUN_POST_GRT_DESIGN_REPAIR: true
+
+# ---- OPTIMISE THE CORNER YOU SIGN OFF AT -------------------------------------
+# The above took Block A's max-slew count from 2 889 to 591, and then it stuck:
+# 591, 845, 1 459, 1 018 across four runs, waived every time. The reason was not
+# the repair settings. It was this, in librelane/steps/openroad.py:
+#
+#     corners = self.config["PNR_CORNERS"] or [self.config["DEFAULT_CORNER"]]
+#
+# PNR_CORNERS was unset and no PDK supplies it, so EVERY OpenROAD optimisation
+# step -- resizing, CTS, post-GRT repair -- ran against `nom_tt_025C_5v00`
+# alone, while signoff STA checked all nine corners. The slow corners were
+# measured and never optimised.
+#
+# The evidence is unambiguous: on mosaic_block_c every one of the 1 285
+# violations is in a `*_ss_125C_4v50` corner and there are ZERO in any tt or ff
+# corner. Slow silicon at 125 C on a 4.5 V rail drives far weaker than typical
+# at 25 C and 5.0 V, and nothing ever asked the resizer to care.
+#
+# (LibreLane's own help text for PNR_CORNERS says "If unspecified, the value
+# for STA_CORNERS from the PDK will be used". The code says DEFAULT_CORNER.
+# The documentation contradicts the implementation, which is why this went
+# unnoticed for four signoff runs including the taped-out one.)
+#
+# Three corners, not nine -- each is there for a reason and PnR time scales
+# with the count:
+#   * nom_tt_025C_5v00  the previous sole corner, kept as the typical case
+#   * max_ss_125C_4v50  worst setup AND worst slew: slowest silicon, hottest,
+#                       lowest rail, maximum RC parasitics. This is the one
+#                       that was being signed off against but never optimised.
+#   * min_ff_n40C_5v50  worst hold: fastest silicon, coldest, minimum
+#                       parasitics. Included because hold slack is +0.071 ns on
+#                       Block C, and adding slew buffering without a fast
+#                       corner in the optimisation set is how you fix slew and
+#                       break hold.
+#
+# MEASURED, and it is NOT the fix. blockc_mc against blockc_u65: max-slew went
+# 1018 -> 826 (-19%), the worst slack got WORSE (-1.644 -> -2.595 ns), hold
+# fell +0.0708 -> +0.0420 ns, and one max-cap and one max-fanout violation
+# appeared. Kept because optimising the corner you sign off at is right in
+# principle -- the single-corner run's mid-PnR STA never even looked at `ss` --
+# but do not mistake this for the remedy.
+#
+# The dominant cause is elsewhere, from blockc_mc's own logs at max_ss:
+#
+#     repair_design finds                                47 violations
+#     STA after repair, before detailed routing           11
+#     STA after detailed routing and extraction          826
+#
+# Repair fixes slew against GLOBALLY-ROUTED ESTIMATED parasitics; detailed
+# routing then makes 75x more, and the Classic flow has no post-DRT repair
+# because that would invalidate the routes. The next lever is
+# GRT_DESIGN_REPAIR_MAX_SLEW_PCT (currently 10), raised so repair
+# over-corrects against the estimate.
+#
+# ---- REPAIR AGAINST THE PARASITICS YOU WILL GET, NOT THE ONES YOU ESTIMATE ---
+# The margin is sized from the measured estimate-to-extracted error, not
+# guessed. The 11 pins that violate BOTH before and after detailed routing, at
+# max_ss_125C_4v50:
+#
+#     _55370_/ZN  4.001 -> 6.594   x1.65
+#     _69192_/ZN  4.918 -> 5.896   x1.20
+#     _68972_/ZN  4.499 -> 5.534   x1.23
+#     _69119_/ZN  4.241 -> 4.884   x1.15      (plus the max_cap*/wire* copies)
+#
+# Extraction makes slew 1.15-1.65x worse than the global-route estimate that
+# repair works from. Repair already targets 4.0 * (1 - 10/100) = 3.6 ns, and
+# post-route the median lands at 4.22 and the worst at 6.59.
+#
+# Required margin is m >= 100 * (1 - 1/ratio):
+#     median  ratio 1.17  ->  15%
+#     p90     ratio 1.23  ->  19%
+#     worst   ratio 1.83  ->  45%
+#
+# 45 targets 2.2 ns during repair so the worst tail lands inside 4.0 after
+# extraction.
+#
+# MEASURED, and this one worked. blockc_slew45 against blockc_mc, one variable,
+# die pinned to 1477.7 um by a check that refuses to launch if it moved:
+#
+#     max-slew violations   826  ->    12      (-98.5%)
+#     max-cap                 1  ->     0
+#     max-fanout              4  ->     4
+#     setup WS           +20.597 -> +20.657 ns  (better)
+#     hold WS            +0.0420 -> +0.0435 ns  (better)
+#     logic area       1,359,799 -> 1,406,117   (+3.41%)
+#     timing repair buffers 2154 ->  4401       (the mechanism, doubled)
+#     achieved utilisation 0.654 -> 0.676
+#
+# DRC, LVS, XOR, antenna, routing DRC and power-grid all stayed 0, and it
+# routed. 3.41% of area for a 98.5% reduction, with setup and hold both
+# slightly BETTER -- the extra buffer delay costs nothing against +20 ns of
+# setup margin, and it helps hold.
+#
+# The 12 survivors are 3 distinct nets: worst 4.267 ns (6.7% over), the rest
+# ~1% over, all inside the library's characterised 4.756 ns range -- which was
+# the whole reason to care. That is a defensible waiver. 826 was not.
+#
+# NOTE the asymmetry this replaces: DESIGN_REPAIR_MAX_SLEW_PCT (post-GPL, on
+# the crudest estimates) was 20 while the post-GRT repair -- the LAST one
+# before routing -- was 10. The least conservative margin sat closest to the
+# thing it could not see. Post-GPL is deliberately left at 20 so this run
+# changes one variable.
+GRT_DESIGN_REPAIR_MAX_SLEW_PCT: 45
+
+# Cluster at most 10 sinks per clock leaf, matching MAX_FANOUT_CONSTRAINT.
+# This is what took max-fanout violations from 411 to 1.
+CTS_SINK_CLUSTERING_SIZE: 10
+# CTS_MAX_CAP is deliberately NOT set. Forcing 0.15 pF in the previous pass
+# over-constrained the leaves without touching the trunk buffers on gated-clock
+# roots, and made max-cap WORSE (27 -> 35) by concentrating load on them.
+
+# ---- MEASURE AGAINST THE LIBRARY, NOT A BLANKET DEFAULT ----------------------
+# The previous pass chased 2 889 max-slew and 35 max-cap violations with
+# buffers. Most of them were not electrically real. What the PDK actually says:
+#
+#   * every one of the 215 cells declares  max_transition : 4.0 ns
+#   * max_capacitance is PER CELL, from 0.2394 pF (clkbuf_1) to 4.756 pF
+#     (clkbuf_20); clkbuf_16 is 3.813 pF
+#
+# LibreLane's defaults were MAX_TRANSITION_CONSTRAINT 3 ns and a blanket
+# set_max_capacitance of 0.2 pF on the whole design -- the latter tighter than
+# EVERY cell's own limit, including the weakest clock buffer. That is why the
+# worst "violation" was a clkbuf_16 flagged at 0.443 pF while being rated for
+# 3.813 pF: a cell at 12% of its capability, reported as failing.
+#
+# So the constraint is set to the library's own number rather than under it.
+# This is not relaxing a limit to make a report green -- 4.0 ns IS the limit the
+# cells are qualified to, and the previous pass's worst slew of 4.844 ns still
+# violates it. It stops the flow spending area on nets that were never failing,
+# so repair can work on the ones that are.
+MAX_TRANSITION_CONSTRAINT: 4
+# Unset: let each cell's own liberty max_capacitance apply. base.sdc only calls
+# set_max_capacitance `if {[info exists ...]}`, so a null here means per-cell
+# limits govern instead of one blanket number.
+MAX_CAPACITANCE_CONSTRAINT: null
+
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+# 20 MHz. The GF180 SRAM cut specifies Tcyc = 55.6 ns (~18 MHz), so the whole
+# design is paced by the scratchpad, not by the cores. Asking for the 50 MHz of
+# config_classic.yaml here would be asking the tool to close something the
+# macro cannot do.
+CLOCK_PORT: clk_i
+
+VDD_NETS: [VDD]
+GND_NETS: [VSS]
+PL_TARGET_DENSITY_PCT: 76
+GRT_ALLOW_CONGESTION: true
+
+# Measured hold WNS was +0.33 to +1.53 ns, i.e. margin to give back.
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.05
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.05
+
+PDN_VWIDTH: 5
+PDN_HWIDTH: 5
+PDN_VSPACING: 1
+PDN_HSPACING: 1
+PDN_VPITCH: 75
+PDN_HPITCH: 75
+
+# CORE RING RESTORED -- IR drop cannot be analysed without it.
+#
+# PDN_CORE_RING: false gave OpenROAD PSM no power source: "PSM-0069 Check
+# connectivity failed on VSS", 101354 power-grid violations. Signoff needs the
+# ring back, but the two obvious placements both fail:
+#   Metal2/Metal3 -> inside the router's own layer range (RT_MIN_LAYER Metal2,
+#                    RT_MAX_LAYER Metal5). Every detailed-routing violation
+#                    became a signal-to-VDD short on Metal3 along the ring.
+#   Metal4/Metal5 explicitly via PDN_CORE_{VERTICAL,HORIZONTAL}_LAYER ->
+#                    "PDN-0186 Connect between layers Metal4 and Metal5 already
+#                    exists in stdcell_grid".
+#
+# The fix is to NOT set PDN_CORE_*_LAYER at all. The PDN config script then
+# defaults the ring to PDN_VERTICAL/HORIZONTAL_LAYER (Metal4/Metal5, above the
+# router) and the three extra add_pdn_connect calls stay guarded behind
+# `info exists`, so no duplicate connect is emitted.
+#
+# PDN_CFG IS DELIBERATELY UNSET. Pointing it at ../pdn_cfg.tcl killed the first
+# signoff attempt at step 21 with "[PDN-1028] Either -instances, -cells, or
+# -default must be specified": that file is LibreLane's own script plus a
+# MOSAIC sram_grid appendix whose define_pdn_grid -macro named none of the
+# three. It is fixed now, but Block A binds no macro at all, so the built-in
+# script is both sufficient and one fewer variable. The core-ring logic quoted
+# above is LibreLane's and is identical either way.
+PDN_CORE_RING: true
+PDN_CORE_RING_VWIDTH: 3
+PDN_CORE_RING_HWIDTH: 3
+PDN_CORE_RING_VSPACING: 2
+PDN_CORE_RING_HSPACING: 2
+PDN_CORE_RING_VOFFSET: 2
+PDN_CORE_RING_HOFFSET: 2
+
+# The 256 B scratchpad: four 64x8 cuts, one per byte lane.
+
+# ---- SIGNOFF -----------------------------------------------------------------
+# Magic DRC must fail the flow on a real violation.
+ERROR_ON_MAGIC_DRC: true
+ERROR_ON_LINTER_WARNINGS: false
+
+# Inherited from config_classic.yaml: these suppress GF180 SRAM-macro DRC false
+# positives. This design binds no SRAM macro (128 B scratchpad is flip-flops),
+# so they are inert here -- kept only so a later macro-backed variant does not
+# rediscover them.
+MAGIC_GDS_FLATGLOB:
+- "*_CDNS_*"
+- "*$$*"
+- "nmos_5p0*"
+- "nmos_1p2*"
+- "pmos_5p0*"
+- "pmos_1p2*"
+- "via1_*"
+
+KLAYOUT_FILLER_OPTIONS:
+  Metal2_ignore_active: true
