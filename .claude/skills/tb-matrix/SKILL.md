@@ -5,7 +5,7 @@ description: >
   every axis (cores x roles x counts x fabrics x ISA/parameter variants x
   scheduler x memory x peripherals) from the core registry, generate a
   pairwise covering array plus curated sim corners, and gate every config
-  through validate -> mcu-gen render -> the all-hart liveness sim. Use it to
+  through validate -> mosaic-gen render -> the all-hart liveness sim. Use it to
   prove ANY generated MOSAIC SoC works, not just the shipped demo configs.
 ---
 
@@ -20,8 +20,8 @@ wrapper-smith automatically enters the matrix — never edit the axes by hand.
 ```bash
 python3 -m harness --json tb-matrix axes                  # show the derived axes
 python3 -m harness --json tb-matrix plan --tier sim       # enumerate, no execution
-python3 -m harness --json tb-matrix run  --tier validate  # oracle: all ~250 configs, seconds
-python3 -m harness --json tb-matrix run  --tier render [--limit N]   # mcu-gen gate
+python3 -m harness --json tb-matrix run  --tier validate  # oracle: all 248 configs, seconds
+python3 -m harness --json tb-matrix run  --tier render [--limit N]   # mosaic-gen gate
 python3 -m harness --json tb-matrix run  --tier sim    [--limit N]   # EXIT SUCCESS gate
 python3 -m harness --json tb-matrix report                # cumulative results
 ```
@@ -29,12 +29,12 @@ python3 -m harness --json tb-matrix report                # cumulative results
 ## Tiers (cheap first — never start with sim)
 
 1. **validate** — in-process `validate_soc_config` on the full pairwise
-   covering array (~250 configs, milliseconds each). Run it after ANY
+   covering array (248 configs, milliseconds each). Run it after ANY
    registry or generator change.
 2. **render** — `make mosaic-gen` per config: templates + software gen must
    succeed. ~10–60 s per config; use `--limit` to bound a session.
-3. **sim** — `tb/mosaic_soc/run_generic.sh` per config: EVERY configured
-   hart must report before EXIT SUCCESS. Minutes per config — this is a
+3. **sim** — `tb/mosaic_soc/run_generic.sh` on each of the 30 curated
+   configs: EVERY configured hart must report before EXIT SUCCESS. Minutes per config — this is a
    campaign, not a smoke test. Results persist to
    `build/tb_matrix/report.json`; re-running resumes past configs that
    already passed (`--no-resume` to force).

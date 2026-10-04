@@ -1,6 +1,6 @@
 #!/bin/bash
 # demo/02_wrap_new_core.sh — replay the wrap-any-core mechanism on Hazard3.
-# The heavy lifting (vendor + agent-fill) is already committed; this script
+# The vendored RTL and the hand-written port map are already committed; this script
 # re-runs the DETERMINISTIC stages against the committed tree and re-verifies.
 set -euo pipefail
 cd "$(dirname "$0")/.."

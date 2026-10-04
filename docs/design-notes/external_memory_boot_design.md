@@ -1,6 +1,7 @@
 # External-memory boot: how others do it, and what MOSAIC should do
 
-> **Status:** Design note for review — **no implementation yet**, by request
+> **Status:** Design note. Option C below was implemented afterwards; the
+> current rules are in [configuration.md](../configuration.md), under `memory`.
 > **Date:** 2026-07-28
 > **Question:** the external-memory profile (`memory.sram_kb: 0`) generates RTL
 > but cannot lay out software, because external RAM is uninitialised at reset.
@@ -130,7 +131,7 @@ writable memory anywhere.
   state could run, which excludes the C runtime and the TDU protocol (workers
   write sentinels).
 
-### Option C — Workers XIP their *code* from flash; external RAM holds only *data* ✅
+### Option C — Workers XIP their *code* from flash; external RAM holds only *data* (recommended)
 
 The observation that dissolves the problem: **code is read-only, and it is
 already non-volatile in flash.** Nothing has to stage it anywhere.
@@ -265,7 +266,7 @@ right anyway, because this is data-only scratchpad rather than the code+data
 RAM0 pool. Generation fails with exactly that reason and names the area a
 silent round-up would have cost.
 
-## 7. Open questions for the team
+## 7. Open questions
 
 1. **Scratchpad size.** 512 B (0.209 mm², one macro) is the minimum that buys a
    real stack. Is that the right trade against the 1.25 mm² budget, or is
@@ -279,7 +280,7 @@ silent round-up would have cost.
    overlap; the current `__mosaic_stack_stride` scheme extends naturally, but
    the address map needs deciding.
 4. **QSPI pin sharing.** RP2350 puts PSRAM on a second chip select of the same
-   QSPI bus. Do we have the pad budget for a dedicated PSRAM port, or must it
+   QSPI bus. Is there pad budget for a dedicated PSRAM port, or must it
    share with flash (and therefore contend with TITAN instruction fetch)?
 
 ## Sources

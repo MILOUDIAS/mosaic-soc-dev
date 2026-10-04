@@ -17,26 +17,18 @@ export PATH="$REPO_ROOT/.venv/bin:$PATH"
 ./.venv/bin/python --version
 
 echo "### [2/6] checking required simulation tools"
-if [ -n "${VERILATOR_PIN:-}" ] && [ -x "$VERILATOR_PIN/usr/bin/verilator" ]; then
-  export PATH="$VERILATOR_PIN/usr/bin:$PATH"
-  export VERILATOR_ROOT="$VERILATOR_PIN/usr/share/verilator"
-fi
-if ! command -v verilator >/dev/null 2>&1; then
-  echo "ERROR: Verilator is not on PATH; install/source Verilator 5.x" >&2
+# tb/tools.sh is the check every simulation runner applies: Verilator 5.050
+# only (from VERILATOR_PIN, else PATH) and the RISC-V prefix from RISCV_TC,
+# else the first riscv32-*-elf-gcc on PATH. `nix develop .#sim` provides both.
+# Running it here stops before generation instead of at stage [6/6].
+if [ -z "${VERILATOR_PIN:-}" ] && ! command -v verilator >/dev/null 2>&1; then
+  echo "ERROR: no Verilator on PATH; run inside 'nix develop .#sim' or set VERILATOR_PIN" >&2
   exit 1
 fi
-verilator --version
-
-if [ -z "${RISCV_TC:-}" ]; then
-  if riscv_gcc="$(command -v riscv32-unknown-elf-gcc 2>/dev/null)"; then
-    RISCV_TC="${riscv_gcc%-gcc}"
-  elif [ -x /opt/riscv32-gnu-toolchain-elf-bin/bin/riscv32-unknown-elf-gcc ]; then
-    RISCV_TC=/opt/riscv32-gnu-toolchain-elf-bin/bin/riscv32-unknown-elf
-  else
-    echo "ERROR: set RISCV_TC to the prefix before -gcc/-ld/-objcopy" >&2
-    exit 1
-  fi
-fi
+source "$REPO_ROOT/tb/tools.sh"
+mosaic_need_verilator
+mosaic_need_riscv_tc
+RISCV_TC="$TC"
 export RISCV_TC
 export RISCV_XHEEP="${RISCV_XHEEP:-$(dirname "$(dirname "$RISCV_TC")")}"
 tc_name="${RISCV_TC##*/}"

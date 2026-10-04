@@ -25,13 +25,15 @@ nix develop .#physical   # the LibreLane 3.0.0 shell (same as flow/librelane's)
 
 Why these pins:
 
-- **LibreLane's own nix-eda and nixpkgs.** The Block A/B/C signoff evidence was
-  produced under exactly these binaries (`flow/librelane/flake.lock`). The root
-  `flake.lock` pins the same three revisions, and
-  `test_toolchain_pin.py` fails if the two ever disagree.
-- **Verilator 5.050, not nix-eda's 5.044.** The oss-cad-suite 5.047-devel build
-  miscompiles cv32e40x's load-use hazard (bug 21). 5.050 is the release the
-  full-SoC regression passed on. 5.044 was never checked.
+- **LibreLane's own nix-eda and nixpkgs.** The signoff results in
+  [physical-flow.md](physical-flow.md) were produced under exactly these
+  binaries (`flow/librelane/flake.lock`). The root `flake.lock` pins the same
+  three revisions, and `test/test_mosaic_gen/test_toolchain_pin.py` fails if the
+  two ever disagree.
+- **Verilator 5.050, not nix-eda's 5.044.** A 5.047 development build
+  miscompiles the load-use hazard logic of cv32e40x, so that core computes wrong
+  results in simulation with no warning. 5.050 is the release the full-SoC
+  regression passed on. 5.044 was never checked.
 - **Two shells, not one.** LibreLane puts nix-eda's Verilator (5.044) on its
   PATH, and its lint step calls `verilator` by name. Merging the sim shell into
   it would silently change a tool inside the signoff flow.
@@ -41,8 +43,7 @@ Everything else is a binary-cache hit.
 
 **Disk.** A flake inside a git repository is evaluated from a store copy of the
 tracked tree. A dirty tree makes a new copy each time its content changes.
-This was already true of `flow/librelane`'s flake. Reclaim the space with
-`nix-collect-garbage` when runs are not in flight.
+Reclaim the space with `nix-collect-garbage` when no run is in progress.
 
 ### The testbench runners refuse, they don't guess
 
@@ -54,25 +55,24 @@ Every runner that calls Verilator sources `tb/tools.sh`:
 - **RISC-V GCC:** `$RISCV_TC` (e.g. `<dir>/bin/riscv32-unknown-elf`) if
   set, otherwise the first `riscv32-*-elf-gcc` on `PATH`, otherwise stop.
 
-The runners used to default to paths that exist on one machine, then fall back
-to whatever was on `PATH`. That is how a 5.047-devel Verilator can silently
-decide a verdict.
+A silent fallback to whatever is on `PATH` would let an unchecked Verilator
+decide a verdict, and nothing in a simulation log says which Verilator built the
+model.
 
 `mosaic flow-runner run <flow>` enters `nix develop <repo>#sim` by itself
 when it is not already inside a nix shell. It does not do this for three flows:
 - `harden-*`, where LibreLane brings its own environment;
 - `pytest`, which runs the harness's own Python;
-- `gls`, whose Block A/C evidence came from the host's Icarus 13.0. nix-eda
-  ships a different Icarus snapshot, so moving GLS means re-running that
-  evidence.
+- `gls`, whose recorded results were produced with Icarus Verilog 13.0 from the
+  host. nix-eda ships a different Icarus snapshot, so moving gate-level
+  simulation into the shell means re-running those results.
 
 ### Python
 
 `.venv/` (from `make venv`) stays the Python layer. `util/python-requirements.txt`
 pins every git dependency to an exact commit:
-- FuseSoC is pinned to `c36dffc` (the `@ot` branch it used to follow).
-- edalize is pinned to 0.6.8 from PyPI, which is what the working venv actually
-  runs.
+- FuseSoC is pinned to commit `c36dffc` of the X-HEEP fork.
+- edalize is pinned to 0.6.8 from PyPI.
 
 ## IIC-OSIC-TOOLS (convenience)
 
@@ -111,8 +111,9 @@ mosaic --json doctor    # for scripts; exits 1 when a required tool is off-pin
 `doctor` reports:
 - the runtime;
 - each tool, required or advisory, with its version and the fix;
-- where each open PDK is installed: repo gf180mcuD, and `~/.ciel` sky130A and
-  ihp-sg13g2.
+- where each open PDK is installed: `gf180mcuD` in the repository clone made by
+  `make -C flow/librelane clone-pdk`, and `sky130A` and `ihp-sg13g2` under
+  `~/.ciel`.
 
 It warns when the shell exports `PDK_ROOT`/`PDK`, because
 `flow/librelane/Makefile` uses `?=` and yields to them. (`run_signoff.sh`

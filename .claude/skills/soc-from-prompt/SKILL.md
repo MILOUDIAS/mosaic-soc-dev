@@ -4,7 +4,7 @@ description: >
   Generate, verify and document a MOSAIC SoC from a natural-language request.
   Use when the user asks for "an SoC with ..." / "build me a chip that ...".
   Deterministic gated pipeline: parse -> config-author -> topo-viz check ->
-  mosaic-gen -> full-SoC TDU wake demo (EXIT SUCCESS) -> docs. You translate
+  mosaic-gen -> all-hart full-SoC liveness sim (EXIT SUCCESS) -> docs. You translate
   intent; the harness validates and executes — never hand-write mosaic.yaml.
 ---
 

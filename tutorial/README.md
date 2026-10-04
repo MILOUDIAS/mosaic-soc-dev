@@ -17,31 +17,40 @@ All commands are run from the repository root. Expected-output blocks show the
 stable success markers; hashes, absolute paths, cycle counts, and elapsed times
 are written as `<hash>`, `<cycles>`, or `<seconds>` because they vary by machine.
 
-Before starting any path, create and activate the project environment:
+Before starting any path, enter the pinned simulation shell, then create and
+activate the Python environment:
 
 ```bash
+nix develop .#sim
 make venv
 source .venv/bin/activate
 ```
 
-Generation plus simulation also requires Verilator 5.x and a bare-metal
-RISC-V GCC toolchain. [Chapter 1, Stage 0](01-generator.md#stage-0--prepare-the-tools)
-shows the complete prerequisite check.
+`nix develop .#sim` is the simulation shell defined in `flake.nix`. It provides
+Verilator 5.050 and a bare-metal RISC-V GCC, and it exports `RISCV_TC`, the
+compiler prefix the simulation runners read. The runners accept Verilator
+5.050 and no other version. Without Nix, set `VERILATOR_PIN` and `RISCV_TC`
+yourself as described in
+[Chapter 1, Stage 0](01-generator.md#stage-0--prepare-the-tools).
 
 ## Choose a path
 
-| Goal | Start here | Typical first-run time |
-|---|---|---:|
-| Understand the generator directly | [01-generator.md](01-generator.md) | 5–15 minutes |
-| Use the deterministic harness | [02-harness.md](02-harness.md) | 10–20 minutes |
-| Configure the OpenCode Go API agent | [03-opencode-go.md](03-opencode-go.md) | 5 minutes plus model time |
-| Diagnose a failure | [troubleshooting.md](troubleshooting.md) | as needed |
+| Goal | Start here |
+|---|---|
+| Understand the generator directly | [01-generator.md](01-generator.md) |
+| Use the deterministic harness | [02-harness.md](02-harness.md) |
+| Configure the OpenCode Go API agent | [03-opencode-go.md](03-opencode-go.md) |
+| Diagnose a failure | [troubleshooting.md](troubleshooting.md) |
 
-For the shortest verified path, run:
+For the shortest verified path, run the whole tutorial as one script. From
+outside the Nix shell:
 
 ```bash
-./tutorial/run_all.sh
+nix develop .#sim --command bash tutorial/run_all.sh
 ```
+
+From inside it, `./tutorial/run_all.sh` does the same. The script creates
+`.venv` itself if it is missing.
 
 Expected final lines:
 
@@ -51,9 +60,9 @@ Expected final lines:
 ### Topology: build/tutorial/tutorial_soc_topology.html
 ```
 
-The script performs schema validation, semantic topology checks, topology
-rendering, direct RTL generation, manifest inspection, and the topology-generic
-full-SoC simulation. It stops at the first failed stage.
+The script checks the tools, then performs schema validation, semantic topology
+checks, topology rendering, direct RTL generation, manifest inspection, and the
+topology-generic full-SoC simulation. It stops at the first failed stage.
 
 ## What success means
 

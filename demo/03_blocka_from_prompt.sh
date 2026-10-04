@@ -1,11 +1,11 @@
 #!/bin/bash
-# Showcase: the Chipathon Block A tapeout part, from one prompt.
+# Block A, the GF180MCU reference design, from one prompt.
 #
 # WHAT THIS DEMONSTRATES
 # ----------------------
-# The project's claim is that natural-language intent can author CONFIGURATION
-# while deterministic Python does the generating and the checking. This is that
-# claim on the design that actually matters -- the part being taped out.
+# Natural-language intent can author CONFIGURATION while deterministic Python
+# does the generating and the checking. The design used here is Block A, whose
+# frozen configuration is configs/mosaic_tapeout_ultra.yaml.
 #
 # Be precise about which part is which:
 #
@@ -16,12 +16,11 @@
 #   steps 4 and 5 are the capability gate refusing false `tapeout` claims, which
 #   is the part that makes a model safe to point at this repo.
 #
-#   Step 6 is the only step where a MODEL does the work. It is gated on an agent
-#   harness being installed -- Claude Code or oh-my-pi, whichever is on PATH --
-#   not on an API key, because a harness is what a reviewer actually has. The
-#   model gets the same framing `mosaic agent` sends (imported from the
-#   harness, not retyped here) and must reach the frozen config through typed
-#   CLI arguments, with the grammar explicitly off the table.
+#   Step 6 is the only step where a MODEL does the work. It is gated on Claude
+#   Code (`claude`) being on PATH, not on an API key. The model gets the same
+#   framing `mosaic agent` sends (imported from the harness, not retyped here)
+#   and must reach the frozen config through typed CLI arguments, with the
+#   grammar explicitly off the table.
 #
 # Step 6 is REPORTED, not asserted: a model run is evidence, and the exit status
 # stays governed by the deterministic steps so this file cannot go flaky. A
@@ -29,7 +28,6 @@
 #
 # Usage:  ./demo/03_blocka_from_prompt.sh
 #         MOSAIC_DEMO_AGENT=off ./demo/03_blocka_from_prompt.sh   # skip step 6
-#         MOSAIC_DEMO_AGENT=omp ./demo/03_blocka_from_prompt.sh   # force driver
 set -uo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
@@ -43,7 +41,7 @@ PROMPT="a tapeout SoC: one serv titan rv32ic compressed with CSRs, \
 one serv atlas rv32i without CSRs boot 0x40010000, \
 no sram, 128 byte scratchpad, 1 kb boot rom, no DMA, no debug, no PLIC, \
 no multicore timer, no gpio, no rv timer, no fast interrupts, \
-XIP from flash, uart only, TDU dynamic, at 20 MHz"
+XIP from flash, uart only, TDU dynamic, at 20 MHz, repair margin 32%"
 
 echo "═══ 1. the prompt ═══"
 echo "$PROMPT" | fold -s -w 78 | sed 's/^/  /'
@@ -108,20 +106,18 @@ echo
 
 echo "═══ 6. the same request, driven by a REAL MODEL ═══"
 
-# Gated on an agent harness being installed, not on an API key: Claude Code or
-# oh-my-pi is what a reviewer already has, and neither needs a key configured
-# here. With no harness on PATH (CI), the step skips and the demo stays green.
+# Gated on Claude Code being installed, not on an API key. With no `claude` on
+# PATH (CI), the step skips and the demo stays green. oh-my-pi is not offered
+# here: the harness gives it the MCP surface only (external_agent_prompt
+# refuses surface="cli" for it), and this step probes the CLI surface.
 AGENT="${MOSAIC_DEMO_AGENT:-auto}"
-if [ "$AGENT" = "auto" ]; then
-  AGENT="off"
-  for cand in claude omp; do
-    if command -v "$cand" >/dev/null 2>&1; then AGENT="$cand"; break; fi
-  done
+if [ "$AGENT" != "off" ]; then
+  if command -v claude >/dev/null 2>&1; then AGENT="claude"; else AGENT="off"; fi
 fi
 
 AGENT_STATUS="skipped"
 if [ "$AGENT" = "off" ]; then
-  echo "  no agent harness on PATH (claude / omp) — skipping the model step."
+  echo "  claude is not on PATH, or MOSAIC_DEMO_AGENT=off: skipping the model step."
   echo "  Steps 2-5 above called no model; this is the step that would."
 else
   rm -f configs/agent_probe.yaml
@@ -133,13 +129,12 @@ else
   # translate prose into correct typed flags -- it is not the enforced path.
   # `mosaic agent --driver claude` uses the gated MCP session instead; see
   # harness/mcp_server.py.
-  AGENT_PROMPT="$(python3 - "$AGENT" "$PROMPT" <<'PY'
+  AGENT_PROMPT="$(python3 - "$PROMPT" <<'PY'
 import sys
 sys.path.insert(0, ".")
 from harness.__main__ import external_agent_prompt
-driver, prompt = sys.argv[1], sys.argv[2]
-print(external_agent_prompt(driver if driver == "omp" else "claude",
-                            surface="cli", text=f"""{prompt}
+prompt = sys.argv[1]
+print(external_agent_prompt("claude", surface="cli", text=f"""{prompt}
 
 Author it with `python3 -m harness config-author generate --name agent_probe`
 and explicit typed flags. Do NOT use `soc-from-prompt`: that is the
@@ -149,15 +144,11 @@ PY
 )"
   echo "  driver: $AGENT   (set MOSAIC_DEMO_AGENT=off to skip)"
   echo "  handing it the request and letting it drive the typed CLI…"
-  if [ "$AGENT" = "omp" ]; then
-    timeout "${MOSAIC_DEMO_AGENT_TIMEOUT:-900}" omp --mode json "$AGENT_PROMPT" 2>&1 | tail -4 | sed 's/^/  │ /'
-  else
-    # Bash is scoped to the harness CLI: the agent must work THROUGH the typed
-    # skills, and cannot reach for an editor to write the YAML by hand.
-    timeout "${MOSAIC_DEMO_AGENT_TIMEOUT:-900}" claude -p "$AGENT_PROMPT" \
-      --allowed-tools "Bash(python3 -m harness:*)" "Read" "Glob" "Grep" 2>&1 \
-      | tail -6 | sed 's/^/  │ /'
-  fi
+  # Bash is scoped to the harness CLI: the agent must work THROUGH the typed
+  # skills, and cannot reach for an editor to write the YAML by hand.
+  timeout "${MOSAIC_DEMO_AGENT_TIMEOUT:-900}" claude -p "$AGENT_PROMPT" \
+    --allowed-tools "Bash(python3 -m harness:*)" "Read" "Glob" "Grep" 2>&1 \
+    | tail -6 | sed 's/^/  │ /'
   echo
   if [ -f configs/agent_probe.yaml ]; then
     python3 - configs/agent_probe.yaml "$FROZEN" <<'PY'

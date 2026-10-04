@@ -11,13 +11,16 @@ Run every command from the repository root.
 
 ## Stage 0 — prepare the tools
 
-Create the Python environment and check Verilator:
+Enter the pinned simulation shell, create the Python environment, and check
+the three tools:
 
 ```bash
+nix develop .#sim
 make venv
 source .venv/bin/activate
-./.venv/bin/python --version
+python --version
 verilator --version
+"${RISCV_TC}-gcc" --version
 ```
 
 Expected key lines:
@@ -25,29 +28,38 @@ Expected key lines:
 ```text
 Detected Python interpreter: <path-or-command>
 Python 3.<minor>.<patch>
-Verilator 5...
+Verilator 5.050 2026-07-01 rev v5.050
+riscv32-none-elf-gcc (GCC) 14.3.0
 ```
 
-Python 3.10 or newer is required. If auto-detection selects an older Python,
-recreate the environment with an explicit interpreter, for example
-`make clean-venv && PY=python3.10 make venv`.
+`nix develop .#sim` is the simulation shell defined in `flake.nix`. It puts
+Verilator 5.050 and a bare-metal RISC-V GCC on `PATH` and exports three
+variables: `RISCV_TC` (the compiler prefix before `-gcc`, `-ld`, and
+`-objcopy`), `RISCV_XHEEP` (the toolchain root, the directory that contains
+`bin/`), and `COMPILER_PREFIX` (`riscv32-none-`). The first entry builds
+Verilator locally; [`docs/reproducing.md`](../docs/reproducing.md) lists every
+pinned version.
 
-The full-SoC test also needs a bare-metal RISC-V compiler. The runner uses
-`RISCV_TC` as the prefix before `-gcc`, `-ld`, and `-objcopy`:
+Python 3.10 or newer is required for `.venv`. If auto-detection selects an
+older Python, recreate the environment with an explicit interpreter, for
+example `make clean-venv && PY=python3.10 make venv`.
+
+### Without Nix
+
+The simulation runners source `tb/tools.sh`, which refuses to continue unless
+it finds exactly Verilator 5.050 and a RISC-V compiler. Provide both yourself:
 
 ```bash
-export RISCV_TC=/path/to/bin/riscv32-unknown-elf
+export VERILATOR_PIN=/path/to/verilator-5.050      # contains bin/verilator or usr/bin/verilator
+export RISCV_TC=/path/to/toolchain/bin/riscv32-unknown-elf
+export RISCV_XHEEP=/path/to/toolchain              # needed by `make mosaic-gen` in Stage 3
 "${RISCV_TC}-gcc" --version
 ```
 
-Expected:
-
-```text
-riscv32-unknown-elf-gcc ...
-```
-
-If your compiler is already at `/opt/riscv32-gnu-toolchain-elf-bin/bin/`, the
-runner's default works and the export is unnecessary.
+`VERILATOR_PIN` is optional when the `verilator` on `PATH` already reports
+5.050. `RISCV_TC` is optional when a `riscv32-*-elf-gcc` is on `PATH`.
+`./mosaic doctor` compares the machine against the pinned versions and names
+what to fix.
 
 ## Stage 1 — inspect and validate the config
 
@@ -65,11 +77,14 @@ Validate it with the authoritative schema:
 ./mosaic config-author validate tutorial/configs/tutorial_soc.yaml
 ```
 
-Expected:
+Expected first line:
 
 ```text
 [OK] tutorial_soc.yaml is valid (3 cores, 4 peripherals)
 ```
+
+A JSON dump of the parsed configuration follows it and ends with
+`"total_cores": 3`.
 
 Artifacts created: none.
 
@@ -100,6 +115,9 @@ Expected:
 [OK] rendered obi topology -> build/tutorial/tutorial_soc_topology.html
 ```
 
+The render command then prints a JSON summary of the diagram (output path,
+bus, views, crossbar master count, RAM bank count).
+
 Artifact created: `build/tutorial/tutorial_soc_topology.html`.
 
 What this proves: the resolved masters, fabric, memory, TDU, and peripherals
@@ -121,6 +139,7 @@ MOSAIC_BUILD_KEY=tutorial_soc-<hash>
 [MCU-GEN] All templates processed successfully
 [MCU-GEN] Generated 3-target PLIC
 [MCU-GEN] Generated topology-specific software contract
+MOSAIC_MANIFEST=.../build/mosaic/tutorial_soc-<hash>/manifest.json
 ### MOSAIC-GEN completed! Running FuseSoC register generators...
 FuseSoC setup completed successfully.
 ### MOSAIC manifest: .../build/mosaic/tutorial_soc-<hash>/manifest.json
@@ -162,14 +181,16 @@ Expected:
 
 ```text
 MOSAIC build summary
+manifest: build/mosaic/tutorial_soc-<hash>/manifest.json
 build key: tutorial_soc-<hash>
+generated root: build/mosaic/tutorial_soc-<hash>/generated
 harts: 3
-  hart 0: cv32e20  role=titan  isa=rv32emc boot=0x00000180 image=0
-  hart 1: fazyrv   role=atlas  isa=rv32i   boot=0x00001000 image=1
-  hart 2: serv     role=nano   isa=rv32i   boot=0x00002000 image=2
-RTL package: .../generated/hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv
-CPU RTL: .../generated/hw/core-v-mini-mcu/cpu_subsystem.sv
-boot contract: .../generated/sw/boot_images.json
+  hart 0: cv32e20  role=titan  isa=rv32emc  boot=0x00000180 image=0
+  hart 1: fazyrv   role=atlas  isa=rv32i    boot=0x00001000 image=1
+  hart 2: serv     role=nano   isa=rv32i    boot=0x00002000 image=2
+RTL package: build/mosaic/tutorial_soc-<hash>/generated/hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv
+CPU RTL: build/mosaic/tutorial_soc-<hash>/generated/hw/core-v-mini-mcu/cpu_subsystem.sv
+boot contract: build/mosaic/tutorial_soc-<hash>/generated/sw/boot_images.json
 ```
 
 What this proves: the generated hardware and generated software agree on hart
@@ -189,7 +210,9 @@ sentinels for all three harts.
 Expected key lines:
 
 ```text
+verilator: <path>/verilator [Verilator 5.050 2026-07-01 rev v5.050]
 ### [1/4] generating topology-generic RTL (tutorial/configs/tutorial_soc.yaml) ...
+###       running FuseSoC setup (register generators + filelist) ...
 ### [2/4] assembling one liveness image per generated boot slot ...
     firmware: .../generic.hex (3 harts, wake mask 6)
 ### [3/4] building the full-SoC Verilator model ...
@@ -197,6 +220,10 @@ Expected key lines:
 EXIT SUCCESS
 ### RESULT: EXIT SUCCESS — all 3 configured harts executed ✓
 ```
+
+The linker prints `-z relro ignored` and `LOAD segment with RWX permissions`
+warnings in step 2, and the simulation prints the last 30 lines of its bus
+trace before `EXIT SUCCESS`. Neither is a failure.
 
 Logs created:
 

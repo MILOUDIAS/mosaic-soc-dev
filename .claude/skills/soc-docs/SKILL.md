@@ -13,11 +13,13 @@ description: >
 ```bash
 python3 -m harness doc-gen config configs/<name>.yaml   # markdown summary
 python3 -m harness doc-gen memory-map                   # memory map + TDU regs
-python3 -m harness doc-gen dashboard                    # DASHBOARD.md metrics
+python3 -m harness doc-gen dashboard --file <path>      # summarise a dashboard file
 ```
 
 `details.markdown` carries the rendered document — paste it into reports or
 save it under docs/. Combine with `topo-viz render` for the diagram.
+`dashboard` without `--file` looks for `DASHBOARD.md` at the repository root,
+which the repository does not ship.
 
 ## Notes
 

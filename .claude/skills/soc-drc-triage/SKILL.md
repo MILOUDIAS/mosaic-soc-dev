@@ -11,9 +11,9 @@ description: >
 ## Commands
 
 ```bash
-python3 -m harness --json drc-triage analyze build/reports/magic_drc.rpt
+python3 -m harness --json drc-triage analyze <run>/<NN>-magic-drc/reports/drc.magic.rpt
 python3 -m harness --json drc-triage analyze report.rpt --format klayout
-python3 -m harness --json drc-triage scan flow/librelane/runs/<run>/reports/
+python3 -m harness --json drc-triage scan flow/librelane/experimental/runs/<run>/
 ```
 
 Format auto-detected (magic `Violation: <rule> (count: n)`, klayout
@@ -28,8 +28,8 @@ pin_access/other. Severity: clean/low/medium/high/critical.
 ## Contract
 
 The skill NEVER modifies RTL — suggestions are advisory; signoff stays with
-the deterministic DRC/LVS tools. Never bypass checks (no --no-verify, no
-harden-nodrc for deliverables).
+the deterministic DRC/LVS tools. Never bypass checks (no --skip, no
+`*-nodrc` target for a result).
 
 ## MCP tools
 

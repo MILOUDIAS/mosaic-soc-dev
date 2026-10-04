@@ -5,8 +5,10 @@ description: Check a long flow's preconditions before it spends hours failing on
 
 # flow-preflight
 
-Run this before `harden-classic`, `harden-chip`, or any `make mosaic-gen`.
-It takes about a second and each check was bought with a wasted run.
+Run this before a signoff run, before `harden-classic` or `harden-chip`, and
+before any `make mosaic-gen`. `flow/librelane/experimental/run_signoff.sh` runs
+it by itself. It takes about a second and each check was bought with a wasted
+run.
 
 ```bash
 python3 -m harness --json flow-preflight harden \
@@ -60,4 +62,4 @@ flow will produce a result, not that you will like it.
 
 Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
-No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.
+No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI command shown above and paste the JSON back.

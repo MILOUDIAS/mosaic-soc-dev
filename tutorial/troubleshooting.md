@@ -8,9 +8,10 @@ fix that stage and rerun it; do not skip ahead to a later PASS marker.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `ModuleNotFoundError`, missing `fusesoc`, or no `.venv` | Python environment not created or activated | Run `make venv`, then `source .venv/bin/activate`, and retry from the repo root. |
-| `riscv32-unknown-elf-gcc: not found` | Bare-metal toolchain missing or at a different path | Export `RISCV_TC=/path/to/bin/riscv32-unknown-elf`; verify with `"${RISCV_TC}-gcc" --version`. |
-| `verilator: command not found` | Verilator is not on `PATH` | Install/source Verilator 5.x or export `VERILATOR_PIN` for the pinned bundle. |
-| `[FAIL] ... is invalid` | YAML violates the authoritative schema | Read every reported error; fix the YAML, then rerun `config-author validate`. |
+| `ERROR: no RISC-V toolchain` | `RISCV_TC` is unset and no `riscv32-*-elf-gcc` is on `PATH` | Run inside `nix develop .#sim`, or export `RISCV_TC=/path/to/bin/riscv32-unknown-elf` and verify with `"${RISCV_TC}-gcc" --version`. |
+| `ERROR: Verilator 5.050 required; PATH has: ...` | The `verilator` on `PATH` is missing or is another version | Run inside `nix develop .#sim`, or export `VERILATOR_PIN` to the install prefix of a 5.050 build. |
+| `ERROR: VERILATOR_PIN=... has no bin/verilator or usr/bin/verilator` | `VERILATOR_PIN` does not point at an install prefix | Point it at the directory that contains `bin/verilator` or `usr/bin/verilator`. |
+| `[FAIL] ... has <N> validation error(s)` | YAML violates the authoritative schema | Read every reported error; fix the YAML, then rerun `config-author validate`. |
 | Topology check reports findings | Unsupported fabric, bank count, or semantic combination | Correct the config before RTL generation. Do not treat the diagram as approval. |
 | `RTL gen failed` | Invalid config or template/generator error | Check the immediately preceding error and rerun validation first. |
 | `FuseSoC setup failed` | Dependency generator or toolchain issue | Read `tb/mosaic_soc/fusesoc-setup-generic.log` or the path printed by `make mosaic-gen`. |
@@ -71,7 +72,7 @@ tb/mosaic_soc/sim-generic.log
 
 Everything created under `build/tutorial/` and `build/mosaic/` is generated and
 ignored by Git. You may remove the relevant tutorial build directories and
-rerun the stages. Do not delete or edit files under `hw/vendor/` or `refs/`.
+rerun the stages. Do not delete or edit files under `hw/vendor/`.
 
 If you ran the optional deterministic one-command example, it deliberately
 created `configs/tutorial_agent.yaml`; remove that file only if you do not want
@@ -83,10 +84,14 @@ Capture these items without secrets:
 
 ```bash
 git status --short
+./mosaic doctor
 verilator --version
 "${RISCV_TC}-gcc" --version
 ./mosaic config-author validate tutorial/configs/tutorial_soc.yaml
 ```
+
+`./mosaic doctor` lists each tool it found, its version, and whether that
+version matches the one the project pins.
 
 Then include the first actual error from the relevant log, not only its final
 summary line. Never include `OPENCODE_API_KEY` or a plaintext provider config.

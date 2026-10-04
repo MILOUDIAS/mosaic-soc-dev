@@ -27,19 +27,22 @@ Key flows:
 | flow | what | config? |
 |---|---|---|
 | mosaic-gen-config | render RTL from a specific config | argv |
+| tb-soc-generic | all-hart liveness for ANY config: every configured hart must report (EXIT SUCCESS gate) | MOSAIC_CFG env — pass --config |
 | tb-soc-wake | full-SoC TDU wake demo (EXIT SUCCESS gate) | MOSAIC_CFG env — pass --config |
 | tb-soc-titan | all-TITAN SMP demo | --config |
 | tb-soc-fw | production C firmware on the full SoC | --config |
 | tb-multicore / tb-tdu / tb-idma / tb-tl-obi / tb-log-xbar / tb-floonoc | subsystem TBs | no |
 | verilator-lint / verilator-run | x-heep build/run | no |
 | firmware-build / firmware-demo | sw/firmware | no |
-| harden-classic / harden-chip | LibreLane GF180 (hours; needs Nix+PDK) | no |
+| harden-classic / harden-chip | LibreLane GF180 chip-level targets (hours; need Nix, the PDK and a PHYSICAL_BUNDLE; approval required) | no |
+| gls | gate-level sim of a hardened run (set GLS_RUN in the environment) | no |
+| lec | netlist-vs-RTL equivalence (approval required) | no |
 | pytest | test/test_mosaic_gen suites | no |
 
 ## Failure playbook
 
 - FAIL with rc 0 + no EXIT SUCCESS → read `details.stdout_tail` and
-  `tb/mosaic_soc/sim.log`; a worker that never wrote its sentinel usually
+  `tb/mosaic_soc/sim.log` (`sim-generic.log` for tb-soc-generic); a worker that never wrote its sentinel usually
   means wrong boot_addr or a stale generated cpu_subsystem (rerun
   mosaic-gen-config for THIS config first — order matters).
 - "does not accept a config override" → only mosaic-gen-config and the

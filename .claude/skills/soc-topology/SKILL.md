@@ -23,7 +23,8 @@ python3 -m harness topo-viz render configs/<name>.yaml --svg -o build/<name>.svg
   sram_kb divisible by banks (mirrors the generator's own validation).
 - Inert `bus_opts` (options that the chosen fabric ignores).
 - Derived RAM address windows overlapping base-config windows.
-- Master-count arithmetic: n_masters = 2*harts + debug + 3*dma_ports.
+- Master-count arithmetic: n_masters = 2*harts + 1 (debug) + DMA ports
+  (4 for `dma: idma`, 0 for `dma: none`).
 
 ## Failure playbook
 

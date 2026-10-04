@@ -13,8 +13,8 @@ make venv
 source .venv/bin/activate
 ```
 
-The verified-simulation example later in this chapter also needs the Verilator
-and RISC-V GCC prerequisites from
+The verified-simulation example in Stage 4 also needs Verilator 5.050 and a
+bare-metal RISC-V GCC. See
 [Chapter 1, Stage 0](01-generator.md#stage-0--prepare-the-tools).
 
 ## Stage 1 — load the key without putting it in shell history
@@ -53,9 +53,12 @@ OPENCODE_API_KEY is set
 Expected key lines:
 
 ```text
-[OK] driver 'api' saved to ~/.config/mosaic/config.json
+[OK] driver 'api' saved to <home>/.config/mosaic/config.json
 [OK] driver: api
 ```
+
+If the first line continues with `env var OPENCODE_API_KEY is not set`, the key
+from Stage 1 is not exported in this shell.
 
 The displayed config should contain only provider metadata:
 

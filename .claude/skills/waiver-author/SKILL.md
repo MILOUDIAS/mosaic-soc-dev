@@ -11,10 +11,9 @@ A waiver accepts a known defect in silicon. `parse_waivers` checks its SHAPE
 at load time and never opens the `evidence` field, so a waiver can pass every
 structural check while no longer describing the chip.
 
-That is not hypothetical. The waiver in this repository has a ceiling of 1,
-cites `runs/blocka_sdc`, passes every existing check, and the design measures
-5 on the run being submitted. Its cited run is a 1117.5 um macro, the die size
-the integrator rejected.
+That is not hypothetical. An earlier fan-out waiver in this repository had a
+ceiling of 1, cited a run on a die size the design no longer used, passed every
+structural check, and the design measured 5 on the run that mattered.
 
 ```bash
 python3 -m harness --json waiver-author
@@ -22,6 +21,12 @@ python3 -m harness --json waiver-author --file path/to/waivers.yaml
 ```
 
 `ok: false` means at least one waiver no longer matches its evidence.
+
+The audit needs the cited run directory as LibreLane wrote it. Only
+`final/metrics.json` and one disconnected-pin table are in version control, so
+on a fresh clone the violator identities of a fan-out waiver are reported as
+unverified, and a disconnected-pin waiver is reported as not matching because
+the design name in the run's `resolved.json` is missing.
 
 ## What it checks
 
@@ -54,7 +59,7 @@ roots at fanout 16 and five combinational nets at fanout 40.
     - _52521_/Z
   preconditions:              # what the argument rests on, as data
     design__max_slew_violation__count: 0
-    design__max_capacitance_violation__count: 0
+    design__max_cap_violation__count: 0
   ...
 ```
 
@@ -87,4 +92,4 @@ buffer at fanout 11.
 
 Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
-No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.
+No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI command shown above and paste the JSON back.

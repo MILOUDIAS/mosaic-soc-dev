@@ -7,14 +7,19 @@ agent path.
 
 Run every command from the repository root.
 
-First prepare the project environment. The simulation stages also need
-Verilator 5.x and a bare-metal RISC-V GCC toolchain, as described in
-[Chapter 1, Stage 0](01-generator.md#stage-0--prepare-the-tools).
+First prepare the environment as in
+[Chapter 1, Stage 0](01-generator.md#stage-0--prepare-the-tools). The
+generation and simulation stages need Verilator 5.050 and a bare-metal RISC-V
+GCC, which the `nix develop .#sim` shell provides.
 
 ```bash
+nix develop .#sim
 make venv
 source .venv/bin/activate
 ```
+
+When `flow-runner` is started outside a Nix shell on a machine that has `nix`
+installed, it runs the flow inside `nix develop .#sim` by itself.
 
 ## Stage 1 — select the deterministic driver
 
@@ -26,12 +31,16 @@ source .venv/bin/activate
 Expected key lines:
 
 ```text
-[OK] driver 'deterministic' saved to ~/.config/mosaic/config.json
+[OK] driver 'deterministic' saved to <home>/.config/mosaic/config.json
 [OK] driver: deterministic
 ```
 
+Each line is followed by a JSON block that shows the saved configuration and
+which agent programs and API key variables were detected on this machine.
+
 Artifact created: `~/.config/mosaic/config.json`. It contains the driver
-choice, not project RTL or credentials.
+choice, not project RTL or credentials. Set `MOSAIC_CONFIG_DIR` to keep the
+file in another directory.
 
 ## Stage 2 — author a config without hand-editing YAML
 
@@ -64,8 +73,9 @@ Expected:
 "target": "simulation"
 ```
 
-The author fills registered ISA defaults, FazyRV's `chunksize`, and distinct
-worker boot slots (`0x1000`, `0x2000`). It fails rather than emitting an invalid
+The author fills registered ISA defaults, FazyRV's `chunksize`, distinct
+worker boot slots (`0x1000`, `0x2000`), the schema version (`mosaic/v1`), and
+the default DMA engine (`idma`). It fails rather than emitting an invalid
 configuration.
 
 ## Stage 3 — run the config and topology gates
@@ -84,6 +94,8 @@ Expected:
 [OK] tutorial_authored.yaml: clean
 [OK] rendered obi topology -> build/tutorial/tutorial_authored_topology.html
 ```
+
+Each `[OK]` line is followed by a JSON block with the details of that result.
 
 If validation or topology checking fails, stop there. Later stages are not
 allowed to turn an invalid config into a PASS.
@@ -202,9 +214,11 @@ Start with the free tier; it validates the entire array in seconds:
 Expected summary:
 
 ```text
-tier validate: ran 248 ({'pass': 248}), resumed past 0 already-passing;
-cumulative 248/248 pass, 68 pairs blocked
+[OK] tier validate: ran 248 ({'pass': 248}), resumed past 0 already-passing; cumulative 248/248 pass, 68 pairs blocked
 ```
+
+On a second run the configs that already passed are skipped, so the line reads
+`ran 0` and `resumed past 248`. Add `--no-resume` to run them all again.
 
 The render tier requires each config to survive full RTL + software
 generation, and the sim tier runs the same all-hart completion gate as

@@ -21,9 +21,9 @@ environment variable at call time and never stored.
 
 ## Why no agent can run it
 
-The board asked whether an agent may re-run environment setup, and called it a
-real gating question rather than an oversight. It is. The answer is that it
-already cannot, and this card is the record of why that should stay true.
+Whether an agent may re-run environment setup is a real gating question, not
+an oversight. The answer is that it cannot, and this card is the record of why
+that should stay true.
 
 The file it writes selects the **driver that owns the agent loop**:
 
@@ -31,8 +31,8 @@ The file it writes selects the **driver that owns the agent loop**:
 |---|---|
 | `deterministic` | in-process — sets `required_scope`, no model, CI-safe |
 | `api` | in-process — sets `required_scope` **and locks it** |
-| `claude` | the external tool's own permission model |
-| `omp` | the external tool's own permission model |
+| `claude` | the mosaic MCP server the session is started with, plus the external tool's own permission model |
+| `omp` | the mosaic MCP server from `.omp/mcp.json`, plus the external tool's own permission model |
 
 `harness/agent.py` branches on that value. The first two enforce scope in
 Python; the other two delegate enforcement outward. So a component able to
@@ -67,4 +67,4 @@ it), expose only the read, and leave the write to a person at a terminal.
 
 Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
-No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.
+No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI command shown above and paste the JSON back.

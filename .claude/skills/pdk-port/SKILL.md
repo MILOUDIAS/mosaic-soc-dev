@@ -54,9 +54,13 @@ those are the ones that need a guard rather than a document:
 | **corner names** | **yes** |
 | **SRAM macros** | **yes** |
 
-For GF180 all eight pass, and the notes say why that is weaker than it sounds:
-five are satisfied *by being hardcoded*, with no per-technology storage for a
-second answer. That is the porting work, stated.
+For GF180 all eight pass once the PDK is cloned (`make -C flow/librelane
+clone-pdk`; without it `signoff-collateral` is reported missing). The notes say
+why that is weaker than it sounds: the area calibration rests on three hardened
+runs of one design family (SERV-only, 2 to 4 harts, execute in place), and
+outside that family the estimator refuses by name rather than extrapolating.
+For `ihp-sg13g2` three pass (site geometry, cell library, corner names) and
+five are missing; for `sky130` none pass.
 
 ## What it does not do
 
@@ -69,4 +73,4 @@ defect this skill exists to surface.
 
 Every MCP session starts with `session_new` (the user's request, verbatim) and `request_scope` (a scope the installation allows; `physical`/`integration` also need a person to run `mosaic approve <scope>` in a terminal). Before claiming success, call `session_status` and report its verdict.
 
-No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI below and paste the JSON back.
+No MCP tool exposes this skill yet. In a gated session (plugin or `mosaic agent --driver claude|omp`) do not run it through a shell: ask the user to run the CLI command shown above and paste the JSON back.

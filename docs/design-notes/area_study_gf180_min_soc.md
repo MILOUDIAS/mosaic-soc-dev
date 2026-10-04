@@ -1,5 +1,13 @@
 # GF180 area study: FazyRV + 2×SERV against a 1.25 mm² budget
 
+> **How to read this note.** This is a dated design study, kept because
+> the generator options it led to (`soc.dma: none`, `soc.spi_mode: xip_only`,
+> `memory.scratchpad_bytes`, the no-SRAM profile) cite its measurements. It
+> records the state of the generator on the dates shown. Statements about what
+> the schema could not express have since been superseded: see
+> [configuration.md](../configuration.md) for the current rules and
+> [physical-flow.md](../physical-flow.md) for place-and-route results.
+
 > **Date:** 2026-07-28
 > **Question asked:** can a SoC of 1× FazyRV (1-bit config) + 2× SERV, no
 > on-chip memory, with UART/SPI/GPIO, fit in ≤ 1.25 mm² on GF180MCU?
@@ -25,7 +33,7 @@
 | `flow-runner mosaic-gen-config` | PASS, 117.8 s |
 | `flow-runner tb-soc-generic` | **`EXIT SUCCESS — all 4 configured harts executed ✓`**, 88.7 s |
 | Area | yosys synthesis to `gf180mcu_fd_sc_mcu7t5v0`, tt/25 °C/5.00 V + SRAM macro LEF |
-| LibreLane hardening | **not run** — `librelane` is not installed on this machine |
+| LibreLane hardening | **not run** — `librelane` was not available in the environment used for this study |
 
 The working config is `build/area_study/mosaic_area_prod.yaml`.
 
@@ -145,7 +153,7 @@ Two further consequences:
 
 ## 5. What these numbers are not
 
-Per the roadmap's own truth rules (§12.3, §14), fidelity is stated explicitly:
+The fidelity of each number is stated explicitly:
 
 - **Quality: `post_synthesis_estimate`.** `yosys stat` reports the sum of
   standard-cell areas. Real die area after floorplanning and routing is
@@ -413,12 +421,12 @@ on-chip scratchpad, while the workers run from PSRAM.
 | Controller complexity | lower | higher (DDR, RWDS latency handshake) |
 
 **Recommendation: QSPI PSRAM.** It halves the pin count — which matters on a
-small die with a Chipathon pad budget — reuses the SPI infrastructure and the
+small die with a tight pad budget — reuses the SPI infrastructure and the
 memory-mapped-window pattern x-heep already has in `spi_memio`, and its
 bandwidth is ample for bit-serial harts. HyperBus's advantage is bandwidth,
 which only pays off with cached, fast cores; that is a different design point
-belonging to the roadmap's `embedded_cluster` / `coherent_application`
-backends. Add it later as a second `memory.external.kind` when a core exists
+belonging to the planned cluster and application-class backends
+([roadmap.md](../roadmap.md)). Add it later as a second `memory.external.kind` when a core exists
 that can use it.
 
 ### 8.4 What it needs in MOSAIC
@@ -516,7 +524,7 @@ not which RISC-V core occupies the TITAN slot.
 
 ### Fidelity
 
-`post_synthesis_estimate`, per roadmap §12.3. Cell area only: no
+`post_synthesis_estimate`. Cell area only: no
 place-and-route, no DRC/LVS, no timing. At a typical 50–60% GF180 utilisation
 the placed die would be roughly **6.5–7.8 mm²**, before a pad ring — far above
 the 1.25 mm² target. The 512 B scratchpad is synthesised to flip-flops here
@@ -707,7 +715,7 @@ Per §5, at 50–60% core utilization real die area is 1.6–2× cell area. So:
 | **To hit a 1.25 mm² die** | **0.63–0.78 mm²** | 1.25 mm² |
 
 **A 1.25 mm² die needs a cell area smaller than the SPI subsystem alone.**
-If the 1.25 mm² budget means die area — which is what a shuttle slot means —
+If the 1.25 mm² budget means die area — which is what a fixed die allocation means —
 then no arrangement of cores reaches it while the design keeps a memory-mapped
 SPI XIP path, a UART, and a crossbar.
 
@@ -836,7 +844,7 @@ whole study has used since §8b. It is *not* die area. Standard cells place at
 | 60% | 1.75 mm² |
 
 **So: 1.25 mm² of silicon — yes. A 1.25 mm² die — no, roughly 1.9 mm², before
-a pad ring.** If the budget is a shuttle slot, the honest status is still ~50%
+a pad ring.** If the budget is a fixed die allocation, the honest status is still ~50%
 over, and closing that needs floorplanning work (and a LibreLane run to
 measure), not more logic deletion.
 
@@ -897,7 +905,7 @@ latency, the second cuts UART throughput under interrupt latency.
    is schema-validated to be inside on-chip SRAM (§6.1). External SRAM on the
    `EXT_SLAVE` window is in the address map but not reachable from the config
    schema. Closing this is the five-step change in §6.2 — a new backend
-   profile, as the roadmap's M1/M2 anticipates, not a parameter tweak.
+   profile, not a parameter tweak.
 3. **Best reachable today: XIP-TITAN + 8 KB SRAM ≈ 3.35 mm² of SRAM**, still
    2.7× over budget. There is no config that meets 1.25 mm² without generator
    work.
