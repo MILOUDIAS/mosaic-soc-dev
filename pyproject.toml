@@ -65,6 +65,9 @@ packages = [
 harness = ["templates/**/*"]
 
 [tool.pytest.ini_options]
+# A bare `pytest` runs this project's suite, not the vendored IPs' own tests
+# or the cocotb benches, which need their simulators.
+testpaths = ["test/test_mosaic_gen"]
 markers = [
     "slow: regression that builds or runs an RTL simulator",
 ]
