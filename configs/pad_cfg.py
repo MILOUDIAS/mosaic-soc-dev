@@ -14,7 +14,7 @@
 # wrapper's port list, LVS-verified against extracted layout.
 #
 # mcu_gen.py still requires --pads_cfg, so this file is passed and its pad
-# ring is simply not instantiated in the macro. See docs/rtl_freeze_blocka.md.
+# ring is simply not instantiated in the macro. See docs/physical-flow.md.
 # ############################################################################
 
 from xheep import XHeep
@@ -26,7 +26,7 @@ from pads.pin import Input, Output, Inout
 def config(xheep: XHeep) -> PadRing:
     """
     Build and return the PadRing for the design, including pin definitions and pad mapping.
-    For detailed documentation and usage instructions, please refer to docs/source/Configuration/PadConfiguration.md
+    For detailed documentation and usage instructions, please refer to docs/source/Configuration/PadConfiguration.md in the upstream X-HEEP repository
     """
 
     ##############################################

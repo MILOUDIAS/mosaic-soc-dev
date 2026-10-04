@@ -114,7 +114,7 @@ class RoutabilityObservation:
 ROUTABILITY_OBSERVATIONS: Tuple[RoutabilityObservation, ...] = (
     RoutabilityObservation(
         "mosaic_block_a", "blocka_signoff", 2, 0.813, 0.844, True,
-        "clean; the taped-out configuration. Hand-written die",
+        "clean; the first Block A signoff configuration. Hand-written die",
     ),
     RoutabilityObservation(
         "mosaic_block_b", "blockb_signoff", 3, 0.739, 0.770, True,

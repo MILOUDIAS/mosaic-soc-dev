@@ -5,8 +5,8 @@ and nixpkgs (flow/librelane/flake.lock). The simulation toolchain (root
 flake.nix, `nix develop .#sim`) must be built from the SAME revisions, or "the
 pinned toolchain" means two different things. And the testbench runners used
 to default to paths that exist on one machine, then fall back to PATH -- where
-this machine's Verilator is the 5.047-devel build that miscompiles cv32e40x
-(bug 21).
+this machine's Verilator is the 5.047-devel build that miscompiles cv32e40x in
+multi-core builds.
 """
 
 import re

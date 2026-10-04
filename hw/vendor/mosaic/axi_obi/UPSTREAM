@@ -6,5 +6,6 @@ Licence:  upstream is Solderpad Hardware License 0.51, text in LICENSE.axi_obi
 Local:    mosaic_axi_to_obi.sv, mosaic_axi_burst_to_obi.sv and mosaic_obi_to_axi.sv are
           MOSAIC rewrites of the upstream axi_to_obi and obi_to_axi converters. They are
           specialised to 32-bit address and data and take the X-HEEP OBI structs as type
-          parameters instead of the PULP obi_pkg configuration. Their headers declare
-          "Copyright 2026 MOSAIC-SoC contributors" and "Apache-2.0 WITH SHL-2.1".
+          parameters instead of the PULP obi_pkg configuration. mosaic_axi_to_obi.sv
+          and mosaic_obi_to_axi.sv keep the upstream copyright line and SHL-0.51;
+          mosaic_axi_burst_to_obi.sv is new and declares "Apache-2.0 WITH SHL-2.1".

@@ -18,8 +18,9 @@ python3 -m harness doc-gen dashboard --file <path>      # summarise a dashboard 
 
 `details.markdown` carries the rendered document — paste it into reports or
 save it under docs/. Combine with `topo-viz render` for the diagram.
-`dashboard` without `--file` looks for `DASHBOARD.md` at the repository root,
-which the repository does not ship.
+`dashboard` requires `--file`: the repository ships no dashboard file, and
+without a path the command is refused with a message saying so. It reads
+two-column metric tables and counts `DONE`, `IN PROG` and `NOT STARTED` cells.
 
 ## Notes
 
@@ -35,6 +36,6 @@ Every MCP session starts with `session_new` (the user's request, verbatim) and `
 | step | MCP tool |
 |---|---|
 | summarise a config | `doc_config {path}` |
-| dashboard / status | `doc_dashboard {path?}` |
+| dashboard / status | `doc_dashboard {path}` |
 
 The `python3 -m harness ...` commands in this card are the human path; a gated agent uses these tools instead.

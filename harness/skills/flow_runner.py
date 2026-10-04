@@ -38,7 +38,6 @@ FLOWS: Dict[str, Dict[str, Any]] = {
         "approval": False,
         "evidence": False,
         "timeout": 300,
-        "outputs": ["hw/core-v-mini-mcu/core_v_mini_mcu.sv"],
     },
     "mosaic-gen-config": {
         "cmd_prefix": ["make", "mosaic-gen", "MOSAIC_CFG="],
@@ -113,10 +112,10 @@ FLOWS: Dict[str, Dict[str, Any]] = {
         # A hardening run is gated on parsed signoff evidence, never on the
         # make exit code. Evidence comes from the LibreLane run tree
         # (runs/<TAG>/final/metrics.csv plus per-step reports), not stdout.
-        # See harness/evidence/librelane.py and roadmap §12.5.
+        # See harness/evidence/librelane.py.
         #
-        # timing and antenna were False, which made roadmap M0's first exit
-        # criterion ("an exit-zero fixture with negative required WNS fails")
+        # timing and antenna were False, which left the rule
+        # "an exit-zero fixture with negative required WNS fails"
         # implemented, tested, and switched off. Both are now required: missing
         # timing or antenna evidence is INFRASTRUCTURE_ERROR, not a pass.
         "signoff": {"drc": True, "lvs": True, "timing": True, "antenna": True},
@@ -595,7 +594,7 @@ class FlowRunner:
         if "all_pass" in metrics:
             ok = ok and bool(metrics["all_pass"])
 
-        # Fail-closed evidence gate (roadmap §12.2/§12.5): a flow that declares
+        # Fail-closed evidence gate: a flow that declares
         # required evidence and does not produce it did NOT pass — the
         # threshold was never evaluated. An exit code is execution evidence,
         # not qualification evidence.

@@ -1,10 +1,12 @@
-// Copyright 2026 MOSAIC-SoC contributors
-// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+// Copyright 2023 ETH Zurich and University of Bologna.
+// Modified by MOSAIC-SoC contributors, 2026.
+// Solderpad Hardware License, Version 0.51, see LICENSE.axi_obi for details.
+// SPDX-License-Identifier: SHL-0.51
 //
 // mosaic_axi_to_obi.sv — AXI4 subordinate -> x-heep OBI master bridge.
 //
 // Ported from pulp-platform axi_obi's axi_to_obi.sv (Solderpad 0.51,
-// refs/IP_Interconnect_Catalog/axi_obi) specialized to NumBanks=1 (AXI
+// https://github.com/pulp-platform/axi_obi) specialized to NumBanks=1 (AXI
 // DataWidth == OBI DataWidth == 32) and with the pulp obi_pkg machinery
 // removed (x-heep obi structs as type parameters — see mosaic_obi_to_axi.sv).
 //

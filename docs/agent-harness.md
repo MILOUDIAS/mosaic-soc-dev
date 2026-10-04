@@ -48,7 +48,7 @@ Each command is a *skill*: a deterministic Python module under
 | `netlist-diff` | compare the netlists of two runs |
 | `waiver-author` | audit the signoff waivers against their evidence |
 | `pdk-port` | list what a technology must supply before the tools can size for it |
-| `doc-gen` | `config`, `memory-map`, `dashboard`: Markdown summaries |
+| `doc-gen` | `config`, `memory-map`: Markdown summaries; `dashboard --file <path>` summarises a status file you supply |
 | `web` | `build` and `serve`: a read-only viewer of configurations, runs and waivers, on `127.0.0.1:8765` |
 | `doctor` | check this machine's tools against the pinned versions |
 | `setup` | choose the driver (below) |

@@ -1,4 +1,4 @@
-"""M4: the MCP server as an agent-host plugin.
+"""The MCP server as an agent-host plugin.
 
 A host (Claude Code plugin, Codex, opencode, omp) starts the server once,
 before anyone has typed a request, so the old "derive the ceiling from
@@ -381,7 +381,7 @@ def test_install_claude_is_the_plugin(tmp_path):
     ("Bash", {"command": "echo {} > ~/.config/mosaic/approvals/physical.json"}, True),
     ("Write", {"file_path": "~/.config/mosaic/approvals/physical.json"}, True),
     ("Bash", {"command": "git status && ls configs"}, False),
-    ("Bash", {"command": "cat docs/FEATURES.md"}, False),
+    ("Bash", {"command": "cat docs/status.md"}, False),
     ("Edit", {"file_path": "harness/gates.py"}, False),
 ])
 def test_the_hook_denies_the_bypasses(tmp_path, tool, tool_input, denied):

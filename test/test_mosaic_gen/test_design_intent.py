@@ -1,10 +1,11 @@
-"""The intent boundary: roadmap M1's "no direct access to raw YAML".
+"""The intent boundary: "no direct access to raw YAML".
 
-This is the one slice of M1 that is load-bearing now. `prompt_to_gds_path.md`
-argued the IR could be deferred without cost *provided the physical lowering
-reads through a small explicit interface rather than raw YAML* — and then
-Phase 2 shipped `derive_floorplan(soc.get("cores", []))`, so the constraint
-that was meant to preserve the option was never imposed.
+This is the one slice of the planned intermediate representation that is
+load-bearing now. The IR can be deferred without cost *provided the physical
+lowering reads through a small explicit interface rather than raw YAML*, and
+yet the floorplan derivation first shipped as
+`derive_floorplan(soc.get("cores", []))`, so the constraint that was meant to
+preserve the option was never imposed.
 
 The tests that matter here are the equivalence ones. A refactor whose exit
 criterion is "existing generated artifacts remain semantically equivalent"
@@ -217,7 +218,7 @@ def test_core_group_survives_a_non_integer_count_without_crashing():
 # ── the boundary itself ──────────────────────────────────────────────
 
 def test_the_physical_lowering_no_longer_reads_raw_yaml():
-    """M1 exit criterion, enforced rather than asserted in prose.
+    """The boundary, enforced rather than asserted in prose.
 
     `soc.get(...)` in these modules means a consumer went around the typed
     view, which is how the boundary erodes.

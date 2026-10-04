@@ -1,8 +1,7 @@
 """Typed metrics: a number with a unit, a corner, a PDK and where it came from.
 
-ROADMAP M2, first exit criterion: "every numeric metric has a unit and source
-artifact", and its second: "timing/power evidence without corner/voltage is
-rejected". Both are enforced here at construction rather than checked later,
+Two rules: "every numeric metric has a unit and source artifact", and
+"timing/power evidence without corner/voltage is rejected". Both are enforced here at construction rather than checked later,
 because a metric that reached a report without provenance has already done the
 damage.
 
@@ -23,7 +22,8 @@ PDK-specific -- the 0.56 x 3.92 um site, the 4.0 ns max transition, the
 0.419 mm2/KB SRAM, the whole per-hart area calibration. A metric recorded
 without its PDK is a number that will silently be compared against a different
 process later, so `pdk` is a field here from the start rather than a retrofit.
-M2 also requires that changing PDK views invalidates dependent evidence, which
+The evidence store also requires that changing PDK views invalidates dependent
+evidence, which
 is impossible if the evidence never recorded which views it used.
 
 WHAT THIS DELIBERATELY DOES NOT DO
@@ -57,7 +57,7 @@ class Dimension(Enum):
 
 
 # Measurements of these vary with process, voltage and temperature, so one
-# without a corner does not identify anything. M2: "timing/power evidence
+# without a corner does not identify anything. The rule: "timing/power evidence
 # without corner/voltage is rejected."
 CORNER_DEPENDENT = frozenset({Dimension.TIME, Dimension.POWER,
                               Dimension.VOLTAGE})
@@ -133,7 +133,7 @@ class Metric:
                 and not self.corner):
             raise MetricError(
                 f"{self.name}: a {self.unit.dimension.value} measurement "
-                "without a corner does not identify anything (M2). Pass the "
+                "without a corner does not identify anything. Pass the "
                 "corner, or kind='constraint' if it is a chosen value")
 
     # ── conversion, which cannot cross dimensions ────────────────────

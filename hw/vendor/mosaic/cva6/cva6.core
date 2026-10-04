@@ -4,7 +4,7 @@ name: mosaic:ip:cva6
 description: "CVA6 32-bit (cv32a65x-derived, WT cache subset) — MOSAIC-SoC vendored copy, SIM-ONLY"
 license: Apache-2.0 WITH SHL-2.0
 
-# Vendored from refs/IP_Cores_Catalog/cva6 (OpenHW Group CVA6), WT-cache
+# Vendored from https://github.com/openhwgroup/cva6 (OpenHW Group CVA6), WT-cache
 # subset per core/Flist.cva6 MINUS: hpdcache tree, cvfpu (in-tree fpnew_pkg
 # suffices with RVF/RVD=0), cvxif example coprocessor (CvxifEn=0), std cache
 # subsystem, fpga-support, instr_tracer, corev_apu. The MOSAIC config package
@@ -12,8 +12,8 @@ license: Apache-2.0 WITH SHL-2.0
 # one CVA6 config per build). See also cva6.f (the ordered fragment consumed
 # by tb/mosaic_soc/gen_filelist.py for the Verilator sim flow).
 #
-# CVA6 is integrated for SIMULATION ONLY — it remains excluded from the
-# GF180MCU tapeout (area budget). See AGENTS.md §13.
+# CVA6 is integrated for SIMULATION ONLY — it remains excluded from
+# `target: tapeout` on GF180MCU (area budget). See docs/cores.md.
 
 filesets:
   core:

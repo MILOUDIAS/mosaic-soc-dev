@@ -36,9 +36,8 @@ WHAT IT DELIBERATELY DOES NOT DO
 --------------------------------
 No shell, no file editor, no "allow all tools" escape. The registry executes
 registered harness operations only. Upstream projects reviewed for this work
-ship `--dangerously-skip-permissions`, `--yolo` and `danger-full-access`; the
-survey concluded WP-1 must not weaken our position for convenience, and it
-does not.
+ship `--dangerously-skip-permissions`, `--yolo` and `danger-full-access`; this
+server must not weaken our position for convenience, and it does not.
 
 PROTOCOL
 --------

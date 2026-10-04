@@ -1,7 +1,7 @@
 # mosaic-technology: gf180mcu
 # Signoff hardening TEMPLATE -- the design-INDEPENDENT part.
 #
-# Phase 1 measured which knobs a second design actually needs. Of 41 keys in
+# Hardening Block B measured which knobs a second design actually needs. Of 41 keys in
 # the Block A signoff config, 35 were byte-identical in Block B's, and the
 # differences were the design name and the floorplan. The PDN geometry, the
 # hold-slack margins, the core-ring arrangement, the slang flags and every
@@ -81,7 +81,7 @@ SYNTH_STRATEGY: AREA 3
 # A synth check error fails this run. The fast configs set this false and
 # called the 108 remaining problems "pre-existing x-heep artifacts" -- that was
 # wrong, and turning the gate back on is what proved it. All 108 came from this
-# repo's own knob code (bug 28, 2026-08-01):
+# repo's own knob code (found 2026-08-01):
 #   107 x rv_timer_tl_h2d used-but-undriven, from the soc.ao_rv_timer: false
 #        branch absorbing h2d into an unused signal instead of tying it off.
 #     1 x a constant 1 conflicting with an $or output, traced to
@@ -277,7 +277,7 @@ PNR_CORNERS:
 # sound evidence against it. 32 is chosen because it is the best result that
 # passes every check we can actually trust, at a cost that rounds to nothing:
 # 90.5% fewer max-slew violations for 0.94% more cell area, with setup and hold
-# both marginally better than the taped-out design.
+# both marginally better than the first Block A layout (runs/blocka_signoff).
 #
 # ^ EVERY REASON IN THAT PARAGRAPH WAS PROCEDURAL. "Passes every check we can
 # actually trust" was the tiebreaker, and the check it referred to was broken.

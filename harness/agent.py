@@ -442,7 +442,7 @@ class AgentState:
     # this is stronger than "the command exited zero" -- but it is NOT
     # qualification: timing is recorded and not gated, and area, power,
     # antenna, IR/EM and multi-corner closure are not evaluated at all.
-    # Named for exactly what it establishes (roadmap 14.3 asked for
+    # Named for exactly what it establishes (the earlier proposal was
     # `physical_command_completed`; typed DRC/LVS evidence now exists, so
     # the honest name is narrower than `physical_ok` and wider than that).
     physical_drc_lvs_ok: bool = False

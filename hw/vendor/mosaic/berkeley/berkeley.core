@@ -4,7 +4,9 @@ name: mosaic:ip:berkeley
 description: "Rocket + BOOM v3 tile closures (chipyard 1.14.0) — SIM-ONLY"
 
 # Copyright 2026 MOSAIC-SoC contributors
-# SPDX-License-Identifier: BSD-3-Clause (upstream rocket-chip/BOOM licenses)
+# SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
+# (the upstream rocket-chip, BOOM, hardfloat and Chipyard licences; see the
+# LICENSE.* files in this directory)
 #
 # Vendored from a chipyard 1.14.0 elaboration:
 #   CONFIG=MosaicRocketBoomConfig (see MosaicConfigs.scala in this directory)
@@ -16,7 +18,7 @@ description: "Rocket + BOOM v3 tile closures (chipyard 1.14.0) — SIM-ONLY"
 # BoomTile instantiation closures across gen-collateral, the synflop mems.v
 # and the blackbox resources (plusarg_reader, EICG_wrapper).
 #
-# Rocket and BOOM are EXCLUDED from the GF180MCU tapeout — simulation only.
+# Rocket and BOOM are EXCLUDED from `target: tapeout` (GF180MCU) — simulation only.
 # The Verilator flow consumes berkeley.f (ordered filelist), config-gated in
 # tb/mosaic_soc/gen_filelist.py on rocket_sci/boom_sci in the generated
 # cpu_subsystem. This .core exists so the FuseSoC graph resolves; the rtl/

@@ -4,7 +4,7 @@
 # until a stated date. It is not an exemption: `accepted_max` is a ceiling, so
 # a regression past the waived count fails the gate again. See
 # harness/evidence/waivers.py for the rules enforced at load time, and
-# docs/prompt_to_gds_path.md for why this one exists.
+# docs/physical-flow.md for why this one exists.
 #
 # Adding a waiver is a decision about silicon, not a way to make a run green.
 # If you are tempted to add one to unblock yourself, close the violation instead.
@@ -71,7 +71,7 @@ waivers:
       design__max_slew_violation__count: 0
       design__max_cap_violation__count: 0
     justification: >
-      RE-BASED 2026-09-24 onto runs/blocka_d15_rstsync, the run that ships:
+      RE-BASED 2026-09-24 onto runs/blocka_d15_rstsync, the current evidence run:
       Block A with the reset synchronizer, hardened against an external
       padframe DEF (flow/librelane/integration). It measures TWO of the four
       root buffers below, the same class at the same numbers (limit 10,
@@ -96,10 +96,10 @@ waivers:
       way because CTS_ROOT_BUFFER is clkbuf_16.
 
       Re-based 2026-09-21 from runs/blocka_sdc onto runs/blocka_1110_ndr,
-      because blocka_sdc CANNOT SHIP: it is a 1117.5 um die and 1110 um is the
-      A-block maximum. Every 1117.5 um run measures one violator and every
+      because blocka_sdc CANNOT BE THE EVIDENCE RUN: it is a 1117.5 um die and
+      1110 um is the A-block maximum. Every 1117.5 um run measures one violator and every
       1110 um run measures four; the count rose because the design was squeezed
-      onto the mandated die, not because anything degraded. The single net waived
+      onto the required die, not because anything degraded. The single net waived
       until now (memory_subsystem clk_cg/Z) is one of these same four.
 
       Why four is still acceptable, argued on the merits rather than by
@@ -162,32 +162,34 @@ waivers:
       other design; and any DRC, LVS, XOR, antenna or timing finding, all of
       which are zero on runs/blocka_1110_ndr and have no waiver to fall back on.
 
-# ---- ON THE SUBMITTED DIE ----------------------------------------------------
-# THE SUBMITTED DESIGN IS NOW 1110 x 1110 um AT 20 MHz (runs/blocka_1110_ndr).
-# 1110 is a MANDATE: the external padframe accepts an A block of at most
-# 1110 x 1110 um and our 1117.5 um PR boundary exceeded it, which is why the
-# padframe generator fell back to the next valid block size. Everything above is
-# measured on the smaller die.
+# ---- THE BLOCK A DIE ---------------------------------------------------------
+# BLOCK A IS HARDENED ON A 1110 x 1110 um DIE AT 20 MHz (runs/blocka_1110_ndr).
+# 1110 is a HARD LIMIT: the external padframe accepts an A block of at most
+# 1110 x 1110 um and the earlier 1117.5 um place-and-route boundary exceeded it,
+# which is why the padframe generator fell back to the next valid block size.
+# Everything above is measured on the smaller die.
 #
 # 20 MHz rather than 25 is a measured choice, not a retreat. On this die 25 MHz
 # also closes with every check clean (runs/blocka_1110_25_ndr) but at +0.089 ns
-# of setup, 0.22% of the period. For scale, changes made during this work moved
-# setup by 0.245 ns and 0.693 ns, and a wrapper rewrite to drive the pad control
-# terminals is still ahead. 20 MHz holds +6.066 ns, 12.13%.
+# of setup, 0.22% of the period. For scale, changes made between hardening runs
+# moved setup by 0.245 ns and 0.693 ns, and a wrapper rewrite to drive the pad
+# control terminals was still outstanding when this was measured. 20 MHz holds
+# +6.066 ns, 12.13%.
 #
-# The GDS that was actually taped out (runs/blocka_signoff) predates every flow
-# fix in this file's history, AND is on the oversized 1117.5 um die. Checked against the CURRENT configuration it
-# would report 591 max-slew violations -- against the old blanket 4.0 ns limit,
+# The first Block A layout (runs/blocka_signoff) predates every flow fix in this
+# file's history, AND is on the oversized 1117.5 um die. Checked against the
+# CURRENT configuration it would report 591 max-slew violations -- against the
+# old blanket 4.0 ns limit,
 # so most of those were the same non-defects retired above, but it also predates
 # the post-GRT repair fix and the antenna iteration fix, which were real. It is
 # not re-measured here and no waiver covers it.
 #
 # NO WAIVER IS RECORDED FOR mosaic_block_b OR FOR mosaic_block_c's max-fanout.
 # Block B measures 1 violating net and Block C measures 4, both unwaived and
-# both therefore reported as adverse. That is deliberate: neither design is
-# being submitted, and a waiver for a design nobody is taping out would be
-# ceremony that makes a dashboard green. Record one if either is ever
-# submitted, with its own measurement.
+# both therefore reported as adverse. That is deliberate: neither design is a
+# reference design, and a waiver for a design that is not being qualified would
+# only hide a finding that the gate is right to report. Record one if either
+# becomes a reference design, with its own measurement.
 
   - metric: design__disconnected_pin__count
     design: mosaic_block_a

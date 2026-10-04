@@ -1,6 +1,6 @@
 """Emitting a hardening config instead of hand-writing one.
 
-The acceptance test for Phase 2 is the first one here: regenerating Block A's
+The acceptance test for the config generator is the first one here: regenerating Block A's
 hardening config from its SoC config must reproduce the file that was actually
 hardened, key for key. Block A is a real signed-off design -- 0 DRC, LVS clean,
 GDS -- so if the generator agrees with it, the generator produces configs that
@@ -43,7 +43,7 @@ def block_a_soc() -> dict:
 
 # ── the acceptance test ──────────────────────────────────────────────
 
-# Keys the generator now sets that the taped-out config did not, each with the
+# Keys the generator now sets that the hand-written Block A config did not, each with the
 # reason it is a deliberate divergence rather than drift. Adding to this set is
 # a decision to sign off differently from Block A, so it needs a sentence.
 INTENDED_DIVERGENCE = {

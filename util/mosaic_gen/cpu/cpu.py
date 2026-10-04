@@ -4,12 +4,13 @@ class CPU:
     """
 
     # NOTE: cva6 is supported for SIMULATION ONLY (32-bit cv32a65x-derived
-    # config, AXI->OBI bridged). It remains excluded from the GF180MCU tapeout:
-    # ~80 kGE + caches does not fit the PoC area budget. See AGENTS.md §13.
+    # config, AXI->OBI bridged). It remains excluded from `target: tapeout` on
+    # GF180MCU: ~80 kGE + caches does not fit the PoC area budget. See
+    # docs/cores.md.
     # NOTE: rocket and boom (Berkeley, chipyard 1.14.0, RV64!) are likewise
     # SIMULATION ONLY: extracted RocketTile/BoomTile closures, TileLink->OBI
     # bridged with window translation (code via 0x8000_0000, sentinels via the
-    # CLINT range, TDU via the PLIC range). Never part of the GF180MCU tapeout.
+    # CLINT range, TDU via the PLIC range). Never accepted for `target: tapeout`.
     AVAILABLE_CPUS = {
         "hazard3",
         "boom",

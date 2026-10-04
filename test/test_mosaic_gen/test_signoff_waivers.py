@@ -76,7 +76,7 @@ def test_a_regression_past_the_ceiling_still_fails():
 def test_a_waiver_does_not_travel_to_another_design():
     """The trap this mechanism exists to avoid.
 
-    Phase 1 of the roadmap is hardening a SECOND configuration. If Block A's
+    The next step is hardening a SECOND configuration. If Block A's
     waivers applied to it, the first thing we would learn about that design is
     a lie.
     """

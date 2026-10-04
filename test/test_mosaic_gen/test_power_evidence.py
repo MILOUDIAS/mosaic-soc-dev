@@ -1,4 +1,4 @@
-"""M2: power reports become typed metrics, or they are refused.
+"""Power reports become typed metrics, or they are refused.
 
 The failure this guards against is not a parse error. It is a number that
 survives into a report with the wrong corner attached, which is how
@@ -87,7 +87,7 @@ def test_clock_fraction_flags_a_default_toggle_report():
     assert r.clock_fraction == pytest.approx(0.471, abs=0.01)
 
 
-# ── the M2 criteria ──────────────────────────────────────────────────
+# ── the three qualification rules ────────────────────────────────────
 def test_a_power_metric_without_a_corner_cannot_be_built():
     """Criterion 2, enforced by Metric itself."""
     with pytest.raises(MetricError, match="without a corner"):

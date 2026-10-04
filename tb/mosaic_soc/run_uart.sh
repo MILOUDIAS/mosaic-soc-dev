@@ -1,7 +1,8 @@
 #!/bin/bash
 # UART bring-up verification for a config whose only peripheral is the UART.
 #
-# Closes the gap recorded in docs/rtl_freeze_blocka.md: the frozen Block A part
+# Closes a verification gap in Block A (its evidence is in docs/status.md): the
+# frozen Block A part
 # carries hand-modified vendored UART RTL (both FIFOs cut 32 -> 4 entries for
 # 0.066 mm2) and nothing exercised it. See tb/mosaic_soc/prog_uart/uart.S for
 # what the three phases check.

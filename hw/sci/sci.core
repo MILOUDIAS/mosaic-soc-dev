@@ -3,8 +3,8 @@ CAPI=2:
 name: mosaic:ip:sci
 description: "MOSAIC-SoC Standard Core Interface (SCI) wrappers"
 
-# Copyright MOSAIC-SoC
-# SPDX-License-Identifier: SHL-0.51
+# Copyright 2026 MOSAIC-SoC contributors
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
 filesets:
   # Legacy aggregate retained for direct users of mosaic:ip:sci without a

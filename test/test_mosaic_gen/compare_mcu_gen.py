@@ -15,7 +15,7 @@ from typing import List
 import filecmp
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
-TEST_X_HEEP_GEN_DIR = pathlib.Path(__file__).resolve().parent
+TEST_MOSAIC_GEN_DIR = pathlib.Path(__file__).resolve().parent
 
 
 def run(cmd: List[str], cwd=None, check=True, env=None):
@@ -124,8 +124,8 @@ def main():
         print(f"Creating detached worktree for main ({main_commit[:8]})...")
         run(["git", "worktree", "add", "--detach", tmp, main_commit])
 
-        out_main = TEST_X_HEEP_GEN_DIR / "_mcu_gen_main"
-        out_curr = TEST_X_HEEP_GEN_DIR / "_mcu_gen_current"
+        out_main = TEST_MOSAIC_GEN_DIR / "_mcu_gen_main"
+        out_curr = TEST_MOSAIC_GEN_DIR / "_mcu_gen_current"
 
         shutil.rmtree(out_main, ignore_errors=True)
         shutil.rmtree(out_curr, ignore_errors=True)

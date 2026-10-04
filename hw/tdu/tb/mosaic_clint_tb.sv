@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC Contributors
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
 `timescale 1ns/1ps
 

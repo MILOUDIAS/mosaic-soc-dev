@@ -5,7 +5,7 @@
 #
 # Every knob in this file is set for area, and each one costs something real.
 # The measured progression from the 3.903 mm2 starting point is in
-# docs/area_study_gf180_min_soc.md sections 8b through 8f.
+# docs/design-notes/area_study_gf180_min_soc.md sections 8b through 8f.
 #
 # What this part can still do: boot from external QSPI flash, execute in place,
 # run two harts scheduled by the TDU, and talk over UART.
@@ -28,7 +28,7 @@ soc:
 
   # TWO SERV cores: one TITAN, one worker. (An earlier revision of this file
   # had three and its comments were not updated with the core list -- the kind
-  # of drift a reviewer is right to catch. Two is what is frozen.)
+  # of drift a review should catch. Two is what is frozen.)
   # Core choice is the SMALLEST lever in this design: measured 2.910 mm2 for a
   # SERV TITAN against 3.036 mm2 for a picoRV32 one, a 4.1% difference, and
   # both cores together are ~2% of the die. The platform around them is the

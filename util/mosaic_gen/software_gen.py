@@ -127,7 +127,7 @@ def _writable_bytes(cfg: "MosaicConfig") -> int:
     minimal-scratchpad profile there is no bank pool: `sram_kb` is 0 and the
     only on-chip writable memory is the sub-KiB scratchpad, which is sized in
     bytes precisely because integer KiB cannot express it
-    (docs/external_memory_boot_design.md). Everything that used to compute
+    (docs/design-notes/external_memory_boot_design.md). Everything that used to compute
     ``cfg.memory.sram_kb * 1024`` goes through here so the two profiles cannot
     drift apart.
     """
@@ -909,7 +909,7 @@ def _layout(cfg: "MosaicConfig") -> tuple[list[Dict[str, Any]], int, int, int]:
     # are pre-loaded — something must copy them from flash into external RAM,
     # and the external memory controller must be brought up before any hart is
     # woken. Fail with that explanation rather than a confusing empty-SRAM
-    # window. See docs/area_study_gf180_min_soc.md §6.2 and §8.5.
+    # window. See docs/design-notes/area_study_gf180_min_soc.md §6.2 and §8.5.
     scratchpad_bytes = getattr(cfg.memory, "scratchpad_bytes", None)
     if (
         cfg.memory.sram_kb == 0
@@ -926,7 +926,8 @@ def _layout(cfg: "MosaicConfig") -> tuple[list[Dict[str, Any]], int, int, int]:
             "SRAM. Both would have to be replaced (assembly-only firmware; "
             "liveness via a peripheral register such as the TDU's per-hart "
             "CPI_EST array) before this profile can run anything. Prefer the "
-            "minimal-scratchpad profile. See docs/external_memory_boot_design.md."
+            "minimal-scratchpad profile. See "
+            "docs/design-notes/external_memory_boot_design.md."
         )
     if cfg.memory.sram_kb == 0 and scratchpad_bytes:
         return _layout_scratchpad(cfg, int(scratchpad_bytes))
@@ -939,7 +940,7 @@ def _layout(cfg: "MosaicConfig") -> tuple[list[Dict[str, Any]], int, int, int]:
             "flash — but the linker scripts must place .text in the flash window "
             "with .data/.bss/stack in the external region, and the memory "
             "controller must be brought up before any hart is woken. "
-            "See docs/external_memory_boot_design.md."
+            "See docs/design-notes/external_memory_boot_design.md."
         )
 
     sram_end = SRAM_BASE + _writable_bytes(cfg)

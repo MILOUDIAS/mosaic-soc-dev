@@ -223,9 +223,20 @@ class DocGen:
         )
 
     def dashboard_summary(self, dashboard_path: Optional[Path] = None) -> SkillResult:
-        """Parse DASHBOARD.md and extract project metrics."""
+        """Parse a dashboard file and extract project metrics.
+
+        The path is required. The repository ships no dashboard file, and
+        docs/status.md is prose plus one three-column table, which this parser
+        (two-column metric rows, DONE / IN PROG / NOT STARTED cells) would
+        summarise as empty.
+        """
         if dashboard_path is None:
-            dashboard_path = self.repo_root / "DASHBOARD.md"
+            return SkillResult(
+                ok=False, skill="doc-gen",
+                summary="doc-gen dashboard needs the path of a dashboard file",
+                errors=["pass --file <path> (MCP: doc_dashboard {path}); "
+                        "the repository does not ship one"],
+            )
 
         if not dashboard_path.exists():
             return SkillResult(

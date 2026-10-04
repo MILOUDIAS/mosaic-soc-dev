@@ -4,11 +4,11 @@
 parts needed to build one are present, which is a question about files on disk
 and therefore cannot live in that deliberately pure module.
 
-CLAUDE.md states the rule: a new core needs its name in ``AVAILABLE_CPUS``, an
+AGENTS.md states the rule: a new core needs its name in ``AVAILABLE_CPUS``, an
 ``hw/sci/<core>_sci.sv`` wrapper, and a ``% elif group.name == "<core>":``
 branch in ``cpu_subsystem.sv.tpl``.  Nothing enforced it.  There is a fourth
-part CLAUDE.md does not mention and elaboration cannot tell apart from the
-second: the wrapper has to be listed in ``hw/sci/sci.core``, or FuseSoC never
+part, which AGENTS.md folds into the second and elaboration cannot tell apart
+from it: the wrapper has to be listed in ``hw/sci/sci.core``, or FuseSoC never
 compiles it and the module is unresolved even though the file is right there.  The matrix happens to
 be complete today, and a fifteenth name added tomorrow would pass validation and
 then fail during elaboration as an unresolved module reference, which is a
@@ -91,7 +91,7 @@ class CoreIntegration:
         parts = "; ".join(self.missing)
         return (
             f"core '{self.name}' has no complete integration path: {parts}. "
-            "See CLAUDE.md for the three parts a new core needs."
+            "See AGENTS.md for the three parts a new core needs."
         )
 
 

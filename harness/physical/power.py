@@ -152,7 +152,7 @@ def corner_names(run_dir: Path, rc: str = "nom") -> List[str]:
     `<rc>_<pvt>`, and the nine come from three RC corners times three PVT
     corners. Every reported number has to name one of these, because power
     varies with process, voltage and temperature and a figure that does not say
-    which corner it was taken at cannot be labelled without guessing (M2).
+    which corner it was taken at cannot be labelled without guessing.
     """
     import json
     import re

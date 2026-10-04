@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Pack per-image Verilog hex files into one flash image for XIP boot.
 
-Under Option C (docs/external_memory_boot_design.md) every hart executes in
+Under Option C (docs/design-notes/external_memory_boot_design.md) every hart executes in
 place from the memory-mapped SPI-flash window, so images are linked at flash
 ADDRESSES (0x4000_0180, 0x4001_0000, ...) and nothing is staged into RAM.
 

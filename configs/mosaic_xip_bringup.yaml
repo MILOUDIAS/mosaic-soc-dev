@@ -3,7 +3,7 @@
 # Every hart executes in place from the memory-mapped SPI-flash window. Code is
 # read-only and non-volatile, so nothing has to be staged anywhere and there is
 # no bootstrapping problem to solve — which is exactly why this is the first
-# step of Option C (docs/external_memory_boot_design.md).
+# step of Option C (docs/design-notes/external_memory_boot_design.md).
 #
 # The consequence is that NOTHING may write to memory: no stack, no .data, no
 # .bss. Liveness has to be observable through peripheral registers.

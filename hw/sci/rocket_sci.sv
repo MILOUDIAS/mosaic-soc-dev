@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // rocket_sci.sv — Standard Core Interface wrapper for Rocket (RV64, SIM-ONLY).
 //
@@ -21,7 +21,7 @@
 // hang address — see extract_tile_closure.py), so the hart program is
 // linked & preloaded at the LOW address and fetched through the alias.
 //
-// Rocket is EXCLUDED from the GF180MCU tapeout — simulation only. The tile
+// Rocket is EXCLUDED from `target: tapeout` (GF180MCU) — simulation only. The tile
 // has no debug module here: debug_req_i accepted but tied off, debug
 // interrupt tied 0. mhartid is cosmetic (chipyard-elaborated hartid width is
 // 1 bit); only a singleton Berkeley TITAN is accepted by the config schema.

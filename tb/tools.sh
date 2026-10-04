@@ -73,5 +73,5 @@ mosaic_templates() {
   find . \( -path './build/*' -o -path './.claude/*' \
     -o -path './hw/vendor/*' ! -path './hw/vendor/xheep' ! -path './hw/vendor/xheep/*' \
     -o -path './util/*' \
-    -o -path './test/*' -o -path './refs/*' \) -prune -o -name '*.tpl' -print
+    -o -path './test/*' \) -prune -o -name '*.tpl' -print
 }

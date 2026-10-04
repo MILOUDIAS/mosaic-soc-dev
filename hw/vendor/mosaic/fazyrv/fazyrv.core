@@ -2,7 +2,7 @@ CAPI=2:
 
 name: mosaic:ip:fazyrv
 description: "FazyRV — chunk-serial RISC-V core (MOSAIC-SoC vendored copy)"
-license: ISC
+license: MIT
 
 filesets:
   core:

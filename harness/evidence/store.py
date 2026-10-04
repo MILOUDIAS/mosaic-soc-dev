@@ -1,6 +1,6 @@
 """A content-addressed evidence store, keyed on everything that produced it.
 
-ROADMAP M2: "immutable content-addressed evidence store", plus the two
+The requirement: "immutable content-addressed evidence store", plus the two
 invalidation criteria -- "changing config, RTL, firmware, workload, SDC/UPF,
 PDK views, or tool image invalidates the correct descendants" and "changing a
 parser or FlowSpec invalidates dependent evidence".
@@ -32,10 +32,10 @@ Six things, each read from a real artefact rather than asserted:
   tool          librelane version, the runtime (nix or iic:<tag>), and the
                 lock narHash of librelane, nix-eda and nixpkgs -- the version
                 string alone does not identify a build
-  parser        a digest of the modules that READ the run. M2 asks for this
-                explicitly, and it is the one input nobody thinks of: fixing a
-                parser bug changes what the numbers mean while every other
-                input stays put.
+  parser        a digest of the modules that READ the run. The second
+                invalidation rule asks for this explicitly, and it is the
+                one input nobody thinks of: fixing a parser bug changes what
+                the numbers mean while every other input stays put.
   pdk_views     a digest of the PDK view FILES this run actually consumed --
                 liberty per corner, tech and cell LEFs, pad LEFs, the Verilog
                 cell models, the RCX rulesets, and the GDS/mag layout views.
@@ -373,7 +373,7 @@ class EvidenceStore:
         """Records whose inputs match every given field.
 
         `store.find(pdk="gf180mcuD")` answers "what would a PDK swap
-        invalidate", which is M2's descendant question asked the practical way
+        invalidate", which is the invalidation rule's descendant question asked the practical way
         round.
         """
         out = []

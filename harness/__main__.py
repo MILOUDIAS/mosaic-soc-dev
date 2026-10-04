@@ -6,7 +6,7 @@ Based on oh-my-pi, adapted for MOSAIC-SoC EDA flows.
 Usage:
     python -m harness <skill> <command> [args...]
     python -m harness config-author generate --name my_soc ...
-    python -m harness config-author validate configs/mosaic.yaml
+    python -m harness config-author validate mosaic.yaml
     python -m harness config-author presets
     python -m harness flow-runner list
     python -m harness flow-runner run mosaic-gen
@@ -29,7 +29,8 @@ from .core import SkillResult
 
 
 # Set by main() from --json: machine mode prints the raw SkillResult JSON
-# (consumed by the .omp/tools shim and tests) and exits non-zero on failure.
+# (consumed by scripts and tests) and exits non-zero on failure. omp does not
+# use it: its integration is .omp/mcp.json plus plugins/mosaic/launch_mcp.py.
 from .physical.floorplan import DEFAULT_MARGIN_UM as _DEFAULT_MARGIN
 
 _JSON_MODE = False
@@ -1135,7 +1136,7 @@ def cmd_agent(args):
             )
             _print_result(result, verbose=True)
             return
-        # WP-7. This handoff used to be unconditional, and everything the
+        # This handoff used to be unconditional, and everything the
         # harness knows about authorization stayed behind: no ceiling, no
         # evidence binding, no completion gate. A driver may now launch only
         # if the gates travel with it.
@@ -1441,7 +1442,7 @@ def cmd_web(args):
 
 
 def main():
-    # Convert cooperative tool cancellation (including the omp custom tool's
+    # Convert cooperative tool cancellation (including an agent host's
     # SIGTERM) into Python's normal unwind path so run_cmd can terminate the
     # complete EDA process group rather than orphaning simulator descendants.
     if hasattr(signal, "SIGTERM"):
@@ -1754,7 +1755,8 @@ def main():
     dg_sub.add_parser("memory-map", help="Memory-map reference doc")
 
     dg_dash = dg_sub.add_parser("dashboard", help="Dashboard summary")
-    dg_dash.add_argument("--file", help="Dashboard path (default: DASHBOARD.md)")
+    dg_dash.add_argument("--file", required=True,
+                         help="Dashboard path (required; the repository ships none)")
 
     # netlist-diff
     nd = subparsers.add_parser(

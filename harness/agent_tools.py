@@ -186,10 +186,12 @@ TOOL_SPECS = (
     ),
     AgentToolSpec(
         "doc_dashboard",
-        "Generate the harness/project status dashboard summary.",
+        "Summarise a dashboard file (two-column metric tables and "
+        "DONE / IN PROG / NOT STARTED cells). The path is required.",
         {
             "type": "object",
             "properties": {"path": {"type": "string"}},
+            "required": ["path"],
             "additionalProperties": False,
         },
     ),

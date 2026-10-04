@@ -95,7 +95,7 @@ PRESETS: Dict[str, Dict[str, Any]] = {
         }
     },
     # The frozen Block A part, the GF180MCU reference design. Mirrors configs/mosaic_tapeout_ultra.yaml;
-    # docs/rtl_freeze_blocka.md is the evidence. Kept in sync by
+    # docs/status.md is the evidence. Kept in sync by
     # test_target_capabilities.py, which validates it against the tapeout gate.
     "blocka": {
         "soc": {

@@ -393,7 +393,8 @@ class MemorySS:
 
         A section may legitimately live OUTSIDE the banks: under the MOSAIC
         execute-in-place profiles the `code` section is the SPI-flash window,
-        which is not RAM at all (docs/external_memory_boot_design.md). Rules
+        which is not RAM at all
+        (docs/design-notes/external_memory_boot_design.md). Rules
         that only make sense for on-chip memory -- the code-before-data
         ordering and the bank-coverage check -- are skipped for such sections.
         """

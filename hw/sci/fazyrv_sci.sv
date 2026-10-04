@@ -1,12 +1,12 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // fazyrv_sci.sv — Standard Core Interface wrapper for FazyRV.
 //
 // Wraps a FazyRV core, converting its dual Wishbone Classic master ports
 // (separate I-fetch and D-access) to OBI v1.3.
 //
-// FazyRV fazyrv_top port map (from refs/IP_Cores_Catalog/FazyRV/rtl/fazyrv_top.sv):
+// FazyRV fazyrv_top port map (from hw/vendor/mosaic/fazyrv/rtl/fazyrv_top.sv):
 //   clk_i, rst_in (active-high), tirq_i (timer IRQ), trap_o
 //   wb_imem_stb_o, wb_imem_cyc_o, wb_imem_adr_o, wb_imem_dat_i, wb_imem_ack_i
 //   wb_dmem_cyc_o, wb_dmem_stb_o, wb_dmem_we_o, wb_dmem_ack_i,

@@ -3,12 +3,12 @@
 # The cores asked for, in the only shape that can currently reach a physical
 # flow: no SRAM macro. A 16 KiB on-chip SRAM would need hash-checked GDS/LEF/
 # LIB/Verilog views that this repo does not have (see flow/librelane/README.md
-# and docs/area_study_gf180_min_soc.md), whereas a 512 B scratchpad is a
+# and docs/design-notes/area_study_gf180_min_soc.md), whereas a 512 B scratchpad is a
 # behavioural tc_sram that synthesises to flops.
 #
 # A TITAN is structurally required and FazyRV cannot be one -- it has neither
 # mhartid nor interrupts, and does not implement the boot-ROM execution
-# contract (docs/area_study_gf180_min_soc.md §7). cv32e20 is the smallest
+# contract (docs/design-notes/area_study_gf180_min_soc.md §7). cv32e20 is the smallest
 # mhartid-capable core in the registry.
 soc:
   name: mosaic_fazyrv_serv_xip

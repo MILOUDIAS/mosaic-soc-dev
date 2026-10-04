@@ -1,6 +1,6 @@
 """What a workload run establishes, and what it does not establish about power.
 
-ROADMAP M2:
+The rules:
   * "workload runner and region-of-interest activity capture"
   * "workload evidence without firmware/workload hashes is rejected"
   * "failed workload oracles, incomplete ROIs, and insufficient activity
@@ -107,7 +107,7 @@ class ActivityCapture:
 class WorkloadRun:
     """One execution of a named workload on a named design.
 
-    `workload` and `firmware_digest` are required: M2 rejects workload evidence
+    `workload` and `firmware_digest` are required: the rules above reject workload evidence
     without them, and the reason is concrete -- two runs of "the wake demo" are
     different measurements if the firmware changed, and nothing else in the
     record would show it.
@@ -130,9 +130,9 @@ class WorkloadRun:
             raise WorkloadError(
                 f"{self.workload}: no firmware digest. Two runs of one "
                 "workload are different measurements if the firmware moved, "
-                "and nothing else in the record would show it (M2)")
+                "and nothing else in the record would show it")
 
-    # ── M2's power rule, stated as three separate refusals ───────────
+    # ── The power rule, stated as three separate refusals ────────────
     def power_evidence_problems(self) -> List[str]:
         """Why this run cannot support a power number. Empty means it can."""
         problems = []

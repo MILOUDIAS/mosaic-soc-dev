@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // tdu.sv — Task Dispatch Unit.
 //
@@ -329,7 +329,7 @@ module tdu #(
   // nobody). Broadcasting to every masked sleeping core instead — the
   // original behavior — launches the whole worker pool on the first push:
   // the losers race to TASK_POP before their descriptors are queued, pop
-  // an empty FIFO, and never return to dormancy (bug 20). Targeted wake
+  // an empty FIFO, and never return to dormancy. Targeted wake
   // also gives the driver a race-free invariant: each wake follows its
   // own push, so worker pops can never outrun pushes.
   logic [NUM_HARTS-1:0] wake_req_pulse;

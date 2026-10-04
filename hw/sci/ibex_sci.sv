@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // ibex_sci.sv — Standard Core Interface wrapper for the lowRISC Ibex core.
 //
@@ -9,7 +9,7 @@
 // of direct assignments (no FSM / handshake translation, unlike the Wishbone
 // SERV/FazyRV wrappers).
 //
-// Ibex port reference: refs/IP_Cores_Catalog/ibex/rtl/ibex_top.sv. The req/gnt
+// Ibex port reference: hw/vendor/mosaic/ibex/rtl/ibex_top.sv. The req/gnt
 // mapping mirrors x-heep's cve2_xif_wrapper.sv (cve2 is the OpenHW fork of this
 // same core). PoC defaults: PMPEnable=0, ICache=0, SecureIbex=0, RegFileFF —
 // chosen to fit the GF180MCU area budget (no cache SRAM, no lockstep).

@@ -1,11 +1,11 @@
 MOSAIC-SoC GF180MCU physical design flow (flow/librelane)
 Copyright 2026 MOSAIC-SoC contributors
 
-This directory includes files from two third-party projects. Both are licensed
+This directory includes files from one third-party project. It is licensed
 under the Apache License, Version 2.0. The licence text is in
 LICENSES/Apache-2.0.txt at the root of the repository.
 
-1. wafer-space gf180mcu-project-template
+wafer-space gf180mcu-project-template
    Copyright 2025 Leo Moser <leo.moser@pm.me> and contributors
    Source: https://github.com/wafer-space/gf180mcu-project-template
    Commit: 8bd0f6ff28947bf222c5288343f8f3ee1fc04632
@@ -28,12 +28,5 @@ LICENSES/Apache-2.0.txt at the root of the repository.
      src/chip_top.sv
      src/slot_defines.svh
      Makefile
-
-2. chipathon-2026-gf180mcu-padring, a fork of the template above
-   Copyright 2026 Mauricio Montanares
-
-   Modified by this project:
-     scripts/run_docker_iic.sh
-     scripts/run_native.sh
 
 Every other file in this directory was written for MOSAIC-SoC.

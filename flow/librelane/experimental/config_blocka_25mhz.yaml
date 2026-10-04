@@ -25,7 +25,7 @@
 
 # Signoff hardening TEMPLATE -- the design-INDEPENDENT part.
 #
-# Phase 1 measured which knobs a second design actually needs. Of 41 keys in
+# Hardening Block B measured which knobs a second design actually needs. Of 41 keys in
 # the Block A signoff config, 35 were byte-identical in Block B's, and the
 # differences were the design name and the floorplan. The PDN geometry, the
 # hold-slack margins, the core-ring arrangement, the slang flags and every
@@ -105,7 +105,7 @@ SYNTH_STRATEGY: AREA 3
 # A synth check error fails this run. The fast configs set this false and
 # called the 108 remaining problems "pre-existing x-heep artifacts" -- that was
 # wrong, and turning the gate back on is what proved it. All 108 came from this
-# repo's own knob code (bug 28, 2026-08-01):
+# repo's own knob code (found 2026-08-01):
 #   107 x rv_timer_tl_h2d used-but-undriven, from the soc.ao_rv_timer: false
 #        branch absorbing h2d into an unused signal instead of tying it off.
 #     1 x a constant 1 conflicting with an $or output, traced to
@@ -160,7 +160,7 @@ RUN_POST_GRT_DESIGN_REPAIR: true
 # (LibreLane's own help text for PNR_CORNERS says "If unspecified, the value
 # for STA_CORNERS from the PDK will be used". The code says DEFAULT_CORNER.
 # The documentation contradicts the implementation, which is why this went
-# unnoticed for four signoff runs including the taped-out one.)
+# unnoticed for four signoff runs including the first Block A one.)
 #
 # Three corners, not nine -- each is there for a reason and PnR time scales
 # with the count:

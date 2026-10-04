@@ -63,7 +63,7 @@ SYNTH_STRATEGY: AREA 3
 # A synth check error fails this run. The fast configs set this false and
 # called the 108 remaining problems "pre-existing x-heep artifacts" -- that was
 # wrong, and turning the gate back on is what proved it. All 108 came from this
-# repo's own knob code (bug 28, 2026-08-01):
+# repo's own knob code (found 2026-08-01):
 #   107 x rv_timer_tl_h2d used-but-undriven, from the soc.ao_rv_timer: false
 #        branch absorbing h2d into an unused signal instead of tying it off.
 #     1 x a constant 1 conflicting with an $or output, traced to

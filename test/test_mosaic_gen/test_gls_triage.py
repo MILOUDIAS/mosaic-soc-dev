@@ -52,7 +52,7 @@ def test_the_oracle_is_reported_even_on_a_pass(tmp_path):
 # ── which oracle produced the log ────────────────────────────────────
 def test_the_oracle_reported_is_the_one_the_log_names(tmp_path):
     """It was a constant saying "zero". A log from the race-free oracle would
-    have been described as race-prone, which is the claim the P0 removes."""
+    have been described as race-prone, which is the claim this fix removes."""
     race_free = PASS_LOG.replace(
         "### netlist :", "### seq c2q : 1 ns on 18 sequential UDPs\n### netlist :")
     d = audit(str(_log(tmp_path / "rf", race_free))).details

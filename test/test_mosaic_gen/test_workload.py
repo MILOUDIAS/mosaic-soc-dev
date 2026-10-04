@@ -1,11 +1,11 @@
-"""M2's workload rules, and the power number they disqualify.
+"""The workload rules, and the power number they disqualify.
 
 Every signoff run in this project reports power, and none of it is workload
 power: LibreLane calls `report_power` with no activity input, so OpenSTA uses
 its default toggle model. The tell is in any run's power.rpt -- combinational
 switching is ~0.5% of total against ~99.5% for clock and sequential.
 
-M2 says failed oracles, incomplete ROIs and insufficient activity coverage
+The rule is that failed oracles, incomplete ROIs and insufficient activity coverage
 cannot produce valid power evidence. Today all three would have to pass and
 one of them (activity) cannot pass at all, because nothing in the simulation
 build emits a trace. These tests hold that line rather than pretending
@@ -39,7 +39,7 @@ def run(**kw) -> WorkloadRun:
     return WorkloadRun(**base)
 
 
-# ── M2: no workload evidence without the hashes ──────────────────────
+# ── no workload evidence without the hashes ──────────────────────────
 
 def test_a_run_without_a_firmware_digest_is_refused():
     """Two runs of one workload differ if the firmware moved."""
@@ -52,7 +52,7 @@ def test_a_run_must_name_its_workload():
         run(workload="")
 
 
-# ── M2: three separate reasons power evidence is invalid ─────────────
+# ── three separate reasons power evidence is invalid ─────────────────
 
 def test_a_fully_evidenced_run_supports_power():
     assert run().supports_power_evidence

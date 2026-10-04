@@ -115,7 +115,7 @@ _start:
 
     /* The message is read from .rodata, i.e. FROM FLASH -- this part has
      * sram_kb: 0, so read-only data has nowhere else to live. That is
-     * deliberate: it makes this test the regression for bug 31, where SERV's
+     * deliberate: it makes this test the regression for a defect where SERV's
      * ext Wishbone port was tied off and any data access at or above
      * 0x4000_0000 stalled the hart forever. If that regresses, this loop hangs
      * and the run fails on the watchdog instead of quietly passing. */

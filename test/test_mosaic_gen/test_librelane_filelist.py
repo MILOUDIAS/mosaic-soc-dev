@@ -80,7 +80,7 @@ def test_unsynthesisable_and_example_sources_are_excluded():
 
 
 def test_only_tc_clk_is_dropped_from_tech_cells_generic():
-    """GF180 has no latch cell, so the generic tc_clk is replaced (bug 24) --
+    """GF180 has no latch cell, so the generic tc_clk is replaced --
     but the rest of that core (tc_sram, tc_pwr) is still required."""
     gen = _load()
     root = "/w/build/src/pulp-platform.org__tech_cells_generic_0/pulp_platform/tech_cells_generic/src"

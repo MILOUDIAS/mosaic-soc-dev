@@ -1,11 +1,11 @@
-"""WP-1/WP-7: the external drivers are gated, or they do not launch.
+"""The external drivers are gated, or they do not launch.
 
 The defect these close: `--driver claude` was a `subprocess.call` with a
 prompt. Scope ceiling, evidence binding and completion gate all existed in
 `AgentRunner` and applied to nothing the external driver did.
 
 The load-bearing test is `test_the_wp1_acceptance_scenario`, which is the
-acceptance criterion from the capability survey verbatim: a session whose
+acceptance scenario for the gated MCP server: a session whose
 ceiling was derived as `simulation`, an external MCP client calling
 `flow_run{flow: "harden-classic"}`, and the *same* refusal the built-in loop
 produces in-process.
@@ -48,10 +48,10 @@ def call(server: MCPServer, name: str, arguments: dict) -> dict:
     return payload
 
 
-# ── WP-1: the acceptance criterion, stated verbatim ──────────────────
+# ── the acceptance scenario ──────────────────────────────────────────
 
 def test_the_wp1_acceptance_scenario():
-    """Survey WP-1: same refusal, in-process or over MCP.
+    """Same refusal, in-process or over MCP.
 
     Not "an equivalent refusal" — the identical summary and errors, because
     the gates are one implementation shared by both paths.
@@ -201,7 +201,7 @@ def test_the_server_runs_as_a_real_subprocess():
     assert "not authorized by 'simulation' request scope" in refusal["summary"]
 
 
-# ── WP-7: no driver launches with the policy silently absent ─────────
+# ── no driver launches with the policy silently absent ───────────────
 
 def test_claude_launches_with_the_gates_attached():
     from harness.__main__ import _external_agent_command, write_mcp_config

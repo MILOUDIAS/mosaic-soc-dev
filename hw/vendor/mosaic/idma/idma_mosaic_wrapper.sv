@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // iDMA register frontend + ND midends + rw_obi backends adapted to x-heep.
 // The stream count defaults to the configured x-heep DMA master-port count.

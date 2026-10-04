@@ -120,7 +120,8 @@ def check_tools(environ: Mapping[str, str],
         "name": "verilator", "required": True,
         "ok": vfound.startswith(f"Verilator {want} "),
         "found": vfound or None, "path": vbin,
-        "detail": f"needs {want} (bug 21: 5.047-devel miscompiles cv32e40x)",
+        "detail": f"needs {want} (5.047-devel miscompiles cv32e40x in "
+                  "multi-core builds)",
         "fix": f"{_FIX}, or export VERILATOR_PIN=<{want} install prefix>",
     })
     gcc = _riscv_gcc(environ)

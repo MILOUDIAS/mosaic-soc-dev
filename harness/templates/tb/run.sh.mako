@@ -7,7 +7,8 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../../.." && pwd)
 
 cd "$REPO"
-# The pinned Verilator (5.050, bug 21) or a refusal -- never PATH's by default.
+# The pinned Verilator (5.050; 5.047-devel miscompiles cv32e40x in multi-core
+# builds) or a refusal -- never PATH's by default.
 source "$REPO/tb/tools.sh"
 mosaic_need_verilator
 rm -rf "build/tb_${core}_sci_obj"

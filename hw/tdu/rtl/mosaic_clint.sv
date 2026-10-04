@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC Contributors
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // Configuration-sized Core-Local Interruptor for MOSAIC multi-hart systems.
 // Provides one software interrupt and one 64-bit timer comparator per hart.

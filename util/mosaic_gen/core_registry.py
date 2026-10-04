@@ -316,7 +316,8 @@ VALID_ISAS = frozenset(isa for spec in CORE_SPECS.values() for isa in spec.isas)
 # targets.  Expanding this matrix requires physical-flow evidence and tests.
 TAPEOUT_PDK = "gf180mcu"
 TAPEOUT_BUS = "obi"
-# Block A (see docs/rtl_freeze_blocka.md): no on-chip SRAM pool, a 128 B
+# Block A, the GF180MCU reference design (see docs/status.md): no on-chip SRAM
+# pool, a 128 B
 # flip-flop scratchpad, 1 KB boot ROM, code executed XIP from external flash.
 TAPEOUT_SRAM_KB = 0
 TAPEOUT_BOOT_ROM_KB = 1
@@ -392,13 +393,14 @@ TAPEOUT_PERIPHERALS = frozenset({"uart"})
 # master is not part of an explicit MOSAIC topology.
 # DMA engine selection (soc.dma).
 #   idma   pulp-platform iDMA: one OBI read/write pair per stream. The default,
-#          and the CLAUDE.md design choice for every explicit topology.
+#          and the AGENTS.md design choice for every explicit topology.
 #   xheep  x-heep's simple DMA: a read/write/addr triplet.
 #   none   no DMA at all. The AO subsystem skips the instantiation entirely
 #          (ao_peripheral_subsystem.sv.tpl guards on get_is_included()), and
 #          num_bus_masters() drops its master ports, so the crossbar shrinks
 #          with it. Measured saving on a 3-core XIP SoC: 0.319 mm2 in GF180,
-#          8.2% of the die -- see docs/area_study_gf180_min_soc.md.
+#          8.2% of the die -- see
+#          docs/design-notes/area_study_gf180_min_soc.md.
 VALID_DMA = frozenset({"idma", "xheep", "none"})
 
 # SPI subsystem flavour.
@@ -881,7 +883,8 @@ def validate_soc_config(cfg: Any, allow_sim_only: bool = True) -> List[str]:
     )
     sram_kb = mem.get("sram_kb", 32)
     # sram_kb == 0 declares that the SoC carries no on-chip SRAM macros. Two
-    # shapes are legal (docs/external_memory_boot_design.md, Option C):
+    # shapes are legal (docs/design-notes/external_memory_boot_design.md,
+    # Option C):
     #
     #   XIP-only        no memory.external. Every hart executes in place from
     #                   the flash window and NOTHING writes to memory: no
@@ -947,7 +950,8 @@ def validate_soc_config(cfg: Any, allow_sim_only: bool = True) -> List[str]:
     # of the die, so rounding it up in the schema would quietly cost real area.
     #
     # This is DATA-ONLY storage. Code still executes in place from flash
-    # (docs/external_memory_boot_design.md, Option C); the scratchpad exists so
+    # (docs/design-notes/external_memory_boot_design.md, Option C); the
+    # scratchpad exists so
     # the C runtime has a stack -- Cheshire's LLC-as-SPM lesson, scaled down.
     scratchpad_bytes = mem.get("scratchpad_bytes")
     if scratchpad_bytes is not None:

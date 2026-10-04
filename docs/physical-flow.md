@@ -225,10 +225,11 @@ Notes on the table:
   limits described above, so their counts are measured against a single 4.0 ns
   limit. They are tracked because the area model and the routability records
   cite them, not as results to quote.
-- On a tree that holds only the tracked metrics, the gate cannot read a run's
-  design name, so it cannot apply the Block A waivers and reports
-  `blocka_d15_rstsync` as rejected. With the full run directory it reports
-  accepted. This is listed under known defects in [status.md](status.md).
+- The Block A reference run also tracks its resolved LibreLane configuration
+  (`resolved.json`, with the keys that hold file paths removed). The gate reads
+  the design name from it, so `./mosaic physical-intent ppa` and
+  `./mosaic waiver-author` give the same verdict on a clone as on the full run
+  directory. The other tracked runs hold only their metrics.
 
 Results recorded in the source tree whose run directories are not tracked:
 

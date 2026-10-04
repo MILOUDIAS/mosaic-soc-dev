@@ -1,4 +1,4 @@
-"""Tests for harness/core.py + flow_runner P0 hygiene (mosaic Phase 2).
+"""Tests for harness/core.py + flow_runner hygiene.
 
 Guards:
 - registry single-sourcing: the AST-read core sets in harness.core must equal

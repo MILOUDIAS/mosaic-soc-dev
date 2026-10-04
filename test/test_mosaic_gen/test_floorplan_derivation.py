@@ -1,6 +1,6 @@
 """Deriving a die size instead of fitting one.
 
-Phase 1 measured that the floorplan is the only design-dependent part of a
+Hardening Block A and Block B measured that the floorplan is the only design-dependent part of a
 hardening config: Block B changed three knobs against Block A, two of them the
 same knob, while PDN, timing and check configuration carried over untouched and
 produced a clean result on a design they were never tuned for.
@@ -44,7 +44,7 @@ def soc_of(design: str) -> dict:
 def test_derivation_reproduces_a_measured_die(measurement):
     """At the utilisation each design ACHIEVED, the derived die matches.
 
-    This is the claim Phase 2 rests on. Under the current template Block A
+    This is the claim the derived floorplan rests on. Under the current template Block A
     comes out at 83.5% utilisation, Block B at 76.3% and Block C at 67.6%;
     feeding each design's own achieved utilisation back in must reproduce the
     die that was actually built, or the model is not describing what the flow

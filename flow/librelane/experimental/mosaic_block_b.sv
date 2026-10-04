@@ -22,7 +22,7 @@
 // learned about the new design would have been Block A's numbers.
 //
 // Both observations point the same way: this file is mechanical port
-// termination derived from a port list, which makes it a Phase 2 generator
+// termination derived from a port list, which makes it a generator
 // target rather than something to copy again.
 //
 // Block A is a quarter of the 2235 x 2235 um shared project area (1117.5 um

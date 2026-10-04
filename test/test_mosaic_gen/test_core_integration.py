@@ -60,7 +60,7 @@ def test_native_cores_need_no_wrapper():
 
 @pytest.mark.parametrize("name", sorted(CORE_SPECS))
 def test_each_core_has_a_template_branch(name):
-    """Part three of the rule in CLAUDE.md."""
+    """Part three of the rule in AGENTS.md."""
     assert inspect(name, REPO_ROOT).has_branch, (
         f'cpu_subsystem.sv.tpl has no branch for "{name}"'
     )

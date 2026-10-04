@@ -1,10 +1,12 @@
-// Copyright 2026 MOSAIC-SoC contributors
-// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+// Copyright 2023 ETH Zurich and University of Bologna.
+// Modified by MOSAIC-SoC contributors, 2026.
+// Solderpad Hardware License, Version 0.51, see LICENSE.axi_obi for details.
+// SPDX-License-Identifier: SHL-0.51
 //
 // mosaic_obi_to_axi.sv — x-heep OBI master -> AXI4 manager bridge.
 //
 // Ported from pulp-platform axi_obi's obi_to_axi.sv (Solderpad 0.51,
-// refs/IP_Interconnect_Catalog/axi_obi) with the pulp obi_pkg machinery
+// https://github.com/pulp-platform/axi_obi) with the pulp obi_pkg machinery
 // removed: x-heep defines its own obi_pkg (obi_req_t {req,we,be,addr,wdata} /
 // obi_resp_t {gnt,rvalid,rdata}) that collides with pulp's, so — like
 // hw/vendor/mosaic/idma/idma_mosaic_wrapper.sv — this module takes the x-heep

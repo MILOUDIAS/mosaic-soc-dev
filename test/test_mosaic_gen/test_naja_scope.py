@@ -1,6 +1,6 @@
 """naja-scope in the enforced session: design FACTS, never evidence.
 
-Phase 4 made `--driver claude` run against a gated MCP server with
+`--driver claude` runs against a gated MCP server with
 `--strict-mcp-config`, so nothing else is reachable. Admitting a second server
 widens that deliberately, and the boundary has to stay visible:
 

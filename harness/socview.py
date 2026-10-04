@@ -322,7 +322,7 @@ def _io(run_dir: Optional[Path], design: Optional[str], resolved: Dict[str, Any]
                     "pins": [{"name": p.name, "direction": p.dir, "width": p.width,
                               "side": None, "group": p.name} for p in ports]}
     # ponytail: which blocks drive pins is a short hand list; derive it from the
-    # generated peripheral ports once wrappers are generated (roadmap R7).
+    # generated peripheral ports once wrappers are generated.
     internal = {"rv_plic", "rv_timer"}
     wanting = ([p["name"] for p in address_map["peripherals"] if p["name"] not in internal]
                + [p["name"] for p in address_map["ao_peripherals"]

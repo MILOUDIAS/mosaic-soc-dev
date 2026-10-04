@@ -6,7 +6,7 @@
 #
 # The scratchpad exists because the C runtime needs a stack before any external
 # memory controller can be brought up — Cheshire's LLC-as-SPM lesson at small
-# scale (docs/external_memory_boot_design.md §2.1, §4).
+# scale (docs/design-notes/external_memory_boot_design.md §2.1, §4).
 #
 # Area: 512 B is one gf180mcu_fd_ip_sram__sram512x8m8wm1 at 0.209 mm², versus
 # 3.350 mm² for the 8 KiB the schema used to demand. Expressing it needs

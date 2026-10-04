@@ -157,7 +157,7 @@ def test_external_agent_prompt_covers_both_harnesses():
     # Claude now has two, and the framing must match what it was actually
     # given. `mosaic agent --driver claude` supplies the gated MCP server
     # and disallows Bash, so the default framing must not tell it to shell
-    # out -- that instruction described the bypass Phase 4 closed.
+    # out -- that instruction described the bypass the gated MCP server closed.
     assert "MCP" in claude and "request_scope" in claude
     assert "python3 -m harness" not in claude
 
@@ -235,7 +235,7 @@ def test_wake_demo_config_is_valid_for_every_registered_core(tmp_path):
     """`tb-smith wake-demo <core>` must produce a config that VALIDATES.
 
     hazard3 had no CORE_DEFAULTS entry, so its wake-demo config was emitted as
-    rv32i and rejected ("valid: ['rv32imc']") -- the documented Phase-2 route
+    rv32i and rejected ("valid: ['rv32imc']") -- the documented wake-demo route
     for the core the wrapper mechanism was built to demonstrate could not run.
     Nothing caught it because the shipped configs are tested, and this one is
     generated on demand. Any future core added to the registry without a

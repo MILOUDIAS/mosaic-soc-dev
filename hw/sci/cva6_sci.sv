@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // cva6_sci.sv — Standard Core Interface wrapper for CVA6 (32-bit, sim-only).
 //
@@ -9,7 +9,7 @@
 // single AXI4 port to a unified OBI master through the burst-capable
 // mosaic_axi_burst_to_obi bridge (64-bit AXI data -> 32-bit OBI).
 //
-// CVA6 remains EXCLUDED from the GF180 tapeout (area) — this integration is
+// CVA6 remains EXCLUDED from `target: tapeout` on GF180 (area) — this integration is
 // for simulation/architecture exploration. Debug is disabled in the config
 // (DebugEn=0), so debug_req_i is accepted but tied off, like the other SCI
 // cores without debug support.

@@ -9,7 +9,7 @@ The mechanism is adapted from CoreSmith's ``orchestrator/langgraph/gate_guard.py
 (facebookexperimental/coresmith, MIT), whose docstring names the bug it fixed:
 call sites that returned ``passed=True`` on any error, *"a fail-OPEN default
 that silently shipped a block whose gate could not run."* The status vocabulary
-is ours (roadmap §12.2), so a raised gate here becomes
+is ours (``harness/evidence/status.py``), so a raised gate here becomes
 ``INFRASTRUCTURE_ERROR`` rather than a bare ``False``.
 
 Contract:
@@ -126,7 +126,7 @@ def gate_error_finding(
 ) -> Dict[str, Any]:
     """Structured finding for a gate that errored.
 
-    Shape follows roadmap §10 (``code``/``severity``/``path``/``message``/
+    Shape is that of a validation finding (``code``/``severity``/``path``/``message``/
     ``suggestions``) so it lands in the same reporting path as validation
     findings instead of disappearing into a log line.
     """

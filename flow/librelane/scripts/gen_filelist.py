@@ -36,7 +36,7 @@ Not everything in the simulation .vc belongs in a synthesis run:
 
   * DPI/C-backed models (uartdpi, remote_bitbang) cannot be synthesised.
   * tech_cells_generic's tc_clk collides by module name with the GF180
-    replacement in hw/asic/gf180/tc_clk.sv (GF180 has no latch cell -- bug 24).
+    replacement in hw/asic/gf180/tc_clk.sv (GF180 has no latch cell).
   * x-heep's example IPs and the peripherals this config does not instantiate
     (pdm2pcm, i2s, the x-heep DMA) are dead weight in front of the elaborator.
 
@@ -72,8 +72,8 @@ EXCLUDED_PATH_PARTS = (
     "/hw/ip/pdm2pcm/",
     # ONE file from tech_cells_generic, not the whole core: its tc_clk collides
     # by module name with hw/asic/gf180/tc_clk.sv (GF180 has no latch cell, so
-    # the generic behavioural clock gate leaves an unmappable $_DLATCH_N_ --
-    # bug 24). The core's other sources (tc_sram, tc_pwr, the deprecated clk
+    # the generic behavioural clock gate leaves an unmappable $_DLATCH_N_).
+    # The core's other sources (tc_sram, tc_pwr, the deprecated clk
     # cells) are still needed.
     "/tech_cells_generic/src/rtl/tc_clk.sv",
 )

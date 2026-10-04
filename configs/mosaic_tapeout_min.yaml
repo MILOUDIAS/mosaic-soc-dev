@@ -2,7 +2,7 @@
 #
 # Every knob in this file is set for area, and each one costs something real.
 # The measured progression from the 3.903 mm2 starting point is in
-# docs/area_study_gf180_min_soc.md sections 8b through 8f.
+# docs/design-notes/area_study_gf180_min_soc.md sections 8b through 8f.
 #
 # What this part can still do: boot from external QSPI flash, execute in place,
 # run three harts scheduled by the TDU, and talk over UART.

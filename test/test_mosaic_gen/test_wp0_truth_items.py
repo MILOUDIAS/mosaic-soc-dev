@@ -1,8 +1,7 @@
-"""WP0 truth items: names and semantics must match what is actually built.
+"""Truth items: names and semantics must match what is actually built.
 
-Both fixes here come from `general_multicore_soc_generator_roadmap.md` §14
-("Immediate truth and correctness issues"), which asks that a result never
-claim more than the evidence supports.
+Both fixes here follow one rule: a result never claims more than the evidence
+supports.
 """
 
 import re
@@ -10,7 +9,7 @@ import re
 from harness.core import REPO_ROOT
 
 
-# ── §14.3: the physical flag must not claim qualification ────────────
+# ── the physical flag must not claim qualification ───────────────────
 
 def test_physical_flag_names_what_it_proves():
     src = (REPO_ROOT / "harness/agent.py").read_text()
@@ -26,7 +25,7 @@ def test_physical_scope_message_states_the_evidence():
     assert "DRC and LVS evidence passed" in src
 
 
-# ── §14.2: the TDU counter is activity, not energy ───────────────────
+# ── the TDU counter is activity, not energy ──────────────────────────
 
 def test_tdu_counter_is_named_for_activity_not_energy():
     for path in (

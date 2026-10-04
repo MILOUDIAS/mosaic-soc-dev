@@ -18,7 +18,7 @@
 #
 # WHAT THIS STILL DOES NOT GIVE YOU
 # ---------------------------------
-# GLS here is zero-delay functional (docs/rtl_freeze_blocka.md §10: timing
+# GLS here is zero-delay functional (docs/verification.md: timing
 # annotated GLS is not achievable with the open tools available). Toggle counts
 # are therefore real but glitch power is not represented, so this UNDERSTATES
 # switching power by an unmeasured amount. That is a smaller error than the

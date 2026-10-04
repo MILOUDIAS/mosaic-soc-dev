@@ -2,18 +2,19 @@
 
 WHAT THIS IS, AND WHAT IT IS NOT
 --------------------------------
-This is roadmap M1's fourth exit criterion -- "templates no longer need direct
-access to raw YAML" -- and nothing else. It is NOT `DesignIntentIR`, and it is
-certainly not `ResolvedSoCIR`: those are twenty-odd types covering pads,
-packages, supplies, power domains, coherence and software, and by M1's own exit
-criteria ("existing generated artifacts remain semantically equivalent") the
-whole refactor ends with zero capability delta.
+This is one requirement of the planned intermediate representation --
+"templates no longer need direct access to raw YAML" -- and nothing else. It is
+NOT `DesignIntentIR`, and it is certainly not `ResolvedSoCIR`: those are
+twenty-odd types covering pads, packages, supplies, power domains, coherence
+and software, and by that refactor's own exit condition ("existing generated
+artifacts remain semantically equivalent") the whole refactor ends with zero
+capability delta.
 
-So this builds the one piece that is load-bearing NOW. `docs/prompt_to_gds_path
-.md` argued the IR could be deferred without cost *provided the physical
-lowering reads through a small explicit interface rather than raw YAML*, and
-then Phase 2 shipped `derive_floorplan(soc.get("cores", []))`. The constraint
-that was supposed to preserve the option was never imposed. This imposes it.
+So this builds the one piece that is load-bearing NOW. The IR can be deferred
+without cost *provided the physical lowering reads through a small explicit
+interface rather than raw YAML*, and yet the floorplan derivation first shipped
+as `derive_floorplan(soc.get("cores", []))`. The constraint that was supposed
+to preserve the option was never imposed. This imposes it.
 
 WHY A VIEW AND NOT A PARSER
 ---------------------------

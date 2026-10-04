@@ -1,6 +1,6 @@
 """Physical intent: derive the hand-fitted part of a hardening config.
 
-Phase 1 measured that the floorplan is the only design-dependent part -- PDN,
+Hardening Block A and Block B measured that the floorplan is the only design-dependent part -- PDN,
 timing and check configuration carried between two designs untouched. This
 package derives the floorplan and leaves the rest as the template it is.
 """

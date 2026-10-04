@@ -71,8 +71,8 @@ PDN_CORE_RING_HWIDTH: 25
 PDN_CORE_VERTICAL_LAYER: Metal2
 PDN_CORE_HORIZONTAL_LAYER: Metal3
 
-# Template posture — review before a real tapeout (CLAUDE.md
-# mandates DRC/LVS-clean signoff). These suppress GF180 SRAM-macro false
+# Template posture — review before a real tapeout (the project
+# requires DRC/LVS-clean signoff). These suppress GF180 SRAM-macro false
 # positives; the IO-cell waivers from the Chip flow are not needed here.
 ERROR_ON_MAGIC_DRC: True
 MAGIC_GDS_FLATGLOB:

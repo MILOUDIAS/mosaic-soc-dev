@@ -1,4 +1,4 @@
-"""M2: every flow declares effect, cost, required scope and approval — no default.
+"""Every flow declares effect, cost, required scope and approval, with no default.
 
 The defect this closes was an asymmetry inside one function. `gates.py` was
 fail-closed for tools:
@@ -31,7 +31,7 @@ from harness.flow_spec import (
 from harness.skills.flow_runner import FLOWS
 
 
-# ── the exit criterion, over the real table ──────────────────────────
+# ── the rule, over the real table ────────────────────────────────────
 
 def test_every_shipped_flow_declares_its_policy():
     specs = build_specs(FLOWS)

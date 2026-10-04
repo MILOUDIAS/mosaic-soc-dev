@@ -69,7 +69,7 @@
           cross = (import nixpkgs { inherit system; }).pkgsCross.riscv32-embedded.buildPackages;
         in
         {
-          # Bug 21: the 5.047 devel DFG optimizer miscompiles cv32e40x's
+          # The 5.047 devel DFG optimizer miscompiles cv32e40x's
           # load-use hazard. 5.050 is the release the full-SoC regression
           # passed on; nix-eda 6.11 ships 5.044, which was never checked.
           verilator =

@@ -333,7 +333,7 @@ def scope_effect_precondition(
         # name -- `flow.startswith("tb-")`, with an `else` that handed any
         # unrecognised flow rtl-level authorization. Tools in this same
         # function fail closed; flows failed open, so adding a flow without
-        # deciding who may run it silently succeeded. M2: "every flow declares
+        # deciding who may run it silently succeeded. The rule: "every flow declares
         # effect, cost, required scope, and approval with no default."
         from .flow_spec import FlowSpecError, FlowSpec
         from .skills.flow_runner import FLOWS

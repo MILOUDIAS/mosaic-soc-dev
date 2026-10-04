@@ -15,6 +15,9 @@ build-backend = "setuptools.build_meta"
 name = "mosaic-soc"
 version = "0.3.0"
 description = "MOSAIC-SoC agentic harness: visible model/tool loop over deterministic EDA gates"
+# Table form: the declared backend floor (setuptools>=64) predates PEP 639,
+# which a bare SPDX string needs (setuptools>=77).
+license = {text = "Apache-2.0 WITH SHL-2.1"}
 requires-python = ">=3.10"
 dependencies = [
     "PyYAML",
@@ -32,7 +35,8 @@ netlist = ["najaeda"]
 mosaic = "harness.__main__:main"
 
 [tool.setuptools]
-# Explicit list, never auto-discovery: test/ and refs/ must not be packaged.
+# Explicit list, never auto-discovery: test/ and other top-level directories
+# must not be packaged.
 #
 # Every harness subpackage must be listed. `harness.evidence` was missing, so a
 # built wheel shipped harness/skills/flow_runner.py — which imports

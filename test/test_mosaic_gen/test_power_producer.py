@@ -98,7 +98,7 @@ def test_what_the_producer_writes_is_what_the_evidence_layer_reads(tmp_path):
     assert tt.corner == "nom_tt_025C_5v00"
     assert tt.total.total == pytest.approx(9.124e-02)
     assert tt.groups["sequential"].internal == pytest.approx(4.922040e-02)
-    # and every metric it yields carries that corner, which is what M2 requires
+    # and every metric it yields carries that corner, which is what the corner rule requires
     assert {m.corner for m in tt.metrics()} == {"nom_tt_025C_5v00"}
 
 

@@ -75,7 +75,7 @@ For sky130, none of the eight is satisfied.
 | Physical flow | No step is skipped and a missing metric is not read as clean. | `flow/librelane/experimental/run_signoff.sh`; `harness/evidence/` and its tests |
 | Reproducibility | The simulation and physical toolchains are pinned to the same nix-eda and nixpkgs revisions. | `flake.nix`; `test_toolchain_pin.py`; `./mosaic doctor` |
 | Agent tooling | Tools reach the flows only through typed, gated calls. | `harness/gates.py`; `test_mcp_plugin_mode.py`, `test_agent_runtime.py` |
-| Python suite | 1653 passed, 100 skipped. | `make test` |
+| Python suite | 1654 passed, 98 skipped. | `make test` |
 
 The sweep steps are defined in the repository; their results depend on running
 them with the pinned toolchain ([verification.md](verification.md)).
@@ -113,21 +113,15 @@ Physical:
   only SERV designs of 2 to 4 harts.
 - **The routing guard** recognises a plateau only after it has happened; it does
   not predict one before routing starts.
-- **Block A's evidence needs the full run directory.** The PPA gate and
-  `waiver-author` read the design name from the run's `resolved.json`, which is
-  not tracked. On a fresh clone `./mosaic physical-intent ppa` therefore reports
-  `blocka_d15_rstsync` as rejected, and `./mosaic waiver-author` reports the
-  disconnected-pin waiver as not matching, although both pass on the complete
-  run.
 - **The chip-level flow has no inputs.** `make harden` and `make classic` in
   `flow/librelane/` need a physical bundle with SRAM macro views and a bound
   pad adapter that the repository does not contain.
 
 Tooling:
 
-- `configs/titan_nomem.yaml` does not pass validation.
-- `./mosaic doc-gen dashboard` expects a `DASHBOARD.md` file that the
-  repository does not contain; pass `--file`.
+- The unit benches `tb/tdu/soc/cocotb` and `tb/idma/cocotb` compile register
+  packages that only the legacy in-place generation writes, so they need
+  `make mcu-gen` once before they run in a fresh clone.
 - `./mosaic pdk-port` reports GF180MCU as incomplete until the PDK has been
   cloned with `make -C flow/librelane clone-pdk`.
 - Model-driven use of the plugin has been checked by handshake and by the test

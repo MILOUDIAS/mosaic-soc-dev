@@ -134,7 +134,7 @@ def test_generic_sweep_ignores_non_numeric_values():
 # Ground truth from the Block A signoff run: the detailed router reported
 # route__drc_errors__iter:0..7 as 11, 4, 3, 7, 2, 1, 1 while converging, and
 # route__drc_errors = 0 as the final answer. Reporting the trace made the gate
-# fail the design we taped out, for 7 reasons that were a router working.
+# fail a signoff-clean design, for 7 reasons that were a router working.
 
 def test_converged_iteration_trace_is_not_adverse():
     assert adverse_metrics({

@@ -6,7 +6,7 @@ stores the DRIVER that owns the visible planning/tool loop:
   deterministic  auditable scope-aware workflow with the same live event transcript
                  (default; no model, no keys, CI-safe; not labelled as an LLM)
   claude         Claude Code interactive agent drives the documented CLI skills
-  omp            oh-my-pi full TUI drives its mosaic_soc tool and skill cards
+  omp            oh-my-pi full TUI drives the gated MCP tools (.omp/mcp.json) and skill cards
   api            built-in multi-turn model/tool/observation agent loop
                  (anthropic, openai-compatible, or OpenCode Go; the key is
                  read from an ENV VAR at call time — never stored)
@@ -116,8 +116,8 @@ class SetupWizard:
             warnings.append("`claude` not found on PATH — install Claude Code "
                             "or the driver will fail at dispatch time")
         if driver == "omp" and not env["omp"]:
-            warnings.append("`omp` not found on PATH — install oh-my-pi "
-                            "(refs/IP_Tools/oh-my-pi) first")
+            warnings.append("`omp` not found on PATH — install it from the "
+                            "oh-my-pi project first")
         if driver == "api":
             kind = api_kind
             if kind is None and interactive and sys.stdin.isatty():

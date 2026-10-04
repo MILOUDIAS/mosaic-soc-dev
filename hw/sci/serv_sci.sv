@@ -1,12 +1,12 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // serv_sci.sv — Standard Core Interface wrapper for SERV (via servile).
 //
 // Wraps SERV+servile, converting its unified Wishbone Lite master port
 // (I+D arbitrated by servile internally) to OBI v1.3.
 //
-// servile port map (from refs/IP_Cores_Catalog/serv/servile/servile.v):
+// servile port map (from hw/vendor/mosaic/serv/servile/servile.v):
 //   i_clk, i_rst (active-high), i_timer_irq
 //   o_wb_mem_adr/dat/sel/we/stb, i_wb_mem_rdt/ack  (unified I+D bus)
 //   o_wb_ext_adr/dat/sel/we/stb, i_wb_ext_rdt/ack  (extension bus)
@@ -48,7 +48,7 @@ module serv_sci #(
 
     // ── servile Wishbone Lite signals ────────────────────────────
     //
-    // servile exposes TWO Wishbone ports, and both must be served (bug 31).
+    // servile exposes TWO Wishbone ports, and both must be served.
     // servile.v feeds servile_mux with the DATA bus only, and the mux splits
     // it on the top two address bits:
     //
@@ -133,7 +133,8 @@ module serv_sci #(
 
         // Extension bus: data accesses at or above 0x4000_0000 -- the flash
         // XIP window and the external-slave window. Arbitrated onto the same
-        // OBI master below; tying its ack off is bug 31.
+        // OBI master below; tying its ack off hangs every data access at or
+        // above 0x4000_0000.
         .o_wb_ext_adr(wb_ext_adr),
         .o_wb_ext_dat(wb_ext_dat_o),
         .o_wb_ext_sel(wb_ext_sel),

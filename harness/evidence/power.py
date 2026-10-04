@@ -1,6 +1,6 @@
 """Turn an OpenSTA `report_power` into typed metrics that carry their corner.
 
-M2 wants "every numeric metric has a unit and source artifact" and "power
+The evidence rules are "every numeric metric has a unit and source artifact" and "power
 evidence without a corner is rejected". `Metric` already refuses both, so this
 module's job is narrow: read the report faithfully and hand `Metric` what it
 needs, never inventing the parts it would otherwise refuse over.
@@ -130,7 +130,7 @@ def parse_power_report(
             f"{source}: no corner banner in the power report. Power varies "
             "with process, voltage and temperature, so a report that does not "
             "say which corner it was taken at cannot be labelled by the "
-            "caller without guessing (M2)")
+            "caller without guessing")
     corner = corner_match.group(1)
 
     report = PowerReport(corner=corner, source=source, pdk=pdk)

@@ -5,7 +5,7 @@ description: "Snitch — bare single-issue RV32 integer core (MOSAIC-SoC vendore
 license: SHL-0.51
 
 # Vendored from the mempool snapshot of pulp-platform snitch:
-#   refs/IP_SoCs_Catalog/mempool/hardware/deps/snitch/src/
+#   https://github.com/pulp-platform/mempool, directory hardware/deps/snitch/src/
 # Bare integer core only (no FP subsystem / IPU / read-only cache / AXI pkg).
 # Local divergence: snitch_pkg.sv hardcodes XPULPIMG/ZFINX/ZQUARTERINX/XDIVSQRT
 # to 0 (upstream defaults them to 1'bX via `ifdef`, which X-poisons derived

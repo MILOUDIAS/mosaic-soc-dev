@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // tdu_tb.sv — Self-checking testbench for the Task Dispatch Unit.
 // Verifies: register read/write, task FIFO push/pop ordering and status,
@@ -139,7 +139,7 @@ module tdu_tb;
     check(rdata, 32'h10, "TASK_STATUS empty again");
 
     // ── 7. Targeted auto-wake on push: ONLY the hinted core wakes ──
-    // (bug 20 regression: broadcast wake launched the whole worker pool
+    // (regression: broadcast wake launched the whole worker pool
     // on the first push and the losers popped an empty FIFO)
     // Descriptor core_hint is bits [15:11]. bus_write's single-accept
     // handshake pushes exactly once; core_wake is a 1-cycle pulse

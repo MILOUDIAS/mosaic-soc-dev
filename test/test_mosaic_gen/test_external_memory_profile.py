@@ -6,7 +6,7 @@ off-chip memory on x-heep's external-slave window (`EXT_SLAVE_START_ADDRESS
 
 Motivation is area: the largest GF180 SRAM macro holds 512 bytes and costs
 0.209 mm², i.e. 0.419 mm²/KB, so the previous 8 KB floor was already 3.35 mm²
-— see docs/area_study_gf180_min_soc.md.
+— see docs/design-notes/area_study_gf180_min_soc.md.
 
 **Scope: the schema layer only.** RTL generation for this profile does not yet
 work; x-heep's ``MemorySS.add_ram_banks`` requires a non-empty bank list
@@ -62,7 +62,7 @@ def test_zero_sram_without_external_is_the_xip_only_profile():
 
     sram_kb: 0 originally *required* memory.external, on the reasoning that
     stack/.data/.bss need somewhere writable. Option C
-    (docs/external_memory_boot_design.md) splits that into two legal shapes:
+    (docs/design-notes/external_memory_boot_design.md) splits that into two legal shapes:
     with external RAM, and XIP-only where nothing writes to memory at all.
     Schema-legality is now decided by boot_addr placement, so the config below
     validates -- and is rejected later, by software generation, for the real

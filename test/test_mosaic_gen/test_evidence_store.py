@@ -1,4 +1,4 @@
-"""Roadmap M2: content-addressed evidence, and invalidation that cannot drift.
+"""Content-addressed evidence, and invalidation that cannot drift.
 
 The store's whole design is that invalidation is not a mechanism. The key is
 the digest of the inputs, so "is my evidence stale?" is "does a record exist
@@ -64,7 +64,7 @@ def record(store_inputs=None, **kw):
     ("pdk_views", "w" * 64),
 ])
 def test_changing_any_input_changes_the_key(field, changed):
-    """M2: config, RTL, PDK views, tool image and PARSER all invalidate."""
+    """Config, RTL, PDK views, tool image and PARSER all invalidate."""
     assert inputs().key() != inputs(**{field: changed}).key()
 
 

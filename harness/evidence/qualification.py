@@ -1,6 +1,6 @@
-"""The M2 exit criteria, as a record that refuses to exist without them.
+"""The qualification rules, as a record that refuses to exist without them.
 
-Three rules, from the roadmap:
+Three rules:
 
   1. every numeric metric has a unit and a source artefact;
   2. timing and power evidence without a corner is rejected;
@@ -12,8 +12,8 @@ whole result together and refuses to call it qualified when the pieces do not
 support the claim, which is where the interesting failures live.
 
 WHY THIS EXISTS RATHER THAN A DICT. A qualification result travels: it gets
-summarised into a dashboard, quoted in a reply to a reviewer, and pasted into a
-fab form. Every one of those is a place where a number loses its corner on the
+summarised into a dashboard, quoted in a reply, and pasted into a
+form. Every one of those is a place where a number loses its corner on the
 way. The measured example is in this repository. LibreLane promotes ONE corner
 to the unsuffixed `power__total` key, and it is `max_ff_n40C_5v50` (5.50 V,
 -40 C), the highest-power corner. Reading that key and calling it "power at 5 V"
@@ -33,7 +33,7 @@ from .workload import WorkloadRun, power_metric_status
 
 
 class QualificationError(ValueError):
-    """A result that does not meet the M2 exit criteria."""
+    """A result that does not meet the qualification rules."""
 
 
 @dataclass(frozen=True)

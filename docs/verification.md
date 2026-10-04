@@ -157,7 +157,7 @@ python3 -m pytest test/test_mosaic_gen -q
 
 The suite covers configuration validation, template rendering, the software
 layout, the harness gates, the physical models and the evidence parsers. The
-measured result on this tree is **1653 passed and 100 skipped**. The skipped
+measured result on this tree is **1654 passed and 98 skipped**. The skipped
 tests need hardening run trees or a PDK clone that are not in version control.
 Tests marked `slow` build or run an RTL simulator.
 

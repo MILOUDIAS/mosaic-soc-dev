@@ -117,7 +117,8 @@ own bus to OBI and adds the dormant-until-woken behaviour.
 | `boom` | rv64imc | TileLink | full SoC simulation (simulation only) |
 
 "Generator only" means the configuration validates and the templates render,
-but no simulation of that core ships; treat it as unproven. "Simulation only"
+but the core is in no step of the regression sweep and no passing simulation
+result is recorded for it; treat it as unproven. "Simulation only"
 cores cannot enter a layout. [docs/cores.md](docs/cores.md) has the full table
 and the procedure for adding a core.
 
@@ -215,7 +216,7 @@ whole SoC, wakes every worker, and prints `EXIT SUCCESS` only after every
 configured hart has reported. A run passes only if that line is present; the
 exit code alone is not the verdict.
 
-`configs/` holds 34 MOSAIC configurations, and `mosaic.yaml` at the root is the
+`configs/` holds 32 MOSAIC configurations, and `mosaic.yaml` at the root is the
 default seven-hart design. [docs/configuration.md](docs/configuration.md) lists
 every key and its allowed values.
 

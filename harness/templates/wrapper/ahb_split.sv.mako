@@ -1,5 +1,5 @@
-// Copyright MOSAIC-SoC
-// SPDX-License-Identifier: SHL-0.51
+// Copyright 2026 MOSAIC-SoC contributors.
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
 // ${core}_sci.sv — Standard Core Interface wrapper for ${core} (AHB-Lite).
 //

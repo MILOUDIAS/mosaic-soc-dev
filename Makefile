@@ -70,8 +70,7 @@ MCU_GEN_TEMPLATES = $(shell find . \
      -path './.claude/*' -o \
      -path './hw/vendor/*' ! -path './hw/vendor/xheep' ! -path './hw/vendor/xheep/*' -o \
      -path './util/*' -o \
-     -path './test/*' -o \
-     -path './refs/*' \) -prune -o \
+     -path './test/*' \) -prune -o \
   -name '*.tpl' -print)
 MCU_GEN_OUTPUTS = $(patsubst %.tpl,%, $(MCU_GEN_TEMPLATES))
 

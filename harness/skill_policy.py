@@ -28,9 +28,10 @@ read-side. Nothing here can author a waiver today,
 which is why every entry declares evidence False and why the rule's second
 clause currently binds nothing.
 
-That will change with the first `waiver-author` skill, and the point of
-declaring the field now is that such a skill cannot be added without answering
-the question.
+The `waiver-author` skill that now exists does not change that: it audits a
+waiver against the run it cites and writes nothing. It will change with the
+first skill that writes a waiver, and the point of declaring the field now is
+that such a skill cannot be added without answering the question.
 
 COST IS WHAT IT INVOKES, NOT WHAT IT RETURNS
 --------------------------------------------

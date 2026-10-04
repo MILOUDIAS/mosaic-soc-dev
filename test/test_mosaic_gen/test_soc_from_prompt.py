@@ -331,7 +331,7 @@ def test_prompt_reproduces_the_frozen_tapeout_config(tmp_path):
 
     Not "something like it" -- the same config, field for field. Before the
     platform-knob grammar existed a prompt could not say "no DMA" at all, so
-    the part that is actually being taped out was the one design the prompt
+    the part that is actually being hardened was the one design the prompt
     path could not express.
     """
     import yaml

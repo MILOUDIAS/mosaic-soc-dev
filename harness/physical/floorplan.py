@@ -1,6 +1,6 @@
 """Derive a floorplan from a design, instead of fitting one by hand.
 
-Phase 1 established that the floorplan is the *only* hand-fitted part of the
+Hardening Block A and Block B established that the floorplan is the *only* hand-fitted part of the
 hardening config. Block B differed from Block A in three knobs, two of them the
 same knob: the design name, and absolute `DIE_AREA`/`CORE_AREA` replaced by
 relative sizing. `CLOCK_PERIOD`, all six PDN knobs, `PL_TARGET_DENSITY_PCT`,
@@ -95,8 +95,8 @@ class AreaMeasurement:
     # cell libraries in the SAME PDK, so a PDK name does not identify the
     # geometry these numbers came from. Every row here is 7-track GF180.
     technology: str = "gf180mcu:gf180mcu_fd_sc_mcu7t5v0"
-    # Electrical-quality violations at signoff. Recorded because Phase 1
-    # measured them growing FASTER than area -- +43% slew and six-fold fanout
+    # Electrical-quality violations at signoff. Recorded because they were
+    # measured growing FASTER than area -- +43% slew and six-fold fanout
     # against +17.2% logic between these two designs -- so they are not a fixed
     # per-design cost. Not yet modelled: two points establish that the trend is
     # adverse, not what its shape is, and a curve fitted to two points would be
@@ -186,7 +186,7 @@ class AreaMeasurement:
 # counts of different things. logic_um2, core_um2, die_side_um and utilisation
 # ARE comparable throughout; only the violation counts moved.
 CALIBRATION: Tuple[AreaMeasurement, ...] = (
-    # blocka_1110_ndr is the SUBMITTED configuration: 1110 um (the A-block
+    # blocka_1110_ndr is the configuration at the FINAL die size: 1110 um (the A-block
     # maximum, mandated -- 1117.5 exceeded it) at 20 MHz, with a non-default
     # routing rule on three fanout-1 nets. Zero max-slew and zero max-cap at all
     # nine corners, which no earlier Block A run achieved.

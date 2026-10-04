@@ -1,12 +1,13 @@
-"""Roadmap M2: a number with a unit, a corner, a PDK and a source.
+"""A number with a unit, a corner, a PDK and a source.
 
-Two of M2's exit criteria are enforced at construction here rather than
-audited later:
+Two evidence rules are enforced at construction here rather than audited
+later:
 
   * "every numeric metric has a unit and source artifact"
   * "timing/power evidence without corner/voltage is rejected"
 
-The third thing this guards is not in M2 but is in the project's goal: GF180 is
+The third thing this guards is not one of those rules but is in the project's
+goal: GF180 is
 the first PDK, not the only one. A metric recorded without its PDK will be
 compared against a different process eventually.
 """
@@ -36,7 +37,7 @@ from harness.evidence.metric import (
     unit_for,
 )
 
-RUN = REPO_ROOT / "flow/librelane/experimental/runs/blocka_reharden/final/metrics.json"
+RUN = REPO_ROOT / "flow/librelane/experimental/runs/blocka_1110_ndr/final/metrics.json"
 
 
 # ── provenance is not optional ───────────────────────────────────────
@@ -48,7 +49,7 @@ def test_a_metric_without_a_source_is_refused():
 
 
 def test_a_timing_measurement_without_a_corner_is_refused():
-    """M2: timing/power evidence without corner/voltage is rejected."""
+    """Timing/power evidence without corner/voltage is rejected."""
     with pytest.raises(MetricError, match="corner"):
         Metric("timing__setup__ws", 20.94, NS, source="final/metrics.json")
 
@@ -159,7 +160,7 @@ def test_an_unqualified_corner_metric_becomes_a_constraint():
 
 def test_a_real_run_types_without_raising():
     if not RUN.is_file():
-        pytest.skip("blocka_reharden run tree not present")
+        pytest.skip("blocka_1110_ndr metrics not present")
     metrics = json.loads(RUN.read_text())
     typed = typed_metrics(metrics, source=str(RUN), pdk="gf180mcuD")
     assert len(typed) > 300
@@ -178,7 +179,7 @@ def test_unit_coverage_is_reported_not_asserted_at_100():
     for it to improve honestly.
     """
     if not RUN.is_file():
-        pytest.skip("blocka_reharden run tree not present")
+        pytest.skip("blocka_1110_ndr metrics not present")
     typed, total = unit_coverage(json.loads(RUN.read_text()))
     assert total > 300
     assert typed / total > 0.65, f"unit coverage regressed to {typed}/{total}"

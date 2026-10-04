@@ -1,6 +1,6 @@
 """Typed flow declarations: effect, cost, scope and approval, with no default.
 
-ROADMAP M2, last exit criterion: "every flow declares effect, cost, required
+The rule: "every flow declares effect, cost, required
 scope, and approval with no default."
 
 THE DEFECT THIS CLOSES

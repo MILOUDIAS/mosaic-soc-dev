@@ -257,6 +257,10 @@ on-chip SRAM pool should size that pool rather than carry a second writable
 memory. It may coexist with `memory.external`: scratchpad for the early stack,
 external RAM for the bulk. `configs/mosaic_scratchpad.yaml` is the reference.
 
+*Superseded: the scratchpad is now generated as an instance outside the bank
+pool, and Block A is hardened with a 128-byte one. The paragraph below records
+the state on 2026-07-28.*
+
 **Not yet realisable, and the generator says so rather than rounding.**
 x-heep's `Bank(size_k)` takes integer kiB and requires a positive power of two
 (`memory_ss/ram_bank.py`), so the RAM bank pool has no representation for a

@@ -6,7 +6,8 @@
 # Toolchain: riscv64-unknown-elf-gcc (from system or oss-cad-suite)
 # Usage:
 #   make              — build all firmware
-#   make titan        — build TITAN only
+#   make demo         — build the scheduling demo firmware
+#   make size         — print section sizes
 #   make clean        — remove build artifacts
 #   make disasm       — generate disassembly listings
 #

@@ -41,8 +41,9 @@ Evidence levels, strongest first:
    the wrapper alone.
 4. **CPU subsystem testbench.** `tb/mosaic` runs the core inside the generated
    `cpu_subsystem` against memory models, without the rest of the SoC.
-5. **Generator only.** The configuration validates and the templates render. No
-   simulation of this core ships. Treat such a core as unproven.
+5. **Generator only.** The configuration validates and the templates render. The core
+   is in no step of the regression sweep and no passing simulation result is
+   recorded for it. Treat such a core as unproven.
 
 The simulation-only cores require `profile: testbench` and are refused by
 `target: tapeout`. Rocket and BOOM are 64-bit tiles extracted from a Chipyard

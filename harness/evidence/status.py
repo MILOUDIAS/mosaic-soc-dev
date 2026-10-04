@@ -5,13 +5,13 @@ Two orthogonal enums, deliberately kept disjoint.
 ``ExecutionStatus`` answers *"could we invoke and observe the process?"* and
 follows ``openada.result/v0alpha1`` (simra-tech/OpenADA, MIT).
 
-``EvidenceStatus`` answers *"what does the evidence support?"* and follows
-roadmap §12.2, which is a strict superset of OpenADA's four engineering states:
+``EvidenceStatus`` answers *"what does the evidence support?"* and uses
+this project's own vocabulary, which is a strict superset of OpenADA's four engineering states:
 it adds ``UNSUPPORTED`` (a deterministic capability proof that the requested
 operation cannot be implemented) and ``INFRASTRUCTURE_ERROR`` (the stage ran
 but did not produce a parseable mandatory report).
 
-The rules encoded here, quoting roadmap §12.2:
+The rules encoded here:
 
 - ``UNKNOWN``: the node has not run, or an upstream prerequisite has no
   evidence.
@@ -55,7 +55,7 @@ class ExecutionStatus(str, Enum):
 
 
 class EvidenceStatus(str, Enum):
-    """What the collected evidence supports (roadmap §12.2)."""
+    """What the collected evidence supports."""
 
     PASS = "PASS"
     FAIL = "FAIL"

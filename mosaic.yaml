@@ -1,14 +1,15 @@
-# mosaic.yaml — MOSAIC-SoC Phase 1 Configuration
-# Single config file governing the entire SoC generation flow.
+# mosaic.yaml: the default example configuration of MOSAIC-SoC.
+# A single config file governs the entire SoC generation flow. This one
+# describes seven harts: one cv32e20, two FazyRV and four SERV.
 
 soc:
   name: mosaic_poc_alpha
   pdk: gf180mcu
-  # NOT 'tapeout'. This 7-hart PoC is the RTL/simulation reference topology and
+  # NOT 'tapeout'. This 7-hart example is the RTL/simulation reference topology and
   # has no physical evidence behind it. The qualified physical part is the
   # Block A design in configs/mosaic_tapeout_ultra.yaml, which is what
-  # core_registry.TAPEOUT_* now describes. This file claiming
-  # 'tapeout' while being far larger than the 22-pin Block A budget would make
+  # core_registry.TAPEOUT_* describes. This file claiming
+  # 'tapeout' while being far larger than the 22-pin Block A design would make
   # the repository contradict itself.
   target: simulation
 

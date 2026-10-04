@@ -31,7 +31,6 @@ tb/testharness.sv
 tb/testharness_pkg.sv
 tb/mosaic_soc/tb_util.svh
 tb/mosaic_soc/soc.f
-tb/mosaic_soc/soc_diag.f
 tb/mosaic_soc/icarus_files.txt
 hw/ip/floonoc_fabric/floo_mosaic_noc_pkg.sv
 hw/ip/floonoc_fabric/floo_mosaic_noc.sv
@@ -82,6 +81,9 @@ sw/device/lib/drivers/pad_control/pad_control_regs.md
 # Physical flow: the PDK clone, run trees and layout binaries are never
 # versioned. Signoff results are published as release assets.
 /flow/librelane/gf180mcu/
+/flow/librelane/runs/
+/flow/librelane/final/
+/flow/librelane/img/
 /flow/librelane/*/runs/*/*
 !/flow/librelane/*/runs/*/final/
 /flow/librelane/*/runs/*/final/*
@@ -91,18 +93,25 @@ sw/device/lib/drivers/pad_control/pad_control_regs.md
 !/flow/librelane/*/runs/*/*-odb-reportdisconnectedpins/
 /flow/librelane/*/runs/*/*-odb-reportdisconnectedpins/*
 !/flow/librelane/*/runs/*/*-odb-reportdisconnectedpins/full_disconnected_pins_table.txt
+# Exception: the reference run's resolved LibreLane configuration, with its
+# path-valued keys removed, and the note that describes the directory.
+!/flow/librelane/integration/runs/blocka_d15_rstsync/resolved.json
+!/flow/librelane/integration/runs/blocka_d15_rstsync/README.md
 /flow/librelane/**/final_*/
 /flow/librelane/experimental/.generated_*.yaml
 /flow/librelane/experimental/.resolved_*.yaml
 /flow/librelane/experimental/.filelist_*.yaml
 *.gds
+*.gds.gz
+*.oas
+*.def
 *.odb
 *.spef
 *.sdf
 *.mag
 
 # Gate-level simulation artefacts, regenerated per netlist
-/tb/gls/gls_powerup_init.svh
+/tb/gls/gls_powerup_init*.svh
 /tb/gls/gf180mcu_cells_cvc.v
 /tb/gls/obj/
 /tb/gls/*.exe
@@ -112,17 +121,16 @@ sw/device/lib/drivers/pad_control/pad_control_regs.md
 /configs/prompted_demo.yaml
 /configs/agent_probe.yaml
 /configs/mcp_plugin_sim_*
+/configs/*.diagram.html
+/configs/tutorial_agent.yaml
 
 # Equivalence-check droppings written to the working directory
 /miter_log_*.txt
 /naja_sv_diagnostics.log
 
-# Local reference checkouts, editors and agent state
-refs/
-private/
+# Editors and local agent state
 .vscode/
 .idea/
 .DS_Store
 .claude/worktrees/
 .claude/settings.local.json
-.commandcode/

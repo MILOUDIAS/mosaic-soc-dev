@@ -1,7 +1,6 @@
 """Fail-closed evidence gates.
 
-These are the negative fixtures the roadmap's M0 exit criteria call for
-(``general_multicore_soc_generator_roadmap.md`` §16, M0):
+These are the negative fixtures the fail-closed rules call for:
 
     An exit-zero fixture with a non-waived DRC/LVS failure fails.
     A stage not run is UNKNOWN; an executed stage missing a mandatory report
@@ -145,7 +144,7 @@ def test_clean_run_passes():
 
 
 def test_exit_zero_with_drc_violations_fails():
-    """M0 exit criterion: a non-waived DRC violation must fail."""
+    """A non-waived DRC violation must fail."""
     ev = parse_signoff(_DIRTY_DRC)
     assert ev.status is EvidenceStatus.FAIL
     assert ev.drc_violations == 3
@@ -370,7 +369,7 @@ def test_pyproject_lists_every_harness_subpackage():
 
 @pytest.mark.slow
 def test_a_built_wheel_actually_runs(tmp_path):
-    """WP-0: `pip install` the wheel and run the console script elsewhere.
+    """`pip install` the wheel and run the console script elsewhere.
 
     Marked slow because it builds a wheel and creates a venv (~20 s), but it is
     the only test that can catch this class of defect: every other test imports
@@ -421,7 +420,7 @@ def test_a_built_wheel_actually_runs(tmp_path):
     )
     assert "presets available" in result.stdout
 
-    # M4: an installed server acts on a CHECKOUT named by MOSAIC_REPO, not
+    # An installed server acts on a CHECKOUT named by MOSAIC_REPO, not
     # on site-packages. Before, REPO_ROOT was the package parent, so every
     # repo-touching tool resolved paths inside the venv and refused them.
     import json

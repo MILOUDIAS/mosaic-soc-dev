@@ -103,5 +103,5 @@ netlist of library cells.
 | `prog_generic/generic.S` | the liveness program of `run_generic.sh` |
 | `prog_titan/` | the multiprocessor program |
 | `prog_uart/uart.S` | the UART program |
-| `mosaic_tb.sv`, `build_diag.sh` | a diagnostic top level that dumps fetch addresses and reset state |
+| `mosaic_tb.sv` | a diagnostic top level that dumps fetch addresses and reset state |
 | `cve2_clock_gate.sv` | the simulation clock gate |

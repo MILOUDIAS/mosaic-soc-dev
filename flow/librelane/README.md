@@ -32,8 +32,10 @@ Checked against `util/mosaic_gen/core_registry.py` and the tracked run metrics.
   placeholder that the preflight rejects, and no layout has been produced
   through this path.
 - **Run directories are not in version control.** Only the `final/metrics.json`
-  of the runs cited by the area model and the waivers is tracked, plus one
-  disconnected-pin table.
+  of the runs cited by the area model and the waivers is tracked, plus, for
+  `integration/runs/blocka_d15_rstsync`, one disconnected-pin table, the
+  resolved LibreLane configuration with its path-valued keys removed, and a
+  `README.md` that describes the directory.
 
 ## Directory map
 

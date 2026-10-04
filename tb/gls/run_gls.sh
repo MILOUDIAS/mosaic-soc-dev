@@ -192,7 +192,8 @@ if [ -n "$PADWRAP" ]; then
   echo "### padwrap : $(basename "$PADWRAP")"
 fi
 
-# The deposit list is scope-specific; regenerate it for the hierarchy in use.
+# The deposit list is scope-specific and is not tracked: generate it from the
+# run's netlist with gen_powerup_init.py, for the hierarchy in use.
 INITDEF=""
 if [ -n "${GLS_POWERUP_INIT:-}" ]; then
   [ -f "$HERE/$GLS_POWERUP_INIT" ] || { echo "ERROR: no deposit list $GLS_POWERUP_INIT" >&2; exit 2; }

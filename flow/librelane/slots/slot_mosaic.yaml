@@ -7,7 +7,7 @@
 # shared pad ring that it does not own.
 #
 # The frozen tapeout config is configs/mosaic_tapeout_ultra.yaml and it does
-# NOT read this file. See docs/rtl_freeze_blocka.md.
+# NOT read this file. See docs/physical-flow.md.
 #
 # The die size here is inconsistent with the declared 22-pin Block A target
 # because the two are different targets; this header is the reconciliation.

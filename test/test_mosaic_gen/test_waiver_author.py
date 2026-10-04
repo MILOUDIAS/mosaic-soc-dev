@@ -4,7 +4,7 @@
 a way a waiver stays structurally perfect while ceasing to be true, and the
 specimen is real: the waiver in this repository has ceiling 1, cites
 runs/blocka_sdc, passes every existing check, and the design measures 5 on the
-run being submitted.
+run being signed off.
 """
 from __future__ import annotations
 

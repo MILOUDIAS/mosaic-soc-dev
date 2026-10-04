@@ -1,6 +1,6 @@
 """Emit a complete hardening config: invariant template plus derived floorplan.
 
-Phase 1 measured the split this module depends on. Of the keys in Block A's
+Hardening Block A and Block B measured the split this module depends on. Of the keys in Block A's
 signoff config, 33 were byte-identical in Block B's and carried over untouched
 onto a design they were never tuned for. Five are design-specific:
 ``DESIGN_NAME``, ``CLOCK_PERIOD``, ``FP_SIZING``, ``DIE_AREA``, ``CORE_AREA``.

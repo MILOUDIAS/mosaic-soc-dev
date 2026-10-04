@@ -1,17 +1,16 @@
 """Typed evidence primitives for the mosaic harness.
 
-This package implements the mechanics for the evidence model specified in
-``docs/general_multicore_soc_generator_roadmap.md`` §12, starting with the
-parts M0 needs: fail-closed gates, an explicit evidence-state vocabulary, and
-truthful signoff parsing.
+This package implements the mechanics of the harness's evidence model,
+starting with the parts every flow gate needs: fail-closed gates, an explicit
+evidence-state vocabulary, and truthful signoff parsing.
 
-The design rule that motivates the whole package is roadmap §12.2:
+The design rule that motivates the whole package:
 
     An exit code is execution evidence, not qualification evidence.
     Only ``PASS`` may close a required graph node.
 
-See ``docs/evidence_gate_hardening_proposal.md`` for the rationale and for the
-upstream sources (OpenADA, CoreSmith) each mechanism is adapted from.
+The mechanisms are adapted from two upstream projects, OpenADA and CoreSmith.
+Each module's docstring gives the rationale and names the source it follows.
 """
 
 from harness.evidence.gate_guard import (

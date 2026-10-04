@@ -7,12 +7,12 @@ the cocotb parser, which searches for ``TESTS=/PASS=/FAIL=`` and
 produced and ``ok`` collapsed to ``returncode == 0``. A run that completed with
 DRC violations reported PASS.
 
-Roadmap §12.5 states the requirement: *"An exit-zero flow with negative
+The requirement: *"An exit-zero flow with negative
 required slack, a non-waived DRC violation, or an LVS mismatch must be FAIL.
 … An unexecuted flow is UNKNOWN; an executed flow with a missing or
 unparseable mandatory report is INFRASTRUCTURE_ERROR."*
 
-One rule here goes beyond §12.5, adapted from CoreSmith
+One rule here goes beyond that requirement, adapted from CoreSmith
 (``orchestrator/langgraph/backend_helpers.py``, MIT), which hit it in
 production: a report can parse perfectly and still yield **zero** because the
 tool printed a blank summary. So a zero count from a primary source is not

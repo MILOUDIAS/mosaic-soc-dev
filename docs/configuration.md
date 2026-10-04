@@ -250,8 +250,6 @@ The files in `configs/` and the root `mosaic.yaml`. "Workers" are `atlas` or
 | `mosaic_blockb_3hart.yaml` | 3 serv | obi | Block B: Block A with a second worker. Requests 20 MHz. |
 | `mosaic_blockc_4hart.yaml` | 4 serv | obi | Block C: Block A with three workers. Requests 10 MHz. |
 | `mosaic_ihp_probe.yaml` | 1 serv | obi | The smallest design on `pdk: ihp-sg13g2`, used to exercise the second technology. |
-| `llm_demo.yaml` | 1 cv32e20, 1 picorv32, 1 serv | obi | An example of a configuration produced from a text request. |
-| `titan_nomem.yaml` | 1 cv32e20 | obi | Does not pass validation (`sram_kb: 4` is below the 8 KB minimum). |
 
 The `.hjson` and `.py` files in `configs/` are X-HEEP's base files. The
 generator reads `configs/general.hjson` for the peripheral address map and

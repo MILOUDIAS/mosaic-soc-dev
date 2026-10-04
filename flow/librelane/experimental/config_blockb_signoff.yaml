@@ -63,7 +63,7 @@ SYNTH_STRATEGY: AREA 3
 # A synth check error fails this run. The fast configs set this false and
 # called the 108 remaining problems "pre-existing x-heep artifacts" -- that was
 # wrong, and turning the gate back on is what proved it. All 108 came from this
-# repo's own knob code (bug 28, 2026-08-01):
+# repo's own knob code (found 2026-08-01):
 #   107 x rv_timer_tl_h2d used-but-undriven, from the soc.ao_rv_timer: false
 #        branch absorbing h2d into an unused signal instead of tying it off.
 #     1 x a constant 1 conflicting with an $or output, traced to
@@ -147,7 +147,7 @@ CLOCK_PERIOD: 100
 VDD_NETS: [VDD]
 GND_NETS: [VSS]
 
-# ── FLOORPLAN: the knob Phase 1 exists to study ──────────────────────
+# ── FLOORPLAN: the knob this config exists to study ──────────────────────
 #
 # Block A is sized ABSOLUTELY because its die is a fixed slot: a quarter of the
 # 2235 x 2235 um shared project area, 1117.5 um square, and a block that does
@@ -161,7 +161,7 @@ GND_NETS: [VSS]
 #   Block A post-CTS logic cells      950,908 um2   (filler/tap/endcap excluded)
 #   Block A core area               1,169,330 um2   -> 81.3% utilisation
 #   one more SERV worker            + 183,151 um2   (21,151 core + 162,000 SCI
-#                                                    wrapper, docs/area_study)
+#                                                    wrapper, docs/design-notes/area_study_gf180_min_soc.md)
 #   Block B estimated logic         1,134,059 um2
 #
 # Forced into Block A's fixed slot that is 97.0% post-CTS utilisation, and the
@@ -180,7 +180,7 @@ GND_NETS: [VSS]
 # Expected outcome at 65: roughly a 1223 um square die, 1.49 mm2, about 9.4%
 # larger on a side than Block A. If the run lands materially away from that,
 # the estimate above is what was wrong -- and knowing by how much is precisely
-# what Phase 2 needs in order to derive a die size instead of fitting one.
+# what a generator needs in order to derive a die size instead of fitting one.
 FP_SIZING: relative
 FP_CORE_UTIL: 65
 # 16 um margin on every side for the ring. The DIE is fixed by the Block A slot,

@@ -1,7 +1,7 @@
 """Contract tests for the selectable DMA engine (``soc.dma``).
 
-MOSAIC historically hard-wired the pulp-platform iDMA (a CLAUDE.md
-"non-negotiable design choice"). Area work on the minimum-area tapeout config
+MOSAIC historically hard-wired the pulp-platform iDMA (AGENTS.md still
+fixes it as the default). Area work on the minimum-area tapeout config
 showed the iDMA costs 0.319 mm2 in GF180 -- 8.2% of the whole SoC -- for a
 design whose workers execute in place from flash and never issue a bulk copy.
 ``soc.dma`` therefore selects between:
@@ -205,7 +205,7 @@ def test_instantiation_guard_still_gates_on_is_included():
 
 
 def test_absent_dma_never_indexes_the_ao_demux_with_a_channel_index():
-    """Regression for bug 28: DMA_CH0_IDX is not an AO peripheral index.
+    """Regression: DMA_CH0_IDX is not an AO peripheral index.
 
     The tie-off that answers the DMA register window when ``soc.dma: none``
     covers exactly one demux slot, DMA_IDX. DMA_CH0_IDX belongs to a different
@@ -231,7 +231,7 @@ def test_absent_dma_never_indexes_the_ao_demux_with_a_channel_index():
 
 
 def test_absent_dma_still_terminates_its_own_window():
-    """The other half of bug 22: DMA_IDX must stay driven, or the bus hangs."""
+    """The other half of the absent-DMA tie-off: DMA_IDX must stay driven, or the bus hangs."""
     tpl = (
         REPO / "hw" / "core-v-mini-mcu" / "ao_peripheral_subsystem.sv.tpl"
     ).read_text()
@@ -422,12 +422,12 @@ def test_gf180_sram_byte_enables_are_active_low():
 
 
 def test_absent_ao_rv_timer_drives_both_halves_of_its_tl_pair():
-    """Regression for bug 29.
+    """Regression: an absent always-on timer left half its TL-UL pair undriven.
 
     ``rv_timer_tl_h2d`` is driven by the reg_to_tlul bridge, which lives inside
     the branch that ``soc.ao_rv_timer: false`` removes. Absorbing it into an
     unused signal instead of tying it off left 107 bits used-but-undriven --
-    the exact signature that exposed bugs 22 and 25, so it must not be allowed
+    the exact signature that exposed two earlier tie-off defects, so it must not be allowed
     to become background noise.
     """
     tpl = (

@@ -6,7 +6,10 @@
 > records the state of the generator on the dates shown. Statements about what
 > the schema could not express have since been superseded: see
 > [configuration.md](../configuration.md) for the current rules and
-> [physical-flow.md](../physical-flow.md) for place-and-route results.
+> [physical-flow.md](../physical-flow.md) for place-and-route results. File and
+> line references, and the description of `configs/mosaic_tapeout_ultra.yaml` in
+> section 8g (a 256-byte scratchpad), are those of the study's dates; the shipped
+> file now uses a 128-byte scratchpad.
 
 > **Date:** 2026-07-28
 > **Question asked:** can a SoC of 1× FazyRV (1-bit config) + 2× SERV, no
@@ -472,8 +475,9 @@ Elaboration needed a wrapper: slang refuses a top-level module with unconnected
 SystemVerilog interface ports, and `core_v_mini_mcu` exposes six (the eXtension
 interface). `mosaic_synth_top` instantiates one `if_xif`, ties all six to it,
 and forwards the other 251 ports and 8 parameters verbatim, so what is
-synthesised is the SoC. It is a measurement artifact and is deliberately not
-committed as design RTL.
+synthesised is the SoC. It is a measurement artifact, kept at
+`flow/librelane/experimental/mosaic_synth_top.sv` and not part of the design RTL
+under `hw/`.
 
 | Subsystem | mm² | % of SoC |
 |---|---:|---:|

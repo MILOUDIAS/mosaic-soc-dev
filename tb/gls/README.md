@@ -103,9 +103,11 @@ tb/gls/gen_powerup_init.py <netlist.v> <output.svh>
 ```
 
 Each design needs its own list, regenerated after every re-harden, because the
-flip-flop names come from the netlist. Two lists are tracked:
-`gls_powerup_init_block_c.svh` for Block C and `gls_powerup_init_padwrap.svh`
-for Block A behind its padframe model.
+flip-flop names come from the netlist. No list is tracked: the post-layout
+netlists are not in the repository, so the list is generated from the run's
+netlist with `gen_powerup_init.py` and selected with `GLS_POWERUP_INIT`. Block
+A behind its padframe model needs a list of its own, because the padframe
+wrapper adds a level of hierarchy to every flip-flop name.
 
 ## The padframe model
 
@@ -134,7 +136,7 @@ available. That flow also needs the `final/sdf/` files of a local run.
 | `gls_tb.sv` | the Icarus testbench |
 | `run_gls.sh` | the functional gate-level runner |
 | `gen_powerup_init.py` | writes a power-up deposit list from a netlist |
-| `gls_powerup_init_*.svh` | tracked deposit lists |
+| `gls_powerup_init*.svh` | deposit lists generated from a run's netlist by `gen_powerup_init.py`; not tracked |
 | `mosaic_block_a_padwrap.sv` | padframe model for Block A |
 | `gls_tb_cvc.v`, `run_gls_cvc.sh` | the CVC testbench and runner |
 | `mk_cells_cvc.py` | writes standards-compliant cell models for CVC |
