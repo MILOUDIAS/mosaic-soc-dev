@@ -1,9 +1,9 @@
 #!/bin/bash
-# Gate-level simulation of a hardened Chipathon macro -- any of them.
+# Gate-level simulation of a hardened MOSAIC block macro -- any of them.
 #
 # Runs the POST-PLACE-AND-ROUTE netlist -- the gates that are in the GDS -- with
 # the PDK's own cell models, booting XIP from a behavioural QSPI flash and
-# reporting only through the 22 pins the integrator bonds. See gls_tb.sv.
+# reporting only through the 22 bonded pins. See gls_tb.sv.
 #
 # Icarus is used rather than Verilator: these models are UDP-based, which
 # Verilator cannot simulate at all.
@@ -181,8 +181,8 @@ echo "### seq c2q : $SEQ_NOTE"
 # USE_POWER_PINS: the netlist connects .VDD/.VNW/.VPW/.VSS on every instance, so
 # the models must expose them or every instantiation is a port mismatch.
 # GLS_PADWRAP=<file.sv> inserts a padframe model between the testbench and the
-# macro. Needed once the macro stops driving its own pads: against the
-# integrator's DEF it exposes 167 control terminals instead of 22 pins, and the
+# macro. Needed once the macro stops driving its own pads: against an
+# external padframe DEF it exposes 167 control terminals instead of 22 pins, and the
 # testbench binds the 13-port face. The wrapper presents that face and speaks
 # the control protocol inward. Set GLS_TOP to the WRAPPER (the netlist stays
 # GLS_DESIGN, the macro), e.g. GLS_TOP=mosaic_block_a_padwrap.

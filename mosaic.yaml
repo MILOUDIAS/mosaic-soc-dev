@@ -6,10 +6,10 @@ soc:
   pdk: gf180mcu
   # NOT 'tapeout'. This 7-hart PoC is the RTL/simulation reference topology and
   # has no physical evidence behind it. The qualified physical part is the
-  # Chipathon Block A design in configs/mosaic_tapeout_ultra.yaml, which is what
-  # core_registry.TAPEOUT_* now describes. A schematic reviewer correctly
-  # flagged that this file claiming 'tapeout' while being far larger than the
-  # 22-pin Block A budget made the repository contradict itself.
+  # Block A design in configs/mosaic_tapeout_ultra.yaml, which is what
+  # core_registry.TAPEOUT_* now describes. This file claiming
+  # 'tapeout' while being far larger than the 22-pin Block A budget would make
+  # the repository contradict itself.
   target: simulation
 
   cores:

@@ -47,7 +47,7 @@ fi
 
 set -x
 docker run --rm -it \
-    --name chipathon-2026-iic \
+    --name mosaic-gf180-iic \
     --user "$(id -u):$(id -g)" \
     -v "${REPO_ROOT}:/workspace" \
     -w /workspace \

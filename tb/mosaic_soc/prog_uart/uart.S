@@ -1,4 +1,4 @@
-/* UART bring-up firmware for the frozen Chipathon Block A part.
+/* UART bring-up firmware for the frozen Block A part.
  *
  * WHY THIS EXISTS
  * ---------------

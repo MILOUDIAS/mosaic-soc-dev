@@ -1,11 +1,11 @@
-// Gate-level testbench for the Chipathon Block A macro.
+// Gate-level testbench for the Block A macro.
 //
 // WHY THIS EXISTS
 // ---------------
 // Every simulation up to now ran on RTL. This one runs on the POST-PLACE-AND-
 // ROUTE netlist -- the actual gates in the GDS, with the PDK's own cell models
-// -- and optionally with SDF timing back-annotated. It closes the last item the
-// schematic review listed for the physical phase ("post-synthesis gate-level
+// -- and optionally with SDF timing back-annotated. It closes the last open
+// item of the physical phase ("post-synthesis gate-level
 // simulation once a netlist exists").
 //
 // It also verifies something no RTL testbench can: that synthesis, CTS, place
@@ -15,7 +15,7 @@
 //
 // THE INTERFACE IS THE CHIP'S
 // ---------------------------
-// This drives only the 22 pins the MPW integrator will bond. There is no
+// This drives only the 22 pins that are bonded out. There is no
 // backdoor memory load, no hierarchical force, no probing of internal state --
 // the design boots XIP from a behavioural QSPI flash and reports through
 // status_valid_o/status_o, which with soc.debug: false is the only observability

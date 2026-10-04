@@ -67,7 +67,7 @@ _STOPWORDS = {
     "test", "testbench", "without", "no", "do", "not", "regenerate",
     # Framing words for a specific part: describing the target does not change
     # the design, so they must not read as unrecognized intent.
-    "chipathon", "block", "slot", "part", "macro", "candidate",
+    "block", "slot", "part", "macro", "candidate",
     "only", "just", "its", "own",
     "update", "write", "author", "create", "execute", "simulation", "rtl",
     "only", "but", "just", "include", "includes", "including", "also",
@@ -333,7 +333,7 @@ def parse_prompt(text: str) -> ParsedIntent:
         consume(m, f"repair margin {intent.repair_margin_pct}%")
 
     # ── selectable platform blocks ──
-    # Each is (regex, key, value). These are what make the Chipathon Block A
+    # Each is (regex, key, value). These are what make the Block A
     # part expressible from a prompt: it is defined as much by what it REMOVES
     # as by its core list, and before this the grammar could not say "no DMA".
     _PLATFORM_RULES = (
@@ -667,7 +667,7 @@ class SocFromPrompt:
                   or parse_prompt(text))
         _repair(intent)
         invalid_memory = []
-        # sram_kb: 0 is a real profile -- the Chipathon Block A part has NO
+        # sram_kb: 0 is a real profile -- the Block A part has NO
         # on-chip RAM pool and executes XIP from external flash -- but only when
         # the prompt SAID so. "0 KB sram" as a quantity is still treated as a
         # slip, because silently building a RAM-less SoC from a typo is worse

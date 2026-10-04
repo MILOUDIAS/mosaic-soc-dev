@@ -26,8 +26,8 @@
 // target rather than something to copy again.
 //
 // Block A is a quarter of the 2235 x 2235 um shared project area (1117.5 um
-// square, 1.2488 mm2) with a 22-pin budget. The shared pad ring belongs to the
-// MPW integrator; this macro is the deliverable, so its pin list IS the block
+// square, 1.2488 mm2) with a 22-pin budget. The shared pad ring is outside
+// this macro; this macro is the deliverable, so its pin list IS the block
 // interface -- there is no chip-level adapter to tie things off in.
 //
 // 22 LEF pins = 20 signal ports below + VDD/VSS, which the PDN creates.
@@ -114,7 +114,7 @@ parameter EXT_XBAR_NMASTER = 0,
   // Output slew tracks input slew, so the trade is a loss. Do not "fix" these
   // pads by upsizing again without first improving what drives them.
   //
-  // Still provisional against the integrator's real pad loading: OUTPUT_CAP_LOAD
+  // Still provisional against the real pad loading: OUTPUT_CAP_LOAD
   // here is 72.91 fF, and a bonded pad plus board trace will exceed that. If
   // that number rises a lot, revisit -- with the input net fixed first.
   for (genvar b = 0; b < 4; b++) begin : gen_flash_sd

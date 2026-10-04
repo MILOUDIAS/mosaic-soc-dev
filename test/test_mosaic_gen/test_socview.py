@@ -8,7 +8,7 @@ require byte equality, and build a view for the covering array's configs --
 the generated design space, not the shipped examples.
 
 DEF fixtures are verbatim excerpts of real output (a hardened run's final DEF
-and the Chipathon D15 padframe DEF), because the two place pins differently and
+and an external padframe DEF), because the two place pins differently and
 a synthetic DEF would test neither.
 """
 
@@ -176,9 +176,9 @@ def test_def_pins_from_a_hardened_run(tmp_path):
     assert pins["VDD"].side is None and pins["VDD"].shapes == 3
 
 
-def test_def_pins_from_an_integrator_padframe(tmp_path):
+def test_def_pins_from_an_external_padframe(tmp_path):
     """FIXED (0 0) with absolute shapes, and UNITS 200 not 2000."""
-    p = tmp_path / "d15.def"
+    p = tmp_path / "padframe.def"
     p.write_text(PADFRAME)
     d = parse_def_pins(p)
     pins = {x.name: x for x in d.pins}
@@ -196,8 +196,8 @@ def test_def_without_pins_is_an_error_not_an_empty_design(tmp_path):
 D15 = REPO / "flow/librelane/integration/D15/project_defs/A"
 
 
-@pytest.mark.skipif(not (D15 / "D15_A.def").is_file(), reason="D15 collateral not on disk")
-def test_padframe_pin_sides_agree_with_the_integrators_pad_map():
+@pytest.mark.skipif(not (D15 / "D15_A.def").is_file(), reason="external padframe collateral not on disk")
+def test_padframe_pin_sides_agree_with_the_pad_map():
     d = parse_def_pins(D15 / "D15_A.def")
     assert len(d.pins) == 167
     sides = {p.side for p in d.pins}

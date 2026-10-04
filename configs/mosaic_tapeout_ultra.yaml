@@ -121,8 +121,8 @@ soc:
     # 86.5% utilisation (B 78%, C 68%), which is why only it is affected.
     # At 32 with its NDR it is 0 and 0, which is the signed-off result.
     repair_margin_pct: 32
-    # NOT set: die_um. 1110 um IS the mandate -- @d-m-bailey reported it as the
-    # A-block maximum, and our previous 1117.5 exceeded it. It belongs here in
+    # NOT set: die_um. 1110 um IS the mandate -- it is the maximum the external
+    # padframe accepts for the A block, and our previous 1117.5 exceeded it. It belongs here in
     # principle. Setting it alone does not work, and the reason is worth
     # recording because it looks like a bug and is not -- MEASURED against the
     # current calibration:

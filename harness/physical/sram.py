@@ -17,7 +17,7 @@ It is impossible. Measured from the PDK's own LEFs:
     gf180mcu_fd_ip_sram__sram512x8   431.86 x 484.88   209,400   0.419 mm2
 
 The best density available is 0.419 mm2 per KB. For scale, the entire Block A
-die -- a quarter of a shared MPW area, two harts, UART, SPI, timers, debug --
+die -- a quarter of a shared project area, two harts, UART, SPI, timers, debug --
 is 1.25 mm2, and Block C's four-hart die is 2.18 mm2. So:
 
     4 KB  =  1.68 mm2   already larger than Block A's whole die

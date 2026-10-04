@@ -17,7 +17,7 @@
 //   Output slew tracks input slew, so the trade is a loss. Do not "fix" these
 //   pads by upsizing again without first improving what drives them.
 //
-//   Still provisional against the integrator's real pad loading:
+//   Still provisional against the real pad loading:
 //   OUTPUT_CAP_LOAD here is 72.91 fF, and a bonded pad plus board trace will
 //   exceed that. If that number rises a lot, revisit -- input net first.
 

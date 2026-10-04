@@ -36,7 +36,7 @@ GOOD = {
     "design": "mosaic_block_a",
     "accepted_max": 591,
     "review_by": "2026-11-30",
-    "recorded_by": "MILOUDIAS",
+    "recorded_by": "mosaic-soc maintainers",
     "evidence": "flow/librelane/experimental/runs/blocka_signoff",
     "justification": "x" * 60,
 }
@@ -233,7 +233,7 @@ def test_the_shipped_waiver_file_is_valid_and_bounded():
     # all, so MAX_FANOUT_CONSTRAINT: 10 overrides nothing and its violations are
     # real. Checked, not assumed by symmetry.
     #
-    # design__disconnected_pin__count joined 2026-09-24: the D15 padframe's
+    # design__disconnected_pin__count joined 2026-09-24: the external padframe's
     # eleven _IN readbacks of output-only pads. A hard check, so it is waived
     # only by the exact pin names (IDENTITY_REQUIRED), never by count.
     assert {w.metric for w in waivers} == {"design__max_fanout_violation__count",

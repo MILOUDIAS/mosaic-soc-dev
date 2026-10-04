@@ -810,11 +810,11 @@ def derive_floorplan(
     objectives = intent.objectives
     errors: List[str] = []
 
-    # An MPW slot is an input, not an output: Block A is a quarter of a shared
+    # A mandated die is an input, not an output: Block A is a quarter of a shared
     # 2235 um project area and must match it exactly. Honour the mandate, but
     # still check the cells fit -- a slot the design overflows is the failure
     # this whole module exists to catch early rather than at DPL-0036.
-    # A padframe DEF mandates the die the same way an MPW slot does, and it
+    # A padframe DEF mandates the die the same way objectives.die_um does, and it
     # wins: pin coordinates come from that file, so a die of any other size
     # puts them off the edge.
     mandated = die_um_override if die_um_override is not None else objectives.die_um

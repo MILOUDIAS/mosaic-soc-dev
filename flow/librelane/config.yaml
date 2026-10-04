@@ -76,7 +76,7 @@ PDN_ENABLE_PINS: False
 PDN_CORE_VERTICAL_LAYER: Metal2
 PDN_CORE_HORIZONTAL_LAYER: Metal3
 
-# Workshop deliverable posture — review before a real tapeout (CLAUDE.md
+# Template posture — review before a real tapeout (CLAUDE.md
 # mandates DRC/LVS-clean signoff). These suppress GF180 IO/SRAM false positives.
 ERROR_ON_MAGIC_DRC: True
 MAGIC_GDS_FLATGLOB:

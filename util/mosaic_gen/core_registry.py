@@ -472,16 +472,16 @@ KNOWN_SCHEMAS: FrozenSet[str] = frozenset({CURRENT_SCHEMA})
 # either meets or does not, and STA remains the only thing that decides which.
 # Budgets are optional and, when present, are checked against measured results
 # rather than used to prune anything.
-# `die_um` is a MANDATE (an MPW slot the block must match exactly); the max_*
+# `die_um` is a MANDATE (a fixed die the block must match exactly); the max_*
 # keys are BOUNDS the derived die must fit inside. Different meanings, so
-# different keys -- a slot delivery is not "at most this big", it is this big.
+# different keys -- a mandated die is not "at most this big", it is this big.
 # `repair_margin_pct` is a per-design override of the signoff template's
 # GRT_DESIGN_REPAIR_MAX_SLEW_PCT. It sits with the die and the clock because
 # it is a statement about THIS design: Block A cannot reach zero max-slew at
 # the shipped 45 on its mandated 1110 um die, while B and C can.
 # `target_utilisation` is the density the die is sized at, and it belongs with
 # the die because it is what makes a die achievable: Block A's mandated 1110 um
-# slot is REFUSED at the model's conservative ~81% and emitted at the 82.3% its
+# die is REFUSED at the model's conservative ~81% and emitted at the 82.3% its
 # shipping run demonstrates. Until this key existed the number could only arrive
 # as MOSAIC_HARDEN_UTIL, so a searched density -- Block C's 0.74, worth 11.9% of
 # its die -- could not be written down as a design decision at all.
@@ -613,7 +613,7 @@ def target_capability_errors(soc: Mapping[str, Any]) -> List[str]:
             normalized_cores.append(normalized)
         if normalized_cores != list(TAPEOUT_CORE_MATRIX):
             errors.append(
-                "soc.target 'tapeout' is qualified only for the Chipathon "
+                "soc.target 'tapeout' is qualified only for the "
                 "Block A topology (1x SERV TITAN rv32ic with CSRs, 1x SERV "
                 "ATLAS rv32i without CSRs at 0x40010000)"
             )

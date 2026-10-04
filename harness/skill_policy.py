@@ -21,9 +21,10 @@ without that second pass, and the honest status is recorded per entry.
 
 The claim that matters most -- that NO skill writes evidence -- does not rest
 on either pass. It is checkable in one line and was checked separately:
-`signoff_waivers`, `signoff_template`, `lvs_config` and `info.yaml` appear in
-exactly one skill module, `flow_runner`, at two `"waivers":` keys that feed
-`load_waivers`. Both are read-side. Nothing here can author a waiver today,
+`signoff_waivers` is named in two skill modules: `flow_runner`, at two
+`"waivers":` keys that feed `load_waivers`, and `waiver_author`, which loads
+the waiver file to audit it. `signoff_template` is named in none. All are
+read-side. Nothing here can author a waiver today,
 which is why every entry declares evidence False and why the rule's second
 clause currently binds nothing.
 

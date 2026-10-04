@@ -1,4 +1,4 @@
-// TIMING-ANNOTATED gate-level testbench for the Chipathon Block A macro (CVC).
+// TIMING-ANNOTATED gate-level testbench for the Block A macro (CVC).
 //
 // This is the companion to gls_tb.sv. That one runs under Icarus and is
 // ZERO-DELAY: iverilog cannot compile the GF180 models' specify blocks

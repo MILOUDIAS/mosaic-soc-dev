@@ -8,8 +8,8 @@ so the field that names the measurement has always been an unread string.
 That is what lets a structurally perfect waiver stop being true. The record on
 this branch is the specimen: ceiling 1, evidence `runs/blocka_sdc`, every
 structural check passing, and the design it describes measures 4 and 5 on the
-runs that came after. Its cited run is a 1117.5 um macro -- the die size the
-integrator rejected -- and its justification still says "the same single net
+runs that came after. Its cited run is a 1117.5 um macro -- a die size the
+external padframe does not accept -- and its justification still says "the same single net
 has been measured in every re-harden since", which three later runs falsify.
 
 WHAT THIS CHECKS, and why each one exists rather than being invented:

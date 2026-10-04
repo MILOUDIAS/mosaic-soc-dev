@@ -62,7 +62,7 @@ waivers:
     design: mosaic_block_a
     accepted_max: 2
     review_by: 2026-11-30
-    recorded_by: MILOUDIAS
+    recorded_by: mosaic-soc maintainers
     evidence: flow/librelane/integration/runs/blocka_d15_rstsync
     expected_violators:
       - clkbuf_0_i_core_v_mini_mcu.cpu_subsystem_i.cpu_1_0.clk_i/Z
@@ -72,8 +72,8 @@ waivers:
       design__max_cap_violation__count: 0
     justification: >
       RE-BASED 2026-09-24 onto runs/blocka_d15_rstsync, the run that ships:
-      Block A with the reset synchronizer, hardened against the integrator's
-      D15 DEF (flow/librelane/integration). It measures TWO of the four
+      Block A with the reset synchronizer, hardened against an external
+      padframe DEF (flow/librelane/integration). It measures TWO of the four
       root buffers below, the same class at the same numbers (limit 10,
       fanout 16, slack -6), so the ceiling tightens from 4 to 2 and the two
       that no longer violate are no longer accepted. The run is otherwise
@@ -133,8 +133,8 @@ waivers:
       on.
 
       Closing it properly is a CTS question, not a waiver question: the root
-      buffer would need to drive fewer branches. That is the next submission's
-      work, and review_by is before the December deadline so this record cannot
+      buffer would need to drive fewer branches. That is work for the next
+      hardening, and review_by is set so that this record cannot
       outlive the decision.
 
       WHY IT IS ACCEPTED. MAX_FANOUT_CONSTRAINT: 10 is a rule this project
@@ -164,8 +164,8 @@ waivers:
 
 # ---- ON THE SUBMITTED DIE ----------------------------------------------------
 # THE SUBMITTED DESIGN IS NOW 1110 x 1110 um AT 20 MHz (runs/blocka_1110_ndr).
-# 1110 is a MANDATE: @d-m-bailey reported that the A block's maximum is
-# 1110 x 1110 and that our 1117.5 um PR boundary exceeded it, which is why the
+# 1110 is a MANDATE: the external padframe accepts an A block of at most
+# 1110 x 1110 um and our 1117.5 um PR boundary exceeded it, which is why the
 # padframe generator fell back to the next valid block size. Everything above is
 # measured on the smaller die.
 #
@@ -193,7 +193,7 @@ waivers:
     design: mosaic_block_a
     accepted_max: 11
     review_by: 2026-11-30
-    recorded_by: MILOUDIAS
+    recorded_by: mosaic-soc maintainers
     evidence: flow/librelane/integration/runs/blocka_d15_rstsync
     expected_violators:
       - spi_flash_cs_o_IN
@@ -210,12 +210,12 @@ waivers:
     preconditions:
       design__critical_disconnected_pin__count: 0
     justification: >
-      The D15 padframe gives every pad an _IN terminal carrying the pad's
+      The external padframe gives every pad an _IN terminal carrying the pad's
       input buffer back into the block. On the eleven OUTPUT-ONLY pads
       (flash CS and SCK, the 7-bit status bus, status_valid, UART TX) the
       block drives the pad and never reads it back, so those eleven _IN
-      terminals are block inputs with no load. The integrator's interface
-      (D15_A_interface.yaml) defines all 167 terminals, so the ports must
+      terminals are block inputs with no load. The padframe's interface
+      file defines all 167 terminals, so the ports must
       exist, and LVS at chip level connects them.
 
       This is the only disconnected-pin waiver and it is pinned: the gate

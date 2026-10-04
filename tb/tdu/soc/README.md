@@ -1,76 +1,58 @@
-# TDU SoC-level test (cocotb + Verilator)
+# TDU test at its SoC address
 
-Verifies the **Task Dispatch Unit at its SoC integration point**, not just in
-isolation. The block-level TB (`hw/tdu/tb/tdu_tb.sv`) drives the TDU with bare
-register offsets (`0x00..`); this test reproduces the **ao-peripheral reg-bus tap**
-from `ao_peripheral_subsystem.sv.tpl` and accesses the TDU through its real SoC
-address (`TDU_START_ADDRESS = 0x200A0000`), injecting per-hart `core_sleep` and
-observing `core_wake`/`tdu_irq`.
+The register-level testbench in `hw/tdu/tb/tdu_tb.sv` drives the Task Dispatch
+Unit (TDU) with bare register offsets. This test checks the TDU where it sits in
+the SoC: behind the register-bus tap of the always-on peripheral subsystem, at
+`TDU_START_ADDRESS = 0x200A0000`. It reproduces that tap, injects the per-hart
+sleep inputs, and observes the wake outputs and the interrupt.
 
-## Run
+## Running it
 
 ```bash
-tb/tdu/soc/cocotb/run.sh           # the (fixed) flow — PASS
-tb/tdu/soc/cocotb/run.sh bug       # also runs the original buggy tap (FAIL)
+tb/tdu/soc/cocotb/run.sh        # the tap as built in the SoC
+tb/tdu/soc/cocotb/run.sh bug    # also runs the tap without address subtraction, which must fail
 ```
 
-Needs cocotb + Verilator only.
+It needs cocotb and Verilator only.
 
-## What it checks (all PASS with the fix)
+## What it checks
 
-Programs the TDU through the SoC bus and verifies:
-- it is **reachable at its SoC address** (`SCHED_MODE` read/write round-trips);
-- the **8-deep task FIFO** works (`TASK_PUSH` ×3 → `TASK_STATUS` count = 3 → `TASK_POP` returns them in order);
-- **`WAKE_REQ` produces a `core_wake` pulse** for the targeted hart;
-- **`CORE_STATUS` reflects** the injected `core_sleep` inputs.
+Through SoC addresses:
 
-## Bug this test caught (now fixed)
+- the TDU is reachable: `SCHED_MODE` reads back what was written;
+- the eight-deep task queue works: three `TASK_PUSH` writes, `TASK_STATUS`
+  reports three, `TASK_POP` returns them in order;
+- a `WAKE_REQ` write produces a wake pulse for the targeted hart;
+- `CORE_STATUS` reflects the injected sleep inputs.
 
-**The TDU was unreachable through the SoC bus.** The tap in
-`ao_peripheral_subsystem.sv.tpl` passed the **full** SoC address
-(`0x200A0000 + offset`) to the TDU, but the TDU decodes by bare **offset**
-(`case(req_addr) TDU_*_OFFSET=0x00..`). So no register ever matched — every TDU
-access (task dispatch, wake, CPI, mode) silently returned 0.
+## Why the tap subtracts the base address
 
-The test demonstrates it directly:
+The TDU decodes register offsets (`0x00`, `0x04`, ...), not full addresses. The
+tap in `ao_peripheral_subsystem.sv.tpl` therefore subtracts the window base
+before it forwards a request:
 
-| Tap (`SUB`) | `SCHED_MODE` readback | task count | wake | result |
-|-------------|-----------------------|-----------|------|--------|
-| `0` full address (original) | `0x0` | 0 | none | **FAIL** |
-| `1` subtract base (fix) | `0x1` | 3 | bit 2 set | **PASS** |
+```
+tdu_req.addr = perconv2regdemux_req.addr - TDU_START_ADDRESS
+```
 
-**Fix:** the tap now subtracts the window base
-(`tdu_req.addr = perconv2regdemux_req.addr - TDU_START_ADDRESS`) so the TDU sees
-its register offsets — keeping the TDU position-independent and consistent with
-the block TB.
+Without the subtraction no register matches and every access returns zero. The
+`bug` argument runs that variant to show the test detects it:
 
-## Wake→core loop (now closed in hardware)
+| Tap | `SCHED_MODE` readback | Task count | Wake | Result |
+|---|---|---|---|---|
+| full address | `0x0` | 0 | none | fail |
+| base subtracted | `0x1` | 3 | bit 2 set | pass |
 
-This test originally surfaced that `core_wake_o` was **not wired back into the
-cores**. That is now fixed:
+## Related tests
 
-- `cpu_subsystem` has a per-hart `core_wake_i [NUM_HARTS]` input, and
-  `core_v_mini_mcu.sv` wires it from `TDU.core_wake_o` (`.core_wake_i(core_wake)`).
-- Each worker core (role ≠ `titan`) boots **dormant**: a per-hart run-enable latch
-  starts at 0 and is set by a `core_wake_i` pulse, gating the core's
-  `fetch_enable`. TITAN boots immediately out of reset (`fetch_enable = 1`).
-- The serial-core SCI wrappers (`serv_sci`, `fazyrv_sci`) — which have no native
-  fetch-enable — emulate dormancy by holding the core in reset and masking their
-  OBI request strobes until woken, and report `core_sleep_o = ~fetch_enable` so
-  the TDU's `CORE_STATUS` reflects which workers are still parked.
-
-The closed loop is verified end-to-end by the multi-core harness
-**`tb/mosaic/cocotb`** (`test_mosaic.py`): workers stay parked with no wake,
-a per-hart wake pulse releases exactly the targeted core, and all workers run
-once woken. What remains is the *policy* layer — the FreeRTOS firmware on TITAN
-that decides when to program `WAKE_REQ`/`TASK_PUSH` — which is future firmware
-work; the hardware mechanism and wiring are now complete and tested.
+The path from a wake pulse to a core starting is tested in `tb/mosaic/cocotb`
+and in the full-SoC benches under `tb/mosaic_soc/`.
 
 ## Files
 
-```
-cocotb/test_tdu_soc.py   cocotb test (drive TDU at its SoC address, check behaviour)
-cocotb/Makefile          cocotb+Verilator build (SUB selects the tap mode)
-cocotb/run.sh            runs the fixed flow (add `bug` to also run the broken tap)
-tdu_soc_tb_top.sv        reproduces the ao-peripheral tap + TDU + sleep/wake ports
-```
+| File | Purpose |
+|---|---|
+| `cocotb/test_tdu_soc.py` | the test |
+| `cocotb/Makefile` | cocotb and Verilator build; `SUB` selects the tap variant |
+| `cocotb/run.sh` | runs the test |
+| `tdu_soc_tb_top.sv` | the tap, the TDU and the sleep and wake ports |

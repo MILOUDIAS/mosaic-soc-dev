@@ -2,7 +2,7 @@
 //
 // The macro used to drive its own pads through internal tristates, so its 22
 // boundary ports were the chip's pins and the testbench bound them directly.
-// Against the integrator's DEF the pads live OUTSIDE the macro, and the macro
+// Against an external padframe DEF the pads live OUTSIDE the macro, and the macro
 // exposes the pad CONTROL terminals instead: OUT/OE/IN plus CS/SL/IE/PU/PD/
 // PDRV0/PDRV1 per bidirectional pad. That is 167 terminals, none of which the
 // existing testbench knows how to bind.

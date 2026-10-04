@@ -5,7 +5,7 @@ WHY THIS EXISTS
 Nothing else describes a whole SoC as one object. The facts are spread over the
 bundle manifest (a curated projection), boot_images.json, the generated
 `core_v_mini_mcu_pkg.sv` (the only per-bundle crossbar and address map), the
-core registry, the wrapper headers, run DEFs and integrator files. Every
+core registry, the wrapper headers, run DEFs and external padframe files. Every
 consumer that stitched its own subset got something wrong: topo-viz drew
 `2*nh+1+4` crossbar masters and 2 RAM banks for every OBI design, and the
 generated package says 7/9/11 masters and 1 bank for Blocks A/B/C.
@@ -268,7 +268,7 @@ def _design_of(run_dir: Optional[Path]) -> Tuple[Optional[str], Dict[str, Any]]:
 
 
 def _pin_plan_dir(template: Optional[str], repo_root: Path) -> Optional[Path]:
-    """The directory holding an integrator's pin template. Runs record an
+    """The directory holding an external padframe's pin template. Runs record an
     absolute path that goes stale when the files move, so fall back to the
     same file name under flow/librelane/integration (run trees skipped)."""
     if not template:

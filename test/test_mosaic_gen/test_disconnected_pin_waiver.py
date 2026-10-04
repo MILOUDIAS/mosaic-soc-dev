@@ -1,6 +1,6 @@
 """A disconnected-pin count is waived only by the exact pins it names.
 
-Block A's D15 padframe wrapper has eleven _IN terminals (pad input buffers of
+Block A's padframe wrapper has eleven _IN terminals (pad input buffers of
 output-only pads) that the block never reads. They are block inputs with no
 load, so LibreLane counts 11 disconnected pins, 0 critical. At the top level
 LibreLane calls a port critical only when EVERY input (or output) is

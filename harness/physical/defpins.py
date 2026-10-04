@@ -4,7 +4,7 @@ Two shapes occur in this project and both must read the same:
 
 - a hardened run's final DEF places each signal pin with `+ PLACED ( x y )` and
   gives its shape relative to that origin (`+ LAYER Metal3 ( -560 -560 ) ...`);
-- an integrator's padframe DEF (the Chipathon D15 files) writes
+- an external padframe DEF (a pin-placement DEF supplied with a pad ring) writes
   `+ FIXED ( 0 0 )` and gives the shape in ABSOLUTE coordinates.
 
 So a pin's position is its origin plus the centre of its first shape, in DEF

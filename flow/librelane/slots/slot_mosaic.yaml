@@ -2,19 +2,18 @@
 #
 # ############################################################################
 # NOT THE TAPEOUT TARGET. This is the CHIP-LEVEL path: a standalone die with
-# its own 68-pad ring. The Chipathon 2026 submission is the Block A MACRO --
-# 1117.5 um square, 22 pins, no pad ring, because an MPW block inherits the
-# shared ring from the integrator.
+# its own 68-pad ring. The hardened reference design is the Block A MACRO --
+# 1117.5 um square, 22 pins, no pad ring, because the block is placed inside a
+# shared pad ring that it does not own.
 #
 # The frozen tapeout config is configs/mosaic_tapeout_ultra.yaml and it does
 # NOT read this file. See docs/rtl_freeze_blocka.md.
 #
-# A schematic reviewer correctly flagged the die size here as inconsistent
-# with the declared 22-pin Block A target. The two are different targets;
-# this header is the reconciliation.
+# The die size here is inconsistent with the declared 22-pin Block A target
+# because the two are different targets; this header is the reconciliation.
 # ############################################################################
 #
-# Starting point: the wafer.space 1x1 MPW die envelope (3932 x 5122 um incl.
+# Starting point: the wafer.space 1x1 die envelope (3932 x 5122 um incl.
 # 26 um sealring per side). Resize CORE_AREA once the placed SoC area is known
 # (PoC target ~1.249 mm2). Pad instance names match the generate labels in
 # src/chip_top.sv; lists are read CLOCKWISE FROM THE SW CORNER and regex-escaped.

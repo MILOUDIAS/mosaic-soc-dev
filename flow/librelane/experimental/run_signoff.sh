@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end signoff run for the Chipathon Block A macro.
+# End-to-end signoff run for the Block A macro.
 #
 # The point of this script is what it does NOT contain: there is no --skip.
 # Every other run in experimental/ passes a long list of them to shorten the
@@ -26,10 +26,11 @@ FLOW="$(cd "$HERE/.." && pwd)"
 # runs/ and the saved views. Defaults to the script's own directory, which is
 # what every experimental run has always used.
 #
-# MOSAIC_WORK_DIR=flow/librelane/integration puts a tapeout run beside the
-# integrator's DEF instead of among the experiments. The distinction is worth a
-# directory: experimental/ holds runs we made up, integration/ holds the one we
-# ship and the files someone else gave us to ship it against.
+# MOSAIC_WORK_DIR=flow/librelane/integration puts a run hardened against an
+# external padframe DEF beside that DEF instead of among the experiments. The
+# distinction is worth a directory: experimental/ holds runs we made up,
+# integration/ holds the one we ship and the externally supplied files it is
+# hardened against.
 WORK="${MOSAIC_WORK_DIR:-$HERE}"
 case "$WORK" in /*) ;; *) WORK="$(cd "$FLOW/../.." && pwd)/$WORK" ;; esac
 mkdir -p "$WORK"

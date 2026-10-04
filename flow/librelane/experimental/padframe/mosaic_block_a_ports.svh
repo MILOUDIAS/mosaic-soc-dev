@@ -1,11 +1,11 @@
 // ---------------------------------------------------------------------------
 // GENERATED PORT LIST -- do not hand-edit.
 //
-//   source : D15_A_interface.yaml
+//   source : <padframe>_interface.yaml
 //   variant: A   die 1110 x 1110 um   167 terminals
 //
-// Regenerate with padframe/gen_wrapper_ports.py when the integrator reissues
-// the DEF. The port names must match D15_A.def exactly, because
+// Regenerate with padframe/gen_wrapper_ports.py when the padframe DEF is
+// reissued. The port names must match that DEF exactly, because
 // Odb.ApplyDEFTemplate runs in strict mode and requires identical pin sets.
 // ---------------------------------------------------------------------------
 

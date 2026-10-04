@@ -26,7 +26,7 @@ PADFRAME = REPO_ROOT / "flow/librelane/experimental/padframe"
 DEFS = REPO_ROOT / "flow/librelane/integration/D15/project_defs/A"
 WRAPPER = REPO_ROOT / "flow/librelane/experimental/mosaic_block_a.sv"
 
-# This file is the Chipathon D15 tapeout collateral: the integrator's DEF, the
+# This file tests the external padframe collateral: the padframe DEF, the
 # pad policy that generates the settings, and the 167-terminal delivery wrapper
 # built against them. Branches carrying only the generator and the harness do
 # not have it, and there a missing integration input is not a broken generator.
@@ -54,7 +54,7 @@ else:
 
 pytestmark = pytest.mark.skipif(
     bool(_MISSING),
-    reason=f"needs the D15 padframe collateral, missing: {', '.join(_MISSING)}",
+    reason=f"needs the external padframe collateral, missing: {', '.join(_MISSING)}",
 )
 
 

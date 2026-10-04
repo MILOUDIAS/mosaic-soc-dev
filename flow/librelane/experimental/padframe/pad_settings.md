@@ -1,8 +1,8 @@
 # Block A pad settings
 
-Generated from `D15_A_interface.yaml` by `gen_pad_settings.py`, with every
+Generated from `<padframe>_interface.yaml` by `gen_pad_settings.py`, with every
 value taken from `pad_policy.py`. Do not hand-edit: regenerate when the
-integrator reissues the DEF.
+padframe DEF is reissued.
 
 Variant `A` · **167 terminals** across **22 user pins** · die 1110 × 1110 µm
 
@@ -20,8 +20,8 @@ reset then holds the part in reset, which is the diagnosable failure on a block
 whose only observability is `status_o`.
 
 **Drive strength is 12 mA and rests on an estimate, not a measurement.**
-No house default exists: the padframe integrator declined to advise, and a
-track lead confirmed on 2026-08-26 that each team sets its own. The number
+No house default exists: the padframe does not prescribe a drive strength,
+and each block sets its own. The number
 comes from QSPI at 20 MHz into an assumed 15-25 pF of bond pad, package and
 short trace, where ~20 pF through a 10 ns edge needs about 10 mA. If a real
 board load ever lands well under 20 pF, 8 mA is the better choice.

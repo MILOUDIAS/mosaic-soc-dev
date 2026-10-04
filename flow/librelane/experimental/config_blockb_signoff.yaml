@@ -149,7 +149,7 @@ GND_NETS: [VSS]
 
 # ── FLOORPLAN: the knob Phase 1 exists to study ──────────────────────
 #
-# Block A is sized ABSOLUTELY because it is an MPW slot: a quarter of the
+# Block A is sized ABSOLUTELY because its die is a fixed slot: a quarter of the
 # 2235 x 2235 um shared project area, 1117.5 um square, and a block that does
 # not match its slot exactly is not deliverable. Block B is not a slot
 # delivery -- it is the experiment that asks which physical knobs are derived

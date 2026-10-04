@@ -429,10 +429,10 @@ def test_the_delivery_wrappers_are_process_neutral():
     wrappers instantiate the neutral names.
 
     One kind of wrapper is process-specific by nature: a padframe interface,
-    whose port list is the integrator's pad cells' terminals (Block A's D15
+    whose port list is the external pad cells' terminals (Block A's padframe
     wrapper drives GF180 pad drive strength, slew and Schmitt select). It must
     say so with a `mosaic-technology:` marker, and it still instantiates no
-    technology cell itself -- the pads are the integrator's."""
+    technology cell itself -- the pads belong to the external pad ring."""
     import re
     from harness.core import REPO_ROOT
     for name in ("a", "b", "c"):

@@ -24,7 +24,7 @@ BLOCK_A_CONFIG = "flow/librelane/experimental/config_blocka_signoff.yaml"
 
 # Block A's ACHIEVED logic/core utilisation under the current template. It was
 # 0.813 before the repair-margin change and is 0.835 after: the same design in the
-# same mandated 1117.5 um MPW slot, holding 2.68% more cell area.
+# same mandated 1117.5 um die, holding 2.68% more cell area.
 #
 # This is not a cosmetic bump. Deriving at the old 0.813 against the refreshed
 # calibration asks for a 1127.9 um die and is REFUSED, correctly -- the slot is
@@ -37,7 +37,7 @@ TEMPLATE = "flow/librelane/signoff_template.yaml"
 def block_a_soc() -> dict:
     soc = yaml.safe_load(
         (REPO_ROOT / "configs/mosaic_tapeout_ultra.yaml").read_text())["soc"]
-    # The MPW slot is an input: Block A is a quarter of a 2235 um shared area.
+    # The die is an input: Block A is a quarter of a 2235 um shared area.
     return dict(soc, objectives={"target_clock_mhz": 10, "die_um": 1117.5})
 
 

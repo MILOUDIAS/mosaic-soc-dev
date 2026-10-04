@@ -261,7 +261,7 @@ def test_run_writes_config_without_execute(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# the Chipathon Block A part, from a prompt
+# the Block A part, from a prompt
 # --------------------------------------------------------------------------
 
 BLOCK_A_PROMPT = (

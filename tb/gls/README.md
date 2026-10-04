@@ -1,215 +1,141 @@
-# Gate-level simulation — Chipathon Block A
+# Gate-level simulation
 
-Simulates the **post-place-and-route netlist** — the gates that are in the GDS —
-with the PDK's own cell models, booting XIP from a behavioural QSPI flash and
-reporting only through the **22 pins the MPW integrator bonds**. No backdoor
-memory load, no hierarchical forces, no internal probes: if this passes, the
-part can be brought up on a board the same way.
+This testbench simulates the netlist produced by place and route, the gates
+that are in the layout, with the GF180MCU PDK's own cell models. The netlist
+boots by executing in place from a behavioural QSPI flash model and reports
+through the pins of the block. No memory is preloaded, no signal is forced and
+no internal signal is probed. If it passes, the block can be brought up on a
+board the same way.
 
-It is the complementary check to bugs 28 and 31, which were RTL that elaborated
-and simulated happily while being wrong. This catches the opposite failure —
-RTL correct, implementation broken.
+It complements RTL simulation: it catches a design whose RTL is correct and
+whose implementation is not.
 
-## Status
+## Running it
 
-| | |
-|---|---|
-| **Functional GLS (Icarus)** | ✅ **passes** — boots in 12 399 cycles vs the RTL's ~12 400 |
-| **Sequential clock-to-Q** | ✅ 1 ns by default — the zero-delay flop race is gone |
-| **Timing-annotated GLS (CVC)** | ❌ blocked by a CVC crash — see below |
+It needs a completed hardening run (for `final/pnl/<design>.pnl.v`) and the PDK
+clone under `flow/librelane/gf180mcu/`. Neither is in version control.
 
 ```bash
-./run_gls.sh                      # functional GLS on the routed netlist
-GLS_NETLIST=<nl.v> ./run_gls.sh   # post-synthesis netlist instead
-GLS_SEQ_DELAY=0 ./run_gls.sh      # the old zero-delay oracle, for comparison
+GLS_RUN=flow/librelane/experimental/runs/<tag> tb/gls/run_gls.sh
+GLS_RUN=flow/librelane/experimental/runs/<tag> ./mosaic flow-runner run gls
+./mosaic gls-triage flow/librelane/experimental/runs/<tag>
 ```
 
+A pass ends with:
+
 ```
-[GLS] reset released at 1950000
-[GLS] status_valid_o asserted at 1239950000 after 12399 cycles, status_o = 0x00
 ### RESULT: EXIT SUCCESS — gate-level netlist booted and reported 0
 ```
 
-Cycle-for-cycle agreement with RTL is the result that matters: synthesis, CTS
-and place-and-route preserved the behaviour.
-
-## Sequential clock-to-Q, and what it did not fix
-
-`-DFUNCTIONAL` strips the specify blocks, and with them the CLK→Q delay, so the
-flops were UDP primitives switching in zero time. That is the textbook race:
-what a flop samples depends on event ordering, and inserting a buffer changes
-ordering without changing logic. So `run_gls.sh` now patches a nonzero
-clock-to-Q onto every sequential UDP in a **derived copy** of the cell models —
-the PDK files are read-only inputs and are never written. Combinational cells
-stay zero-delay; only the clock-to-Q arc changes, because only that arc carried
-the race. The log header records which oracle ran:
-
-```
-### seq c2q : 1 ns on 18 sequential UDPs
-```
-
-`harness/evidence/gls.py` reads that line, and a verdict from the zero-delay
-oracle is labelled race-prone. A log with no such line predates the change and
-is treated as race-prone, because it is.
-
-If a PDK bump ever changes the cell models so the patch matches nothing,
-`run_gls.sh` **refuses** rather than running a zero-delay simulation while
-claiming a delay it does not have.
-
-### What actually caused the 2026-08-12 "failure"
-
-Not the clock-to-Q race. The bench released reset **in the same timestep as
-the capture edge**:
-
-```systemverilog
-repeat (20) @(posedge clk);
-rst_n = 1'b1;              // same instant as the rising edge
-```
-
-This design has `dffrnq`/`dffsnq` flops with asynchronous reset. Deasserting
-`rst_n` on the edge means each of them sees `RN` rise at the instant `CLK`
-rises, and which the simulator delivers first is decided by how many **delta
-cycles** the reset tree and the clock tree each take. Both trees are
-zero-delay combinational, so that count is exactly the number of buffer
-stages. **Buffering therefore decided the verdict** — which is why two
-netlists identical in logic, connectivity and cell function disagreed on
-whether the part boots.
-
-The evidence is a bounded VCD of the first 250 cycles from each run, diffed on
-the 5 587 flop `Q` outputs, whose instance names are identical in both. The
-first state divergence is at **t = 1 951 ns**, one clock-to-Q after reset
-released at 1 950 ns, and the first five flops to diverge are `dffrnq` and
-`dffsnq` — the asynchronous ones.
-
-Releasing half a cycle away is what real bring-up does, and it settles it:
-
-| netlist | reset on the edge | reset off the edge |
-|---|---|---|
-| `blocka_signoff` (slew margin 10) | ✅ 12 399 cyc | ✅ **12 400** |
-| `blocka_reharden` (slew margin 45) | ❌ watchdog 40 001 | ✅ **12 400** |
-
-Both netlists now boot, to the same cycle. **`GRT_DESIGN_REPAIR_MAX_SLEW_PCT:
-45` is exonerated** — there was never a design defect here.
-
-### Which fix was load-bearing
-
-The reset-release fix, on its own. With `GLS_SEQ_DELAY=0` — the old zero-delay
-oracle — both netlists still boot in 12 400 cycles once reset is released off
-the edge. So the clock-to-Q patch did **not** fix this incident; it removes a
-different and genuine race (zero-delay UDP flops racing on *data capture*),
-and it is kept because that race is real, not because it was the culprit here.
-
-For the record, the clock-to-Q sweep before the reset bug was found — one
-variable, everything else held. It is a clean negative result, and it is what
-ruled the c2q race out and sent the search to the VCD:
-
-| netlist | 0 | 0.1 ns | 1 ns | 2 ns | 5 ns |
-|---|---|---|---|---|---|
-| `blocka_signoff` | ✅ 12 399 | — | ✅ 12 399 | — | ✅ 12 399 |
-| `blocka_reharden` | ❌ 40 001 | ❌ 40 001 | ❌ 40 001 | ❌ 40 001 | ❌ 40 001 |
-
-The structural comparison that made the failure impossible to attribute to the
-netlist, and so forced the search onto the bench:
-
-| check | result |
+| Variable | Meaning |
 |---|---|
-| logic instance names | identical, 0 only in either |
-| input-pin drivers, buffer chains collapsed | **0 mismatches across 76 910 pins** |
-| cell functions | 73 type differences, every one a drive-strength resize or `clkinv`↔`inv` |
-| `clkinv_1` vs `inv_1` models | byte-identical (`not MGM_BG_0( ZN, I )`) |
-| clock cone from `clk_i` | same 5 591 sequential endpoints |
-| reset cone from `rst_ni` | same 2 474 sequential endpoints |
-| `assign` statements, non-PDK macros | none in either |
+| `GLS_RUN` | the run directory; the design name is read from its `resolved.json` |
+| `GLS_DESIGN` | override the design (top module) name |
+| `GLS_NETLIST` | a different netlist, for example the post-synthesis one |
+| `GLS_FIRMWARE` | a different flash image |
+| `GLS_SEQ_DELAY` | clock-to-Q delay of the flip-flop models in ns; default 1, and 0 restores zero delay |
+| `GLS_MAXCYCLES` | watchdog, default 2,000,000 cycles |
+| `GLS_PADWRAP` | a padframe model placed between the testbench and the block |
+| `GLS_TOP` | the module the testbench instantiates when a padframe model is used |
+| `GLS_POWERUP_INIT` | a power-up deposit list other than the default |
+| `GLS_VCD`, `GLS_VCD_START`, `GLS_VCD_CYCLES` | capture switching activity for a window of cycles |
 
-## Why there are two flows
+The firmware is the liveness image built by
+`MOSAIC_CFG=<config> tb/mosaic_soc/run_generic.sh`.
 
-**Icarus cannot do timing annotation on this PDK.** The GF180 cell models use
-`ifnone` on edge-sensitive specify paths, which iverilog rejects:
+## What this simulation is, and is not
+
+**It is functional, not timing-annotated.** The GF180MCU cell models use
+`ifnone` on edge-sensitive specify paths. IEEE 1364-2005 permits `ifnone` only
+for state-dependent simple paths, and Icarus Verilog rejects the construct:
 
 ```
 sorry: ifnone with an edge-sensitive path is not supported
 ```
 
-so they must be compiled `-DFUNCTIONAL`, which strips the specify blocks — and
-with them the very paths SDF would annotate. `run_gls.sh --sdf` therefore
-**refuses** rather than running zero-delay and calling it timing-annotated.
+The models are therefore compiled with `-DFUNCTIONAL`, which removes the specify
+blocks and with them every path that SDF could annotate. `run_gls.sh --sdf`
+refuses to run rather than simulate without delays and call the result
+timing-annotated. Timing is established by static timing analysis at nine
+corners.
 
-**CVC** (OSS CVC 7.00b, IEEE 1364-2005) does compile specify blocks, has SDF
-annotation and `+min/typ/maxdelays`, and offers `+random_2state=<seed>` — a
-better power-up model than Icarus allows. `run_gls_cvc.sh` is complete and
-correct as far as it goes, but CVC **segfaults** compiling this design (peak RSS
-210 MB of 7.3 GB available, so a bug at scale, not memory). The same patched
-library compiles and simulates a small design in 0.1 s.
+**Flip-flops have a nonzero clock-to-Q delay.** With `-DFUNCTIONAL` the
+flip-flops are primitives that switch in zero time, which makes the value a
+flip-flop samples depend on event ordering, and inserting a buffer changes the
+ordering. `run_gls.sh` adds a clock-to-Q delay to every sequential primitive in
+a derived copy of the cell models; the PDK files are never written. The log
+header records it:
 
-**Re-tested 2026-08-13 on `blocka_slew32`, and the earlier diagnosis was too
-narrow.** This section used to blame the full specify library. It is not that:
-
-| variant | result |
-|---|---|
-| baseline (`+define+USE_POWER_PINS`, `+maxdelays`, `+sdfverbose`) | segfault |
-| without `+sdfverbose` | segfault |
-| plain `nl` netlist, no power pins, testbench patched | segfault |
-| **`+nospecify +notimingchecks`** | **segfault** |
-
-It crashes with no specify data at all, so the trigger is design size outright,
-not timing annotation. That rules out every workaround available here and
-leaves the conclusion below unchanged — but pointed at the right cause, so
-nobody re-runs this bisect.
-
-Timing coverage is therefore STA's, at nine corners. Closing this gap needs a
-commercial simulator or a newer CVC.
-
-## The PDK defect
-
-The models are **not standard-compliant**:
-
-```verilog
-ifnone
- (posedge A1 => (ZN:A1)) = (1.0,1.0);
+```
+### seq c2q : 1 ns on 18 sequential UDPs
 ```
 
-IEEE 1364-2005 §14.2.6 permits `ifnone` only as the default for *state-dependent
-simple* paths, never edge-sensitive ones. Two independent simulators reject it
-and both are right:
+`harness/evidence/gls.py` reads that line and labels a verdict from the
+zero-delay model as race-prone. If a PDK update changes the models so that the
+patch matches nothing, the runner refuses to run.
 
-| | |
-|---|---|
-| iverilog | `sorry: ifnone with an edge-sensitive path is not supported` |
-| CVC | `ERROR [1012] ifnone path illegal - has edge or is state dependent` |
+**Reset is released away from the clock edge.** The design has flip-flops with
+asynchronous reset. If a testbench deasserts reset in the same time step as a
+rising clock edge, the simulator's ordering of the two events depends on the
+number of buffer stages in the reset tree and the clock tree. Two netlists that
+are identical in logic and differ only in buffering then disagree on whether the
+block boots. `gls_tb.sv` releases reset on the falling edge, half a cycle from
+the capture edge, as a board would.
 
-`mk_cells_cvc.py` removes the 120 illegal keywords and keeps the paths (225
-legal state-dependent blocks are untouched), so they survive as SDF annotation
-targets instead of losing their delays. Worth reporting upstream.
+**It cannot see buffers.** Two netlists that differ only in buffer, clock, fill,
+tie or antenna cells are the same netlist to this simulation. `gls-triage` and
+`netlist-diff` use that fact: a difference confined to those cells cannot
+explain a differing verdict.
 
-## Power-up
+## Power-up state
 
-**4 081 of the design's 5 587 flops are plain `dffq_1` with no reset.** At time
-zero they are X, and X-propagation stalls the netlist — the first attempt sat at
-126 000 cycles with the QSPI pins stuck at `x`. Verilator hides this by
-zero-initialising, which is why no RTL run ever showed it.
+Most flip-flops in these designs have no reset. In a gate-level simulation they
+start as unknown, the unknown value propagates, and the netlist never fetches
+its first instruction. That looks like a slow simulation, not a broken one. RTL
+simulation in Verilator hides the problem by starting everything at zero.
 
-Real silicon powers up to a definite 0 or 1, so:
+Silicon powers up to a definite value, so `gen_powerup_init.py` writes a list
+that deposits a value on each such flip-flop. The deposit holds only until the
+flip-flop's first clock edge.
 
-- **Icarus:** `gen_powerup_init.py` emits a `$deposit` per flop. The deposit
-  holds only until each flop's first clock edge.
-- **CVC:** `+random_2state=<seed>` — random 0/1 for all state, and a different
-  seed is a different power-up state. Stronger, and worth sweeping on a design
-  with this much unreset state.
+```bash
+tb/gls/gen_powerup_init.py <netlist.v> <output.svh>
+```
+
+Each design needs its own list, regenerated after every re-harden, because the
+flip-flop names come from the netlist. Two lists are tracked:
+`gls_powerup_init_block_c.svh` for Block C and `gls_powerup_init_padwrap.svh`
+for Block A behind its padframe model.
+
+## The padframe model
+
+Block A, hardened against an external padframe DEF, has no pad cells inside it.
+It exposes the control terminals of each pad instead. `mosaic_block_a_padwrap.sv`
+plays the part of the padframe so that the same testbench, firmware and flash
+model apply. It models output enable, input enable and the pulls, and prints
+`[PADWRAP] FAIL ...` when a pad control is wrong; `gls-triage` reports that as
+`PASS_WITH_UNCHECKED_ASSERTIONS`. It does not model drive strength, slew or
+input type, which a functional simulation cannot observe.
+
+## The second simulator
+
+`run_gls_cvc.sh` targets OSS CVC, which compiles specify blocks and supports SDF
+annotation and random two-state initialisation. `mk_cells_cvc.py` writes a copy
+of the cell models with the non-compliant `ifnone` keywords removed, and
+`mk_spiflash_v2001.py` writes a Verilog-2001 flash model. The scripts are
+complete, but CVC crashes while compiling a design of this size, with and
+without specify data, so timing-annotated gate-level simulation is not
+available. That flow also needs the `final/sdf/` files of a local run.
 
 ## Files
 
-| | |
+| File | Purpose |
 |---|---|
-| `gls_tb.sv` | Icarus testbench (SystemVerilog) |
-| `run_gls.sh` | functional GLS runner |
-| `gls_tb_cvc.v` | CVC testbench (Verilog-2001 — CVC is not a SystemVerilog simulator) |
-| `run_gls_cvc.sh` | timing-annotated runner (blocked on the CVC crash) |
-| `gen_powerup_init.py` | → `gls_powerup_init.svh` (generated, gitignored) |
-| `mk_cells_cvc.py` | → `gf180mcu_cells_cvc.v`, standards-compliant cell copy (generated, gitignored) |
-| `mk_spiflash_v2001.py` | → `spiflash_v2001.v`, Verilog-2001 flash model |
-
-Generated artifacts are reproducible from the scripts and are not committed; run
-the generators after a re-harden, since the flop list comes from the netlist.
-
-Note that `final/sdf/` is gitignored (185 MB across nine corners), so the CVC
-flow needs a local signoff run present — not just the committed deliverable.
+| `gls_tb.sv` | the Icarus testbench |
+| `run_gls.sh` | the functional gate-level runner |
+| `gen_powerup_init.py` | writes a power-up deposit list from a netlist |
+| `gls_powerup_init_*.svh` | tracked deposit lists |
+| `mosaic_block_a_padwrap.sv` | padframe model for Block A |
+| `gls_tb_cvc.v`, `run_gls_cvc.sh` | the CVC testbench and runner |
+| `mk_cells_cvc.py` | writes standards-compliant cell models for CVC |
+| `mk_spiflash_v2001.py`, `spiflash_v2001.v` | Verilog-2001 flash model |

@@ -124,14 +124,15 @@ def test_each_skill_declares_legal_scopes(name):
 def test_no_skill_writes_evidence_today():
     """Checked independently of the classification that produced this table.
 
-    `signoff_waivers`, `signoff_template`, `lvs_config` and `info.yaml` appear
-    in exactly one skill module, flow_runner, at two `"waivers":` keys that
-    feed load_waivers. Both read-side. This test is that grep, so the first
+    `signoff_waivers` is named in two skill modules: flow_runner, at two
+    `"waivers":` keys that feed load_waivers, and waiver_author, which loads
+    the waiver file to audit it. `signoff_template` is named in none. All
+    read-side. This test is that grep, so the first
     skill able to author a waiver fails here rather than shipping quietly.
     """
     import re
     from harness.core import REPO_ROOT
-    pattern = re.compile(r"signoff_waivers|signoff_template|lvs_config|info\.yaml")
+    pattern = re.compile(r"signoff_waivers|signoff_template")
     writers = []
     for path in sorted((REPO_ROOT / "harness/skills").glob("*.py")):
         for i, line in enumerate(path.read_text().splitlines(), 1):

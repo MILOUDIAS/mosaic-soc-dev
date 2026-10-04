@@ -176,7 +176,7 @@ def test_pnr_keeps_the_transition_target_while_signoff_does_not():
     assert template["MAX_TRANSITION_CONSTRAINT"] == 4, (
         "PnR must keep a transition target; null was measured and degrades the design")
     # `dir::` resolves against the resolved config's directory: experimental/
-    # for experiments, integration/ for the D15 tapeout run. One path must
+    # for experiments, integration/ for the run hardened against an external padframe DEF. One path must
     # reach the one copy of the file from both.
     sdc = template["SIGNOFF_SDC_FILE"]
     assert sdc.startswith("dir::")

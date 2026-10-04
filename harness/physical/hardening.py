@@ -69,7 +69,7 @@ def die_side_from_def(def_path: Path) -> Optional[float]:
     """The DIEAREA edge length in microns, or None if the file does not say.
 
     DEF coordinates are in database units; the divisor is on the UNITS line and
-    is not always 1000 (the Chipathon padframe DEFs use 200). Reading the number
+    is not always 1000 (external padframe DEFs have used 200). Reading the number
     without the divisor is off by 5x and looks plausible, so both are required.
     """
     from .defpins import die_area
@@ -156,9 +156,9 @@ def render_derived_block(
     for key, value in floorplan.as_librelane().items():
         lines.append(f"{key}: {_format_value(value)}")
     if pin_template:
-        # The integrator's padframe DEF fixes every pin's edge, offset and
+        # An external padframe DEF fixes every pin's edge, offset and
         # layer. It is per-design by construction (each block gets its own
-        # slot), which is why it is derived here and refused in the shared
+        # position in the pad ring), which is why it is derived here and refused in the shared
         # template.
         #
         # LibreLane matches pin SETS in strict mode: one port the DEF does not
@@ -167,7 +167,7 @@ def render_derived_block(
         # silently dropped a pad control would otherwise reach GDS.
         lines += [
             "",
-            "# Pin placement comes from the integrator's padframe DEF, not from",
+            "# Pin placement comes from an external padframe DEF, not from",
             "# our floorplan. DIE_AREA above must equal the DEF's DIEAREA or the",
             "# pins land outside the die.",
             f"FP_DEF_TEMPLATE: {pin_template}",

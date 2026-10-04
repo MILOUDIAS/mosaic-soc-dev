@@ -28,8 +28,8 @@ fi
 
 SLOT="${SLOT:-workshop}"
 
-echo "chipathon-2026-gf180mcu-padring - native build"
-echo "----------------------------------------------"
+echo "MOSAIC-SoC GF180MCU chip-level flow - native build"
+echo "--------------------------------------------------"
 echo "Repo: ${REPO_ROOT}"
 echo "Slot: ${SLOT}"
 echo

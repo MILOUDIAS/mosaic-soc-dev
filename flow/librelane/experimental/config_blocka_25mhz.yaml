@@ -2,7 +2,7 @@
 #
 # COMMITTED ON PURPOSE, unlike the .generated_* configs beside it. Those are
 # regenerated build products and are ignored; this one produced a number that has
-# been published to the Chipathon reviewers (issue #134), so it has to be
+# been published outside the project, so it has to be
 # reviewable rather than reproducible-in-principle.
 #
 # Reproduce:
@@ -15,7 +15,7 @@
 #
 # 25 MHz IS NOT A LOCKED TARGET. configs/mosaic_tapeout_ultra.yaml deliberately
 # carries no soc.objectives.target_clock_mhz, so the period is supplied here
-# rather than derived. Once the track lead and integration team confirm a clock,
+# rather than derived. Once a clock is confirmed for the design,
 # set target_clock_mhz in the SoC config and let the derivation emit it -- at
 # which point this file should be deleted rather than maintained.
 #
@@ -379,11 +379,10 @@ DESIGN_NAME: mosaic_block_a
 # 10 MHz, from soc.objectives.target_clock_mhz. A request, not a result:
 # STA decides whether it was met.
 # 25 MHz. ONE key differs from the config that produced runs/blocka_sdc.
-# The reviewer's estimate (issue #134): the worst setup path is a half-cycle
+# The estimate made before this run: the worst setup path is a half-cycle
 # output path to spi_flash_sd_io with ~3.7 ns of logic, so 25 MHz should be
-# reachable. NOT a locked target -- this run exists to bring numbers to that
-# conversation, not to pre-empt it. 25 MHz is also what the official padring
-# config uses.
+# reachable. NOT a locked target -- this run exists to put measured numbers behind
+# that estimate, not to pre-empt the decision.
 #
 # MEASURED: 25 MHz closes. setup WS +1.663 ns (TNS 0), hold +0.0662 ns, every
 # hard check 0, max-slew 0, logic area 959,827 um2, GLS EXIT SUCCESS 12,399 cyc.

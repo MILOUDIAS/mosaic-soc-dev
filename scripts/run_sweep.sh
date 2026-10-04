@@ -1,20 +1,15 @@
 #!/bin/bash
-# Full regression sweep — every suite the project claims passes.
+# Full regression sweep: every test suite of the project, run in sequence.
 #
-# WHY THIS EXISTS
-# ---------------
-# The suite list lived only in DASHBOARD.md prose, so running "the sweep" meant
-# copying ~30 commands out of a table by hand. Predictably it went unrun for
-# three weeks, and when it was finally run again four steps failed — two of
-# them masked by a sibling suite that shares a DASHBOARD row:
+# Each step has a name, a command and a success marker (a regular expression
+# that must appear in the step's log). A step passes only when the command
+# exits 0 AND the marker is found, because several runners exit 0 while
+# printing a failure.
 #
-#   * tb/mosaic/run.sh checks "alive + executed" and never tests dormancy, so
-#     it passed while the cocotb dormancy test failed.
-#   * tb/sci/hazard3 passed because tb_smith adds Hazard3's include path
-#     itself, while the full-SoC build could not find the same headers.
-#
-# A green row was hiding a red one. This script is the executable version of
-# that table, so the claim and the check cannot drift apart again.
+# Suites that look alike are separate steps on purpose. tb/mosaic/run.sh checks
+# that the workers are alive and executed code but does not test dormancy; the
+# cocotb test in tb/mosaic/cocotb does. tb/sci/hazard3 adds the Hazard3 include
+# path itself; the full-SoC build has to find the same headers on its own.
 #
 # Usage:
 #   scripts/run_sweep.sh                 # everything (~40 min)
@@ -35,7 +30,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --list) LIST_ONLY=1; shift ;;
     --only) ONLY="${2:-}"; shift 2 ;;
-    -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done

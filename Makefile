@@ -104,11 +104,11 @@ mcu-gen:
 	$(PYTHON) util/mosaic_gen/mcu_gen.py --config $(X_HEEP_CFG) --python_config $(PYTHON_X_HEEP_CFG) --pads_cfg $(PADS_CFG) --outtpl "$(MCU_GEN_TEMPLATES)" --externaltpl "$(EXTERNAL_MCU_GEN_TEMPLATES)" --cpu $(CPU) --bus $(BUS) --memorybanks $(MEMORY_BANKS) --memorybanks_il $(MEMORY_BANKS_IL)
 
 	@echo "### MCU-GEN completed! Running FuseSoC register generators..."	
-	# NOTE: use the refs-excluding cores-root helper. A bare `--cores-root .`
-	# makes FuseSoC recurse into refs/ and crash on the 0-byte test fixture
-	# refs/IP_Tools/fusesoc/tests/capi2_cores/misc/empty.core. The helper builds
-	# a temporary cores-root with only the project trees (hw tb util configs sw)
-	# plus the root .core files, then runs the identical `--setup`.
+	# NOTE: use the cores-root helper instead of a bare `--cores-root .`, which
+	# makes FuseSoC scan every directory of the checkout for .core files. The
+	# helper builds a temporary cores-root holding only the project trees
+	# (hw tb util configs sw flow scripts) plus the root .core files, then
+	# runs the identical `--setup`.
 	bash scripts/fusesoc-setup.sh
 
 

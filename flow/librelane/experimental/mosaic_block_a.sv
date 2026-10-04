@@ -1,22 +1,24 @@
 // Copyright 2026 MOSAIC-SoC contributors
 // SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 //
-// MOSAIC-SoC -- Chipathon MPW "Block A" delivery wrapper, padframe interface.
+// MOSAIC-SoC -- "Block A" (the GF180MCU reference design) macro wrapper,
+// padframe interface.
 // mosaic-technology: gf180mcu
 //   Declared because this port list IS the GF180 pad cells' terminal set
 //   (drive strength, slew, Schmitt select); another process needs another
 //   padframe wrapper, not an edit of this one.
 //
-// Block A is 1110 x 1110 um, the maximum the A slot allows. The shared pad ring
-// belongs to the MPW integrator, so this macro is the deliverable and its pin
-// list IS the block interface.
+// Block A is 1110 x 1110 um, the die the external padframe DEF mandates. The
+// shared pad ring is outside this macro and is not part of this repository, so
+// this macro is the deliverable and its pin list IS the block interface.
 //
 // THIS MACRO DRIVES THE PAD CONTROLS, NOT JUST THE DATA. The 22 bonded I/O cells
 // expand to 167 boundary terminals, because gf180mcu_fd_io pads take their
 // configuration from the block: pull enables on every pad, and on the
 // bidirectional ones also input/output enable, CMOS-vs-Schmitt select, slew
 // select and a two-bit drive strength. The port list is GENERATED into
-// padframe/mosaic_block_a_ports.svh from the integrator's D15_A_interface.yaml,
+// padframe/mosaic_block_a_ports.svh from the padframe interface file (a YAML
+// list of the pad terminals, supplied with the external padframe DEF),
 // because Odb.ApplyDEFTemplate matches pin sets in strict mode and 167
 // hand-typed names would fail only after a synthesis run.
 //

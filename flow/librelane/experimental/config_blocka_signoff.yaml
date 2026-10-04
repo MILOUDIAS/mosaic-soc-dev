@@ -161,7 +161,8 @@ GND_NETS: [VSS]
 # Block A is a FIXED slot: a quarter of the 2235 x 2235 um shared project
 # area = 1117.5 um square. Relative sizing gave 1107.9 x 1125.8 um -- the area
 # fitted (1.2473 vs 1.2488 mm2) but the die was 8.3 um too TALL for the slot.
-# An MPW block must match its slot exactly, so size it absolutely.
+# A block placed in a shared project area must match its slot exactly, so
+# size it absolutely.
 FP_SIZING: absolute
 DIE_AREA: [0, 0, 1117.5, 1117.5]
 # 16 um margin on every side for the ring. The DIE is fixed by the Block A slot,

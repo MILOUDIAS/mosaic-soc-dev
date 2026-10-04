@@ -22,10 +22,10 @@ from harness.skills.config_author import ConfigAuthor
 
 
 def _soc() -> dict:
-    """The QUALIFIED physical part: Chipathon Block A.
+    """The QUALIFIED physical part: Block A, the GF180MCU reference design.
 
     This used to be the 7-hart PoC, which never had physical evidence behind
-    it. A schematic reviewer caught the consequence: the design being taped out
+    it. The consequence was that the design being taped out
     and the design the generator called 'tapeout' were different chips. The
     matrix now describes what was actually hardened and signed off --
     2x SERV in a 1117.5 um square macro. See docs/rtl_freeze_blocka.md.

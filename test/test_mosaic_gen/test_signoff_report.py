@@ -54,7 +54,7 @@ def test_area_is_reported_in_mm2_by_the_type_not_by_hand():
     if not have("blocka_reharden"):
         pytest.skip("run tree not present")
     summary, _ = signoff_summary(RUNS / "blocka_reharden")
-    # Block A is a quarter of a 2235 um MPW area: 1117.5 um square.
+    # Block A is a quarter of a 2235 um shared project area: 1117.5 um square.
     assert summary["area_mm2"]["design__die__area"] == pytest.approx(1.2488, abs=1e-3)
     assert summary["logic_um2"] == pytest.approx(976364, rel=1e-4)
 
@@ -80,7 +80,7 @@ def test_the_comparison_reports_the_die_so_a_confound_cannot_hide():
     summary, _ = signoff_summary(
         RUNS / "blocka_reharden", compare=RUNS / "blocka_signoff")
     deltas = summary["compare"]["deltas"]
-    # Same mandated MPW die, so this delta must be zero -- and must be shown.
+    # Same mandated die, so this delta must be zero -- and must be shown.
     assert "design__die__area" in deltas
     assert deltas["design__die__area"]["delta"] == pytest.approx(0, abs=1)
     # The fix: 591 -> 4 max-slew for +2.68% logic area.

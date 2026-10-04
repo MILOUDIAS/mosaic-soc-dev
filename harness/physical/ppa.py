@@ -156,7 +156,7 @@ class PPA:
     #: power_w x clock_period_ns: W x ns is nJ, per clock cycle.
     energy_nj: Optional[float] = None
     #: `design__die__area`, the silicon this design occupies. Constant for a
-    #: design whose die is mandated (Block A's Chipathon slot), where it
+    #: design whose die is mandated (Block A's fixed die), where it
     #: contributes a zero-gain term rather than a refusal.
     die_mm2: Optional[float] = None
     caveats: Tuple[str, ...] = ()

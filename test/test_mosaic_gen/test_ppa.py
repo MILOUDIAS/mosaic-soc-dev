@@ -148,7 +148,7 @@ def test_naming_one_weight_does_not_silence_the_others():
 
 
 def test_a_mandated_die_contributes_nothing_rather_than_refusing():
-    """Block A's die is fixed by the Chipathon slot, so every run of it has the
+    """Block A's die is fixed by its mandated slot, so every run of it has the
     same die area. That must be a zero-gain term, not a refusal."""
     r, why = compare(_ppa(logic_um2=900.0), _ppa())
     assert r, why

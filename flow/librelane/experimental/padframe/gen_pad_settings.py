@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Emit the Block A pad-settings table from the integrator's interface file.
+"""Emit the Block A pad-settings table from the padframe interface file.
 
 Every value comes from pad_policy, which the wrapper generator also reads, so the
 table and the netlist cannot disagree about a pad setting. They did once: the
 table said rst_ni carries a pull-down while the wrapper tied it to 0, because
 each script held its own copy of the policy.
 
-Regenerate whenever the integrator reissues the DEF. Do not hand-edit the output.
+Regenerate whenever the padframe DEF is reissued. Do not hand-edit the output.
 """
 from __future__ import annotations
 import argparse, collections, pathlib, sys
@@ -47,7 +47,7 @@ def main() -> int:
         "",
         f"Generated from `{args.interface.name}` by `gen_pad_settings.py`, with every",
         "value taken from `pad_policy.py`. Do not hand-edit: regenerate when the",
-        "integrator reissues the DEF.",
+        "padframe DEF is reissued.",
         "",
         f"Variant `{data['variant']}` · **{len(rows)} terminals** across "
         f"**{sum(counts.values())} user pins** · die {w} × {h} µm",
@@ -67,8 +67,8 @@ def main() -> int:
         "whose only observability is `status_o`.",
         "",
         "**Drive strength is 12 mA and rests on an estimate, not a measurement.**",
-        "No house default exists: the padframe integrator declined to advise, and a",
-        "track lead confirmed on 2026-08-26 that each team sets its own. The number",
+        "No house default exists: the padframe does not prescribe a drive strength,",
+        "and each block sets its own. The number",
         "comes from QSPI at 20 MHz into an assumed 15-25 pF of bond pad, package and",
         "short trace, where ~20 pF through a 10 ns edge needs about 10 mA. If a real",
         "board load ever lands well under 20 pF, 8 mA is the better choice.",

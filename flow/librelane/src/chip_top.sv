@@ -1,9 +1,10 @@
 // MOSAIC-SoC GF180MCU chip top — pad frame.
 //
-// Adapted from the chipathon-2026-gf180mcu-padring template (Apache-2.0,
-// © Leo Moser / wafer-space; see NOTICE). Instantiates the GF180 physical IO
+// Adapted from a GF180MCU pad-ring template that is a fork of
+// wafer-space/gf180mcu-project-template (Apache-2.0, © Leo Moser / wafer-space;
+// see NOTICE). Instantiates the GF180 physical IO
 // cells (gf180mcu_ws_io__dvdd/dvss, gf180mcu_fd_io__in_s/in_c/bi_24t) and wraps
-// the MOSAIC SoC via `mosaic_soc_core`. The workshop chip-ID and wafer.space
+// the MOSAIC SoC via `mosaic_soc_core`. The template's chip-ID and wafer.space
 // logo macros are intentionally removed (not part of the MOSAIC deliverable).
 //
 // Pad ordering / placement is given to OpenROAD by slots/slot_mosaic.yaml.

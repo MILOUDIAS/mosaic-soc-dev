@@ -5,7 +5,7 @@ drifted immediately: the settings table said rst_ni carries a pull-down while th
 wrapper tied it to 0. A table and a netlist that disagree about a pad setting is
 worse than either alone, because each looks authoritative.
 
-Decisions and why, agreed with @d-m-bailey on the Chipathon issue:
+Decisions and why:
 
   IE = ~OE on bidirectional pads
       The PDK control table marks IE=1 with OE=1 "Disallowed". Tying IE high, as
@@ -23,9 +23,8 @@ Decisions and why, agreed with @d-m-bailey on the Chipathon issue:
       edge needs about 10 mA, so 8 mA does not cover it and 12 does.
 
       THE LOAD FIGURE IS OURS, NOT MEASURED, AND NOBODY ELSE OWNS THIS NUMBER.
-      We asked @d-m-bailey, who declined to advise and pointed at the track
-      leads; a track lead answered on Discord (2026-08-26) that "each team
-      should decide its own configuration according to their needs". So there
+      The padframe does not prescribe a drive strength: each block decides
+      its own pad configuration according to its needs. So there
       is no house default and no characterised package/board load to design to.
       This value rests on the arithmetic above and nothing else.
 

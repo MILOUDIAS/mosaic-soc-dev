@@ -1,11 +1,9 @@
 # tb/tools.sh -- sourced by every testbench runner; resolves Verilator and the
 # RISC-V toolchain, and REFUSES instead of falling back to whatever is on PATH.
 #
-# The runners used to default to paths that exist on one machine
-# (/mnt/.../tools/verilator-5.050, /opt/riscv32-gnu-toolchain-elf-bin) and
-# silently used PATH's tools anywhere else. PATH's Verilator is how the
-# 5.047-devel build ended up miscompiling cv32e40x (bug 21), and a silent
-# fallback is how that would happen again.
+# A silent fallback to PATH is unsafe: a Verilator 5.047 development build
+# miscompiles cv32e40x, and nothing in the simulation log says which Verilator
+# produced the model.
 #
 # The reference toolchain is the root flake: `nix develop .#sim` provides both
 # tools and sets RISCV_TC. harness/toolchain.py PINS must name the same version
@@ -65,14 +63,15 @@ mosaic_need_riscv_tc() {
   fi
 }
 
-# The Mako templates mcu_gen renders, one path per line. One copy of the list
-# (it was pasted into ten runners and the Makefile). ./.claude holds agent
+# The Mako templates mcu_gen renders, one path per line. The runners share this
+# one copy; MCU_GEN_TEMPLATES in the Makefile must select the same files (the
+# two find expressions are kept equivalent). ./.claude holds agent
 # worktrees -- whole repository copies -- whose templates would otherwise be
 # rendered too, and whose count pushes the list past the kernel's 128 KiB
 # per-argument limit ("Argument list too long").
 mosaic_templates() {
   find . \( -path './build/*' -o -path './.claude/*' \
     -o -path './hw/vendor/*' ! -path './hw/vendor/xheep' ! -path './hw/vendor/xheep/*' \
-    -o -path './util/*' ! -path './util/profile' ! -path './util/profile/*' \
+    -o -path './util/*' \
     -o -path './test/*' -o -path './refs/*' \) -prune -o -name '*.tpl' -print
 }

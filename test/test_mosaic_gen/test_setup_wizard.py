@@ -89,7 +89,7 @@ def test_setup_rejects_secret_value_in_env_key_slot(isolated_config):
     result = sw.SetupWizard().configure(
         driver="api",
         api_kind="opencode-go",
-        env_key="sk-user-pasted-a-secret",
+        env_key="sk-test-not-a-real-key",
         interactive=False,
     )
     assert not result.ok

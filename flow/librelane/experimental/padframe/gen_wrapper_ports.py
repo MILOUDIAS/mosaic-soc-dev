@@ -4,7 +4,7 @@
 The macro must present one port per DEF pin: 167 of them, because the padframe
 expects it to drive each pad's control terminals as well as its data. Writing that
 list by hand invites a mismatch that Odb.ApplyDEFTemplate would only catch in
-strict mode, after a synthesis run. Generating it from D15_A_interface.yaml makes
+strict mode, after a synthesis run. Generating it from the padframe interface file makes
 the two agree by construction.
 
 Emits the port declarations and the constant drives. The functional connections
@@ -72,8 +72,8 @@ def main() -> int:
         f"//   variant: {data['variant']}   die {data['size_microns'][0]} x "
         f"{data['size_microns'][1]} um   {len(pins)} terminals",
         "//",
-        "// Regenerate with padframe/gen_wrapper_ports.py when the integrator reissues",
-        "// the DEF. The port names must match D15_A.def exactly, because",
+        "// Regenerate with padframe/gen_wrapper_ports.py when the padframe DEF is",
+        "// reissued. The port names must match that DEF exactly, because",
         "// Odb.ApplyDEFTemplate runs in strict mode and requires identical pin sets.",
         "// ---------------------------------------------------------------------------",
         "",

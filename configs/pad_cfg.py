@@ -6,10 +6,10 @@
 # Description: Pad configuration for X-HEEP
 #
 # ############################################################################
-# NOT USED BY THE CHIPATHON BLOCK A TAPEOUT.
+# NOT USED BY BLOCK A, THE GF180MCU REFERENCE DESIGN.
 #
-# This declares ~55 signal pins for the CHIP-LEVEL x-heep pad ring. The
-# Chipathon submission is a 22-pin hard MACRO with no pad ring of its own
+# This declares ~55 signal pins for the CHIP-LEVEL x-heep pad ring.
+# Block A is a 22-pin hard MACRO with no pad ring of its own
 # (flow/librelane/experimental/mosaic_block_a.sv); its pin contract is that
 # wrapper's port list, LVS-verified against extracted layout.
 #
