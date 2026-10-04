@@ -287,7 +287,7 @@ class MCPServer:
                 "protocolVersion": negotiate_protocol(
                     params.get("protocolVersion")),
                 "capabilities": {"tools": {"listChanged": False}},
-                "serverInfo": {"name": SERVER_NAME, "version": "0.4.0"},
+                "serverInfo": {"name": SERVER_NAME, "version": "0.3.0"},
                 # Not decoration: the client should say this to the model, so
                 # it knows the ceiling before it wastes a turn on a refusal.
                 "instructions": self.session.instructions(),
