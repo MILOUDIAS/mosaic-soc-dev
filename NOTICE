@@ -1,0 +1,57 @@
+MOSAIC-SoC
+Copyright 2026 MOSAIC-SoC contributors
+
+MOSAIC-SoC is a generator for heterogeneous multi-core RISC-V systems on chip.
+Files written for this project are licensed under the Solderpad Hardware
+License v2.1 (SPDX identifier "Apache-2.0 WITH SHL-2.1"), see LICENSE and
+LICENSES/Apache-2.0.txt, unless a file header states another licence.
+
+This product is a derivative of X-HEEP (https://github.com/x-heep/x-heep) and
+of its configuration generator xheep_gen (https://github.com/x-heep/xheep_gen).
+    Copyright EPFL
+    Copyright EPFL and Politecnico di Torino
+    Copyright ETH Zurich and University of Bologna
+    Copyright lowRISC contributors
+    Copyright OpenHW Group
+The files taken from X-HEEP keep the licence stated in their headers:
+Apache-2.0 WITH SHL-2.1, Apache-2.0 or SHL-0.51. The text of the Solderpad
+Hardware License 0.51 that X-HEEP ships is in LICENSES/SHL-0.51.txt.
+
+This product includes third-party hardware designs. Each keeps its own
+licence. UPSTREAM.md lists every one with its source, revision and licence
+file. The copyright holders named most often in the headers and licence
+files of each directory are:
+
+    hw/vendor/lowrisc/opentitan       lowRISC contributors
+    hw/vendor/pulp_platform           ETH Zurich and University of Bologna;
+                                      lowRISC contributors; EPFL;
+                                      T-Head Semiconductor Co., Ltd.; SiFive, Inc.;
+                                      The Regents of the University of California
+    hw/vendor/openhwgroup             OpenHW Group; Eclipse Foundation;
+                                      ETH Zurich and University of Bologna;
+                                      lowRISC contributors; Silicon Labs, Inc.;
+                                      Dolphin Design; TU Wien
+    hw/vendor/xheep                   EPFL; ETH Zurich and University of Bologna;
+                                      lowRISC contributors; Silicon Labs, Inc.;
+                                      Dolphin Design; Claire Xenia Wolf
+    hw/vendor/mosaic/axi_obi          derived from axi_obi,
+                                      ETH Zurich and University of Bologna
+    hw/vendor/mosaic/berkeley         The Regents of the University of California;
+                                      SiFive, Inc.
+    hw/vendor/mosaic/cva6             ETH Zurich and University of Bologna;
+                                      Thales; PlanV Technology;
+                                      Bruno Sá and Zero-Day Labs
+    hw/vendor/mosaic/fazyrv           Meinhard Kissich
+    hw/vendor/mosaic/floonoc          ETH Zurich and University of Bologna
+    hw/vendor/mosaic/hazard3          Luke Wren
+    hw/vendor/mosaic/ibex             lowRISC contributors;
+                                      ETH Zurich and University of Bologna
+    hw/vendor/mosaic/idma             ETH Zurich and University of Bologna;
+                                      lowRISC contributors
+    hw/vendor/mosaic/picorv32         Claire Xenia Wolf
+    hw/vendor/mosaic/serv             Olof Kindgren
+    hw/vendor/mosaic/snitch           ETH Zurich and University of Bologna
+
+The physical design flow in flow/librelane includes files from the wafer-space
+gf180mcu-project-template, Copyright 2025 Leo Moser and contributors, licensed
+under the Apache License 2.0. See flow/librelane/NOTICE.

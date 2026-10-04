@@ -3,7 +3,7 @@ package chipyard
 import org.chipsalliance.cde.config.{Config}
 
 // ---------------------------------------------------------------------------
-// MOSAIC-SoC extraction config (github.com/MILOUDIAS/MOSAIC-SoC)
+// MOSAIC-SoC extraction config (https://github.com/mosaiclab-org/mosaic-soc)
 //
 // One small BOOM (v3) and one standard Rocket in a SINGLE design, so both
 // tile closures are uniquified by one firtool run and can be vendored into

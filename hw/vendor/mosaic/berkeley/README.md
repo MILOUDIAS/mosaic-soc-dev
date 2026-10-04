@@ -2,9 +2,10 @@
 
 Extracted RocketTile and BoomTile (SmallBoomV3) Verilog closures from a
 **chipyard 1.14.0** elaboration, behind the MOSAIC `mosaic_tilelink_to_obi`
-window bridge (`hw/vendor/mosaic/tl_obi/`). **Both cores are EXCLUDED from
-the GF180MCU tapeout** — RV64 + caches do not fit the PoC area budget; this
-integration exists for simulation/architecture exploration, like CVA6.
+window bridge (`hw/vendor/mosaic/tl_obi/`). **Both cores are simulation-only**:
+the configuration validator refuses them for `target: tapeout`, and no physical
+implementation of a 64-bit cached tile exists in this project. The integration
+is for simulation and architecture exploration, like CVA6.
 
 ## Provenance (fully reproducible)
 

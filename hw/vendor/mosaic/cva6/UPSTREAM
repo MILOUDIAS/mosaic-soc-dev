@@ -1,0 +1,11 @@
+Project:  CVA6, the OpenHW Group application-class RISC-V core
+URL:      https://github.com/openhwgroup/cva6
+Commit:   8a2df2987ab3c0e864f152e2cc7702ef43cc37a4 (v5.3.0-174). Confirmed: 80 files under
+          core/ and common/ are byte-identical to that commit.
+Licence:  Solderpad Hardware License 0.51 (LICENSE). Individual file headers also declare
+          "Apache-2.0 WITH SHL-2.0" and "Apache-2.0 WITH SHL-2.1". LICENSE.SiFive and
+          LICENSE.Berkeley are copied from the same commit.
+Local:    A subset of the upstream file list is vendored (write-through cache, no HPDcache,
+          no CVFPU, no CV-X-IF example coprocessor). core/fpu_wrap.sv is patched to drop
+          the early_valid_o port connection. core/include/cv32a6_mosaic_config_pkg.sv,
+          cva6.core and cva6.f are MOSAIC files.

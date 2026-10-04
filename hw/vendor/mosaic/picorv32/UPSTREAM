@@ -1,0 +1,6 @@
+Project:  PicoRV32, a size-optimised RISC-V core by Claire Xenia Wolf
+URL:      https://github.com/YosysHQ/picorv32
+Commit:   f00a88c36eaab478b64ee27d8162e421049bcc66. Confirmed: picorv32.v is byte-identical
+          to that commit.
+Licence:  ISC (COPYING, copied from the same commit). The file header carries the ISC text.
+Local:    No RTL change. Only picorv32.v is vendored. picorv32.core is a MOSAIC file.

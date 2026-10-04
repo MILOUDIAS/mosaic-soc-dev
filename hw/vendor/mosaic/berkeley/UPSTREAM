@@ -1,0 +1,15 @@
+Project:  Rocket and BOOM v3 tiles, generated with Chipyard
+URLs:     https://github.com/ucb-bar/chipyard (tag 1.14.0,
+          commit 0acc1e1de2d3284bcd4d876956932a013ffe1949)
+          https://github.com/chipsalliance/rocket-chip (55bcad0f59436de98ea510334121de8546b9e9d7)
+          https://github.com/riscv-boom/riscv-boom (5223e44cfeb26f41380057a2eb4d651197475f69)
+          https://github.com/ucb-bar/berkeley-hardfloat (0ecaef097ce2accbd16a61613699450ed5533f29)
+          The three generator commits are the submodule pins of Chipyard 1.14.0.
+Licence:  rocket-chip: Apache-2.0 and BSD-3-Clause (LICENSE.rocket-chip.SiFive,
+          LICENSE.rocket-chip.Berkeley); BOOM: BSD-3-Clause (LICENSE.boom);
+          hardfloat: BSD-3-Clause (LICENSE.hardfloat); Chipyard: BSD-3-Clause (LICENSE.chipyard).
+Local:    rtl/ is Verilog emitted by firtool 1.75.0 from one Chipyard elaboration and
+          selected by extract_tile_closure.py. The generated files carry no licence header.
+          They have not been regenerated and compared, so the commits above are recorded,
+          not confirmed. MosaicConfigs.scala, extract_tile_closure.py, berkeley.core,
+          berkeley.f and README.md are MOSAIC files. README.md gives the reproduction steps.

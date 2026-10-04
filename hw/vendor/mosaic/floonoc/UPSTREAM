@@ -1,0 +1,10 @@
+Project:  FlooNoC, an AXI network-on-chip library of the PULP Platform
+URL:      https://github.com/pulp-platform/FlooNoC
+Commit:   d534a2135cfb6db2fa245b7b5dc383b4cf2301a1 (v0.8.3-1). Confirmed: 20 files under hw/
+          are byte-identical to that commit.
+Licence:  Solderpad Hardware License 0.51 (LICENSE-SHL). File headers declare SHL-0.51.
+Local:    Only the single-AXI subset is vendored (routers, AXI chimneys, links). The
+          narrow-wide modules, hw/test and hw/tb are left out. Three files are patched and
+          marked "MOSAIC vendoring patch": floo_id_translation.sv, floo_output_arbiter.sv
+          and floo_reduction_unit.sv. The patches adapt assertion macros and one parameter
+          to common_cells 1.38. floonoc.core is a MOSAIC file.

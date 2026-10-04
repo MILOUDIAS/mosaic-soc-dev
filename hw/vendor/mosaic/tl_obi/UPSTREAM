@@ -1,0 +1,5 @@
+Project:  none. This directory has no upstream.
+Licence:  Apache-2.0 WITH SHL-2.1, as declared in the file headers. The text is in the
+          LICENSE file at the root of the repository.
+Local:    mosaic_tilelink_to_obi.sv is a MOSAIC design. It converts the TileLink port of the
+          Rocket and BOOM tiles in ../berkeley to the OBI bus of the SoC.

@@ -1,0 +1,9 @@
+Project:  FazyRV, a chunk-serial RISC-V core by Meinhard Kissich
+URL:      https://github.com/meiniKi/FazyRV
+Commit:   c8d9c7971b91c0c166aef6c236f1134b2c6ac1a1. Confirmed: all 20 files under rtl/ are
+          byte-identical to that commit.
+Licence:  MIT (LICENSE.txt, copied from rtl/LICENSE.txt of the same commit). Every file
+          header declares "SPDX-License-Identifier: MIT", and the upstream README states
+          that rtl/ is under the MIT licence.
+Local:    No RTL change. fazyrv.core is renamed to mosaic:ip:fazyrv. Its "license: ISC"
+          line does not match the upstream licence, which is MIT.

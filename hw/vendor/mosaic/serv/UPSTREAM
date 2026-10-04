@@ -1,0 +1,8 @@
+Project:  SERV, a bit-serial RISC-V core by Olof Kindgren, with its servile wrapper
+URL:      https://github.com/olofk/serv
+Commit:   9baea86ff0e46e64b45342b9742898ed24e3c285 (1.4.0-9). Confirmed: 22 files under rtl/
+          and servile/ are byte-identical to that commit.
+Licence:  ISC (LICENSE). Most file headers declare ISC. Five files declare Apache-2.0.
+Local:    servile/servile.v is patched: the constant PRE_REGISTER value becomes the module
+          parameter pre_register. serv.core and servile.core are renamed to mosaic:ip:serv
+          and mosaic:ip:servile.

@@ -1,0 +1,11 @@
+Project:  Snitch, a single-issue RISC-V integer core of the PULP Platform, taken from
+          the copy kept inside MemPool
+URL:      https://github.com/pulp-platform/mempool (directory hardware/deps/snitch/src)
+Commit:   MemPool 3855df6da1893a5d18f34f3feaca5486d681738e. Confirmed: riscv_instr.sv,
+          snitch_lsu.sv and snitch_regfile_ff.sv are byte-identical to that commit.
+Licence:  Solderpad Hardware License 0.51 (LICENSE, copied from MemPool hardware/LICENSE).
+          File headers declare SHL-0.51.
+Local:    Only the bare integer core is vendored. rtl/snitch_pkg.sv and rtl/snitch.sv are
+          patched and marked "MOSAIC divergence": four extension flags are fixed to 0, the
+          floating-point configuration is removed, and one performance-counter reference is
+          guarded. snitch.core is a MOSAIC file.

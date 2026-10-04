@@ -1,0 +1,10 @@
+Project:  axi_obi, the AXI4 to OBI protocol converters of the PULP Platform
+URL:      https://github.com/pulp-platform/axi_obi
+Commit:   205c9bb338df6955a0c4a300c5140d9ce413ec56 (the version the port was written against;
+          no file here is a verbatim copy, so the commit cannot be confirmed by comparison)
+Licence:  upstream is Solderpad Hardware License 0.51, text in LICENSE.axi_obi
+Local:    mosaic_axi_to_obi.sv, mosaic_axi_burst_to_obi.sv and mosaic_obi_to_axi.sv are
+          MOSAIC rewrites of the upstream axi_to_obi and obi_to_axi converters. They are
+          specialised to 32-bit address and data and take the X-HEEP OBI structs as type
+          parameters instead of the PULP obi_pkg configuration. Their headers declare
+          "Copyright 2026 MOSAIC-SoC contributors" and "Apache-2.0 WITH SHL-2.1".

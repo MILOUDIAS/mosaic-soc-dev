@@ -1,0 +1,9 @@
+Project:  Ibex, the lowRISC RISC-V core
+URL:      https://github.com/lowRISC/ibex
+Commit:   022f084096baed0a9b5ebdf697ed2965f13e8ed8. Confirmed: 64 files are byte-identical
+          to that commit.
+Licence:  Apache-2.0 (LICENSE). NOTICE is the upstream notice file of the same commit.
+Local:    Four files are patched so that Ibex builds against the older OpenTitan primitives
+          shipped with X-HEEP: rtl/ibex_pkg.sv, rtl/ibex_lockstep.sv, rtl/ibex_top.sv and
+          vendor/prim/rtl/prim_count.sv. vendor/prim holds only the primitives that the
+          X-HEEP OpenTitan snapshot lacks. ibex.core is a MOSAIC file.

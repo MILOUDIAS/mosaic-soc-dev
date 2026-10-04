@@ -1,0 +1,7 @@
+Project:  Hazard3, a RISC-V core by Luke Wren
+URL:      https://github.com/Wren6991/Hazard3
+Commit:   8af992930f71a69b0e06c38734c1094f41a05ca0. Confirmed: all 38 files under rtl/ are
+          byte-identical to files under hdl/ of that commit.
+Licence:  Apache-2.0 (LICENSE, copied from the same commit). File headers declare Apache-2.0.
+Local:    No RTL change. The upstream hdl/ directory is flattened into rtl/. hazard3.core is
+          a MOSAIC file.

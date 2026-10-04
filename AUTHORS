@@ -1,0 +1,8 @@
+MOSAIC-SoC contributors
+
+The people who wrote MOSAIC-SoC are recorded in the git history of this
+repository. Run "git shortlog -sn" to list them.
+
+MOSAIC-SoC builds on X-HEEP (https://github.com/x-heep/x-heep), written by the
+X-HEEP contributors. The other projects this repository includes, and their
+copyright holders, are listed in NOTICE and UPSTREAM.md.

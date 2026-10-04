@@ -1,0 +1,12 @@
+Project:  iDMA, a modular DMA engine of the PULP Platform
+URL:      https://github.com/pulp-platform/iDMA
+Commit:   3c0cc3fbaa8f4b35f82cc028b795cb12c35f90d9 (six commits after release v0.6.5).
+          Confirmed: 34 files under rtl/ are byte-identical to that commit.
+Licence:  Solderpad Hardware License 0.51 (LICENSE). File headers declare SHL-0.51. The two
+          register files produced by lowRISC reggen declare Apache-2.0.
+Local:    Seven files under rtl/ are outputs of the iDMA generator for the rw_obi backend
+          and the 32-bit 3-D register frontend (idma_backend_rw_obi.sv,
+          idma_legalizer_rw_obi.sv, idma_transport_layer_rw_obi.sv, idma_reg.hjson,
+          idma_reg_top.sv, idma_reg32_3d_reg_pkg.sv, idma_reg32_3d_reg_top.sv). They are not
+          stored in the upstream repository, so they could not be compared.
+          idma_mosaic_wrapper.sv and idma.core are MOSAIC files.
