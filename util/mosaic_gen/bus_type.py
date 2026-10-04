@@ -5,7 +5,7 @@ class BusType(Enum):
     """Enumeration of all supported bus types.
 
     The enum value is interpolated verbatim into the SystemVerilog
-    ``bus_type_e`` enum literal in ``core_v_mini_mcu_pkg.sv.tpl`` — the two
+    ``bus_type_e`` enum literal in ``mosaic_soc_pkg.sv.tpl`` — the two
     must stay in sync.
     """
 

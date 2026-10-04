@@ -56,7 +56,7 @@ if ! "$PY" -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if "u
 fi
 UART_BASE="$("$PY" -c '
 import re, sys, pathlib
-pkg = pathlib.Path(sys.argv[1]) / "hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv"
+pkg = pathlib.Path(sys.argv[1]) / "hw/mosaic_soc/include/mosaic_soc_pkg.sv"
 text = pkg.read_text()
 
 def const(name):

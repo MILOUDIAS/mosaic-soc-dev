@@ -13,15 +13,15 @@
 
 module tb_log_xbar;
   import obi_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
-  localparam int unsigned NM = core_v_mini_mcu_pkg::SYSTEM_XBAR_NMASTER;
-  localparam int unsigned NS = core_v_mini_mcu_pkg::SYSTEM_XBAR_NSLAVE;
-  localparam int unsigned NB = core_v_mini_mcu_pkg::NUM_BANKS;
+  localparam int unsigned NM = mosaic_soc_pkg::SYSTEM_XBAR_NMASTER;
+  localparam int unsigned NS = mosaic_soc_pkg::SYSTEM_XBAR_NSLAVE;
+  localparam int unsigned NB = mosaic_soc_pkg::NUM_BANKS;
   localparam int unsigned NbLog2 = $clog2(NB);
   localparam int unsigned IdxW = cf_math_pkg::idx_width(NS);
   // Per-bank word addressing as memory_subsystem sees it
-  localparam int unsigned BankWords = 32'(core_v_mini_mcu_pkg::RAM0_SIZE) / 4;
+  localparam int unsigned BankWords = 32'(mosaic_soc_pkg::RAM0_SIZE) / 4;
   localparam int unsigned BankAw = $clog2(BankWords);
 
   logic clk = 1'b0;
@@ -42,8 +42,8 @@ module tb_log_xbar;
   ) dut (
       .clk_i        (clk),
       .rst_ni       (rst_n),
-      .addr_map_i   (core_v_mini_mcu_pkg::XBAR_ADDR_RULES),
-      .default_idx_i(core_v_mini_mcu_pkg::ERROR_IDX[IdxW-1:0]),
+      .addr_map_i   (mosaic_soc_pkg::XBAR_ADDR_RULES),
+      .default_idx_i(mosaic_soc_pkg::ERROR_IDX[IdxW-1:0]),
       .master_req_i (m_req),
       .master_resp_o(m_resp),
       .slave_req_o  (s_req),
@@ -85,11 +85,11 @@ module tb_log_xbar;
 
   localparam int unsigned NNonmem = 5;
   localparam nonmem_cfg_t NonmemCfg[NNonmem] = '{
-      '{core_v_mini_mcu_pkg::ERROR_IDX, 32'hBADACCE5, 0},
-      '{core_v_mini_mcu_pkg::DEBUG_IDX, 32'hDEB00000, 2},
-      '{core_v_mini_mcu_pkg::AO_PERIPHERAL_IDX, 32'hA0000000, 1},
-      '{core_v_mini_mcu_pkg::PERIPHERAL_IDX, 32'hCAFE0000, 3},
-      '{core_v_mini_mcu_pkg::FLASH_MEM_IDX, 32'hF1A50000, 1}
+      '{mosaic_soc_pkg::ERROR_IDX, 32'hBADACCE5, 0},
+      '{mosaic_soc_pkg::DEBUG_IDX, 32'hDEB00000, 2},
+      '{mosaic_soc_pkg::AO_PERIPHERAL_IDX, 32'hA0000000, 1},
+      '{mosaic_soc_pkg::PERIPHERAL_IDX, 32'hCAFE0000, 3},
+      '{mosaic_soc_pkg::FLASH_MEM_IDX, 32'hF1A50000, 1}
   };
 
   logic error_slave_seen = 1'b0;
@@ -110,7 +110,7 @@ module tb_log_xbar;
     assign s_resp[SlvIdx].rdata = rdata_q;
   end
 
-  always @(posedge clk) if (s_req[core_v_mini_mcu_pkg::ERROR_IDX].req) error_slave_seen <= 1'b1;
+  always @(posedge clk) if (s_req[mosaic_soc_pkg::ERROR_IDX].req) error_slave_seen <= 1'b1;
 
   // ── OBI master driver tasks (single outstanding, like the real cores) ──
   int unsigned gnt_cycle[NM];
@@ -181,7 +181,7 @@ module tb_log_xbar;
           cycle, m_req[0].req, m_req[0].addr, m_req[0].we, m_resp[0].gnt, m_resp[0].rvalid,
           dut.tier_req[0][1].req, dut.tier_resp[0][1].gnt, dut.tier_resp[0][1].rvalid,
           dut.tier_req[0][0].req, dut.tier_resp[0][0].gnt, dut.tier_resp[0][0].rvalid,
-          s_req[1].req, s_req[core_v_mini_mcu_pkg::ERROR_IDX].req);
+          s_req[1].req, s_req[mosaic_soc_pkg::ERROR_IDX].req);
       $display(
           "      lic0: req=%b wen=%b gnt_o=%b vld_d=%b vld_q=%b vld_o=%b | tcdm req=%b gnt=%b vld=%b",
           dut.tcdm_interconnect_i.gen_lic.i_xbar.gen_inputs[0].i_addr_dec_resp_mux.req_i,
@@ -243,11 +243,11 @@ module tb_log_xbar;
     fork
       for (int unsigned w = 0; w < 32; w++) obi_write(0, 32'h0000_4000 + 4 * w, w);
       begin
-        obi_read(4, core_v_mini_mcu_pkg::DEBUG_START_ADDRESS + 32'h10, rd);
-        check(rd == (32'hDEB00000 ^ (core_v_mini_mcu_pkg::DEBUG_START_ADDRESS + 32'h10)), $sformatf(
+        obi_read(4, mosaic_soc_pkg::DEBUG_START_ADDRESS + 32'h10, rd);
+        check(rd == (32'hDEB00000 ^ (mosaic_soc_pkg::DEBUG_START_ADDRESS + 32'h10)), $sformatf(
               "T4 DEBUG read data: got %08x", rd));
-        obi_read(4, core_v_mini_mcu_pkg::PERIPHERAL_START_ADDRESS + 32'h20, rd);
-        check(rd == (32'hCAFE0000 ^ (core_v_mini_mcu_pkg::PERIPHERAL_START_ADDRESS + 32'h20)),
+        obi_read(4, mosaic_soc_pkg::PERIPHERAL_START_ADDRESS + 32'h20, rd);
+        check(rd == (32'hCAFE0000 ^ (mosaic_soc_pkg::PERIPHERAL_START_ADDRESS + 32'h20)),
               $sformatf("T4 PERIPHERAL read data: got %08x", rd));
       end
     join

@@ -42,7 +42,7 @@ DEFAULT_OUTPUT_ROOT = "build/mosaic"
 # deliberately absent: they are not legal generator inputs.
 GENERATOR_SOURCE_ROOTS = ("hw", "tb", "util", "configs", "sw", "flow", "scripts")
 GENERATOR_SOURCE_FILES = (
-    "core-v-mini-mcu.core",
+    "mosaic_soc.core",
     "waiver_v5.core",
 )
 
@@ -521,7 +521,7 @@ def resolved_manifest(
             "resolved_base_peripherals": base_peripherals,
         },
         "build": {
-            "fusesoc_core": "openhwgroup.org:systems:core-v-mini-mcu",
+            "fusesoc_core": "mosaic:systems:mosaic_soc",
             "target": "sim",
             "tool": "verilator",
             "flags": flags,

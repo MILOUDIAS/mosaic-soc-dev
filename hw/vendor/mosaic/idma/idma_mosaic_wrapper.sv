@@ -24,37 +24,37 @@ module idma_mosaic_wrapper #(
     parameter int unsigned GLOBAL_SLOT_NUM = 0,
     parameter int unsigned EXT_SLOT_NUM = 0,
     parameter int unsigned NUM_STREAMS =
-        core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS,
+        mosaic_soc_pkg::DMA_NUM_MASTER_PORTS,
     parameter idma_pkg::error_cap_e ERROR_CAP =
         idma_pkg::NO_ERROR_HANDLING
 ) (
     input logic clk_i,
     input logic rst_ni,
 
-    input logic clk_gate_en_ni [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0],
+    input logic clk_gate_en_ni [mosaic_soc_pkg::DMA_CH_NUM-1:0],
 
     input  reg_req_t reg_req_i,
     output reg_rsp_t reg_rsp_o,
 
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_resp_i,
 
-    output fifo_req_t  [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
-    input  fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
+    output fifo_req_t  [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
+    input  fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
 
     input logic [GLOBAL_SLOT_NUM-1:0] global_trigger_slot_i,
     input logic [EXT_SLOT_NUM-1:0]   ext_trigger_slot_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
-    input dma_reg_pkg::dma_hw2reg_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0]
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
+    input dma_reg_pkg::dma_hw2reg_t [mosaic_soc_pkg::DMA_CH_NUM-1:0]
         external_hw2reg_i,
 
     output logic dma_done_intr_o,
     output logic dma_window_intr_o,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_ready_o,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_ready_o,
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_o
 );
 
   import idma_pkg::*;
@@ -344,17 +344,17 @@ module idma_mosaic_wrapper #(
 
   // Legacy x-heep exposes DMA_CH_NUM status bits. Streams occupy the first
   // NUM_STREAMS bits; channels without a physical stream remain inactive.
-  for (genvar i = NumStreams; i < core_v_mini_mcu_pkg::DMA_CH_NUM; i++) begin : gen_unused_ch
+  for (genvar i = NumStreams; i < mosaic_soc_pkg::DMA_CH_NUM; i++) begin : gen_unused_ch
     assign dma_ready_o[i] = 1'b0;
     assign dma_done_o[i]  = 1'b0;
   end
 
   for (genvar i = NumStreams;
-       i < core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS; i++) begin : gen_unused_rw
+       i < mosaic_soc_pkg::DMA_NUM_MASTER_PORTS; i++) begin : gen_unused_rw
     assign dma_read_req_o[i]  = '0;
     assign dma_write_req_o[i] = '0;
   end
-  for (genvar i = 0; i < core_v_mini_mcu_pkg::DMA_CH_NUM; i++) begin : gen_fifo_tie
+  for (genvar i = 0; i < mosaic_soc_pkg::DMA_CH_NUM; i++) begin : gen_fifo_tie
     assign hw_fifo_req_o[i] = '0;
   end
 
@@ -362,9 +362,9 @@ module idma_mosaic_wrapper #(
   initial begin : check_configuration
     assert (NumStreams > 0 && NumStreams <= 16)
       else $fatal(1, "iDMA NUM_STREAMS must be in [1, 16]");
-    assert (NumStreams <= core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS)
+    assert (NumStreams <= mosaic_soc_pkg::DMA_NUM_MASTER_PORTS)
       else $fatal(1, "iDMA needs one DMA master port per stream");
-    assert (NumStreams <= core_v_mini_mcu_pkg::DMA_CH_NUM)
+    assert (NumStreams <= mosaic_soc_pkg::DMA_CH_NUM)
       else $fatal(1, "iDMA streams exceed x-heep DMA status channels");
     assert (ERROR_CAP == idma_pkg::NO_ERROR_HANDLING)
       else $fatal(1,

@@ -26,7 +26,7 @@ from xheep import CpuConfig, XHeep
 
 
 TEMPLATE = Template(
-    filename=str(REPO_ROOT / "hw" / "core-v-mini-mcu" / "cpu_subsystem.sv.tpl"),
+    filename=str(REPO_ROOT / "hw" / "mosaic_soc" / "cpu_subsystem.sv.tpl"),
     strict_undefined=True,
 )
 

@@ -8,8 +8,9 @@ before changing anything.
 MOSAIC-SoC is a generator. One YAML file describes a multi-core RISC-V system on
 chip, and the generator produces its RTL, boot images, a simulation testbench
 and the inputs of a GF180MCU physical flow. It is a fork of X-HEEP and keeps
-X-HEEP's module names (`core_v_mini_mcu`, `x_heep_system`) and build system
-(FuseSoC, Mako templates).
+X-HEEP's build system (FuseSoC, Mako templates). The SoC module is
+`mosaic_soc` and its pad-ring wrapper is `mosaic_system`; in X-HEEP they are
+`core_v_mini_mcu` and `x_heep_system`.
 
 Start with [docs/architecture.md](docs/architecture.md). The other pages in
 `docs/` are the reference for configuration, cores, verification, the physical
@@ -53,7 +54,7 @@ flow and current status.
    listed in `hw/sci/sci.core`, with the core's RTL vendored under
    `hw/vendor/mosaic/<core>/`.
 3. A branch `% elif group.name == "<core>":` in
-   `hw/core-v-mini-mcu/cpu_subsystem.sv.tpl`.
+   `hw/mosaic_soc/cpu_subsystem.sv.tpl`.
 
 `./mosaic wrapper-smith analyze` and `scaffold` do the mechanical part. The core
 is not integrated until `./mosaic tb-smith run <core>` prints `TB PASS` and
@@ -66,7 +67,7 @@ is not integrated until `./mosaic tb-smith run <core>` prints `TB PASS` and
 |---|---|
 | `mosaic.yaml`, `configs/` | configurations |
 | `util/mosaic_gen/` | the generator. `core_registry.py` is the single source of supported cores, buses, PDKs and configuration rules |
-| `hw/core-v-mini-mcu/*.sv.tpl` | SoC templates |
+| `hw/mosaic_soc/*.sv.tpl` | SoC templates |
 | `hw/sci/` | core wrappers |
 | `hw/tdu/` | Task Dispatch Unit and CLINT |
 | `hw/vendor/mosaic/` | vendored cores, iDMA, FlooNoC, bus bridges |
@@ -135,7 +136,7 @@ yourself. See [docs/agent-harness.md](docs/agent-harness.md).
 
 - SystemVerilog: `lowercase_snake_case`, explicit types, packed structs, no
   hard-coded bus master or slave indices (use the constants in
-  `core_v_mini_mcu_pkg`).
+  `mosaic_soc_pkg`).
 - Mako: a `%` control line must be the first non-blank character on its line. An
   inline `% if` is emitted as literal text.
 - Python: follow the surrounding module; `make format-python` runs `black`.

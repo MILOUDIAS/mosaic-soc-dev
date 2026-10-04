@@ -9,7 +9,8 @@ berkeley.core.  No live-tree remapping or broad ``-y`` repair is performed.
 The positional-only invocation is retained as a legacy compatibility path. It
 starts from the old shared sim-verilator .vc and applies the historical live
 source remaps/fixes:
-  - core-v-mini-mcu/hw/* and the tb/* build-copies -> live hw/* and tb/* sources
+  - mosaic_systems_mosaic_soc_0/hw/* and the tb/* build-copies -> live hw/* and
+    tb/* sources
   - drop the stale idma build copies + pulp obi_pkg.sv (duplicate-package fix)
   - add -y for sci / serv / fazyrv / live-idma / cv32e40x (if_xif) / ams, plus
     idma_reg_top.sv (module name != filename) and the obi/idma include roots
@@ -58,14 +59,14 @@ def _find_vc(build_root: Path) -> Path:
     preferred = [
         path
         for path in candidates
-        if "core-v-mini-mcu" in path.name and "sim-verilator" in str(path.parent)
+        if "mosaic_soc" in path.name and "sim-verilator" in str(path.parent)
     ]
     if len(preferred) == 1:
         return preferred[0]
     if not preferred and len(candidates) == 1:
         return candidates[0]
     raise RuntimeError(
-        f"expected one core-v-mini-mcu sim .vc below {build_root}, found: "
+        f"expected one mosaic_soc sim .vc below {build_root}, found: "
         + ", ".join(str(path) for path in candidates)
     )
 
@@ -179,11 +180,11 @@ if "--manifest" in sys.argv or "--build-root" in sys.argv:
 
 REPO = sys.argv[1]
 SIMV = os.path.join(
-    REPO, "build/openhwgroup.org_systems_core-v-mini-mcu_1.0.5/sim-verilator"
+    REPO, "build/mosaic_systems_mosaic_soc_0/sim-verilator"
 )
-VC = os.path.join(SIMV, "openhwgroup.org_systems_core-v-mini-mcu_1.0.5.vc")
-CMM = "openhwgroup.org_systems_core-v-mini-mcu_1.0.5/hw/"
-CMM_TB = "openhwgroup.org_systems_core-v-mini-mcu_1.0.5/tb/"
+VC = os.path.join(SIMV, "mosaic_systems_mosaic_soc_0.vc")
+CMM = "mosaic_systems_mosaic_soc_0/hw/"
+CMM_TB = "mosaic_systems_mosaic_soc_0/tb/"
 TBUTILS = "x-heep__tb-utils_0/"
 
 
@@ -218,16 +219,16 @@ for ln in open(VC):
     # misses it -> point at the live (fixed) source explicitly.
     if os.path.basename(ap) == "obi_fifo.sv":
         ap = os.path.join(REPO, "hw/ip/obi_fifo/obi_fifo.sv")
-    # core_v_mini_mcu_pkg.sv is a CONFIG-DEPENDENT generated package (NUM_HARTS,
+    # mosaic_soc_pkg.sv is a CONFIG-DEPENDENT generated package (NUM_HARTS,
     # CORE*_IDX) shipped under a separate VLNV (x-heep__packages_0) as a STALE
     # build-copy. The CMM remap misses it, so the build would use the old
     # NUM_HARTS while the live hw/ files use the regenerated value -> array-size
     # mismatch. Point at the freshly-generated live package.
-    elif os.path.basename(ap) == "core_v_mini_mcu_pkg.sv":
-        ap = os.path.join(REPO, "hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv")
+    elif os.path.basename(ap) == "mosaic_soc_pkg.sv":
+        ap = os.path.join(REPO, "hw/mosaic_soc/include/mosaic_soc_pkg.sv")
     # The FlooNoC fabric top + pkg are CONFIG-DEPENDENT generated files
     # (floogen via floonoc_gen.py, incl. the router-map patch) — same staleness
-    # hazard as core_v_mini_mcu_pkg.sv: point at the live generated sources.
+    # hazard as mosaic_soc_pkg.sv: point at the live generated sources.
     elif os.path.basename(ap) in ("floo_mosaic_noc.sv", "floo_mosaic_noc_pkg.sv"):
         ap = os.path.join(REPO, "hw/ip/floonoc_fabric", os.path.basename(ap))
     # remap build-copies -> live
@@ -346,7 +347,7 @@ out.append(os.path.join(REPO, "hw/vendor/mosaic/snitch/rtl/snitch_regfile_ff.sv"
 # cva6 (mosaic:ip:cva6): package-heavy — explicit ordered fragment, appended
 # ONLY when the generated cpu_subsystem actually instantiates cva6_sci (keeps
 # ~80 files out of non-cva6 builds; sim-only core, excluded from tapeout)
-_cpu_ss = os.path.join(REPO, "hw/core-v-mini-mcu/cpu_subsystem.sv")
+_cpu_ss = os.path.join(REPO, "hw/mosaic_soc/cpu_subsystem.sv")
 _cpu_ss_txt = open(_cpu_ss).read() if os.path.exists(_cpu_ss) else ""
 if "cva6_sci" in _cpu_ss_txt:
     out.append("-I" + os.path.join(REPO, "hw/vendor/mosaic/cva6/core/include"))

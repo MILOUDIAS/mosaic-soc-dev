@@ -171,7 +171,7 @@ def test_the_minimum_area_config_carries_no_dma():
 def test_xbar_master_count_is_computed_without_consulting_is_included():
     """Pins a known, documented limitation so it cannot be silently "fixed".
 
-    ``core_v_mini_mcu_pkg.sv.tpl`` derives SYSTEM_XBAR_NMASTER from
+    ``mosaic_soc_pkg.sv.tpl`` derives SYSTEM_XBAR_NMASTER from
     ``dma.get_num_master_ports()`` alone. With ``soc.dma: none`` the engine is
     not instantiated but its (stubbed, 1-port) master slots still exist. Any
     change here must move ``xheep.num_bus_masters`` in the same commit -- that
@@ -179,7 +179,7 @@ def test_xbar_master_count_is_computed_without_consulting_is_included():
     two unused ports.
     """
     tpl = (
-        REPO / "hw" / "core-v-mini-mcu" / "include" / "core_v_mini_mcu_pkg.sv.tpl"
+        REPO / "hw" / "mosaic_soc" / "include" / "mosaic_soc_pkg.sv.tpl"
     ).read_text()
     lines = [
         ln
@@ -198,7 +198,7 @@ def test_xbar_master_count_is_computed_without_consulting_is_included():
 def test_instantiation_guard_still_gates_on_is_included():
     """The guard in ao_peripheral_subsystem.sv.tpl is what makes "none" work."""
     tpl = (
-        REPO / "hw" / "core-v-mini-mcu" / "ao_peripheral_subsystem.sv.tpl"
+        REPO / "hw" / "mosaic_soc" / "ao_peripheral_subsystem.sv.tpl"
     ).read_text()
     assert re.search(r"contains_peripheral\(\s*['\"]dma['\"]\s*\)", tpl)
     assert "get_dma().get_is_included()" in tpl
@@ -216,7 +216,7 @@ def test_absent_dma_never_indexes_the_ao_demux_with_a_channel_index():
     back error=1, rdata=0. It shipped in a GDS before yosys' check caught it.
     """
     tpl = (
-        REPO / "hw" / "core-v-mini-mcu" / "ao_peripheral_subsystem.sv.tpl"
+        REPO / "hw" / "mosaic_soc" / "ao_peripheral_subsystem.sv.tpl"
     ).read_text()
     offenders = [
         ln
@@ -233,10 +233,10 @@ def test_absent_dma_never_indexes_the_ao_demux_with_a_channel_index():
 def test_absent_dma_still_terminates_its_own_window():
     """The other half of the absent-DMA tie-off: DMA_IDX must stay driven, or the bus hangs."""
     tpl = (
-        REPO / "hw" / "core-v-mini-mcu" / "ao_peripheral_subsystem.sv.tpl"
+        REPO / "hw" / "mosaic_soc" / "ao_peripheral_subsystem.sv.tpl"
     ).read_text()
     assert re.search(
-        r"assign\s+ao_peripheral_slv_rsp\[\s*core_v_mini_mcu_pkg::DMA_IDX\s*\]",
+        r"assign\s+ao_peripheral_slv_rsp\[\s*mosaic_soc_pkg::DMA_IDX\s*\]",
         tpl,
     )
 
@@ -291,15 +291,15 @@ def test_plic_false_drops_rv_plic_from_the_mandatory_set():
 def test_peripheral_subsystem_template_ties_off_an_absent_plic():
     """Removing the PLIC is safe only because the template has a full else
     branch; without it the design would have floating interrupt nets."""
-    tpl = (REPO / "hw" / "core-v-mini-mcu" / "peripheral_subsystem.sv.tpl").read_text()
+    tpl = (REPO / "hw" / "mosaic_soc" / "peripheral_subsystem.sv.tpl").read_text()
     assert "contains_peripheral('rv_plic')" in tpl
     for tie in ("assign msip_o = '0;", "assign irq_plic_o = '0;",
                 "assign plic_tl_d2h = '0;"):
         assert tie in tpl, f"missing PLIC tie-off: {tie}"
 
 
-def test_core_v_mini_mcu_template_ties_off_an_absent_debug_subsystem():
-    tpl = (REPO / "hw" / "core-v-mini-mcu" / "core_v_mini_mcu.sv.tpl").read_text()
+def test_mosaic_soc_template_ties_off_an_absent_debug_subsystem():
+    tpl = (REPO / "hw" / "mosaic_soc" / "mosaic_soc.sv.tpl").read_text()
     assert "% if debug_enabled:" in tpl
     for tie in ("assign debug_req         = '0;",
                 "assign debug_reset_n     = 1'b1;",
@@ -311,7 +311,7 @@ def test_core_v_mini_mcu_template_ties_off_an_absent_debug_subsystem():
 def test_debug_reset_is_released_when_the_debug_module_is_absent():
     """debug_reset_n gates the whole system bus reset. Tying it to 0 -- or
     leaving it undriven -- would hold the SoC in reset forever."""
-    tpl = (REPO / "hw" / "core-v-mini-mcu" / "core_v_mini_mcu.sv.tpl").read_text()
+    tpl = (REPO / "hw" / "mosaic_soc" / "mosaic_soc.sv.tpl").read_text()
     assert "assign debug_reset_n     = 1'b1;" in tpl
     # the synchronized pad reset (test_reset_sync.py), still gated by debug
     assert "rst_n_sync && debug_reset_n" in tpl
@@ -431,7 +431,7 @@ def test_absent_ao_rv_timer_drives_both_halves_of_its_tl_pair():
     to become background noise.
     """
     tpl = (
-        REPO / "hw" / "core-v-mini-mcu" / "ao_peripheral_subsystem.sv.tpl"
+        REPO / "hw" / "mosaic_soc" / "ao_peripheral_subsystem.sv.tpl"
     ).read_text()
     else_branch = tpl.split("% if ao_rv_timer:", 1)[1].split("% endif", 1)[0]
     assert "% else:" in else_branch, "ao_rv_timer branch lost its else"

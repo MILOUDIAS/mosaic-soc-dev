@@ -53,8 +53,8 @@ BUNDLES = _bundles_matching_their_config()
 @pytest.mark.skipif(not BUNDLES, reason="no generated bundle on disk")
 @pytest.mark.parametrize("bundle,cfg", BUNDLES, ids=[b.name for b, _ in BUNDLES])
 def test_view_counts_equal_the_generated_package(bundle, cfg):
-    pkg = localparams((bundle / "generated/hw/core-v-mini-mcu/include/"
-                       "core_v_mini_mcu_pkg.sv").read_text())
+    pkg = localparams((bundle / "generated/hw/mosaic_soc/include/"
+                       "mosaic_soc_pkg.sv").read_text())
     v = build_view(cfg)
     assert v["crossbar"]["nmaster"] == pkg["SYSTEM_XBAR_NMASTER"]
     assert v["crossbar"]["nslave"] == pkg["SYSTEM_XBAR_NSLAVE"]
@@ -66,7 +66,7 @@ def test_view_counts_equal_the_generated_package(bundle, cfg):
 @pytest.mark.skipif(not BUNDLES, reason="no generated bundle on disk")
 def test_in_memory_package_is_the_generated_file():
     bundle, cfg = BUNDLES[0]
-    gen = (bundle / "generated/hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv").read_text()
+    gen = (bundle / "generated/hw/mosaic_soc/include/mosaic_soc_pkg.sv").read_text()
     assert render_pkg(_xheep_kwargs(cfg, REPO), REPO) == gen
 
 

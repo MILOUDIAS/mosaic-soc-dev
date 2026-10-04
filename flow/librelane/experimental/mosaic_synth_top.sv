@@ -1,7 +1,7 @@
 // GENERATED FOR SYNTHESIS MEASUREMENT ONLY -- not design RTL.
 //
 // slang refuses a top-level module with unconnected SystemVerilog interface
-// ports, and core_v_mini_mcu exposes six (the eXtension interface). This
+// ports, and mosaic_soc exposes six (the eXtension interface). This
 // wrapper instantiates one if_xif and ties all six to it so the SoC can be
 // elaborated standalone. Parameters and all 251 other ports are
 // forwarded verbatim, so the synthesised logic is the SoC itself.
@@ -16,8 +16,8 @@ parameter EXT_XBAR_NMASTER = 0,
     
     parameter AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 0 : AO_SPC_NUM - 1,
     parameter EXT_XBAR_NMASTER_RND = EXT_XBAR_NMASTER == 0 ? 1 : EXT_XBAR_NMASTER,
-    parameter EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS,
-    parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT,
+    parameter EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS,
+    parameter NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT,
     parameter EXT_HARTS_RND = EXT_HARTS == 0 ? 1 : EXT_HARTS
 ) (
     input logic rst_ni,
@@ -242,14 +242,14 @@ parameter EXT_XBAR_NMASTER = 0,
     input  obi_resp_t ext_core_data_resp_i,
     output obi_req_t  ext_debug_master_req_o,
     input  obi_resp_t ext_debug_master_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i,
-    output fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
-    input fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i,
+    output fifo_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
+    input fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
     output reg_req_t ext_peripheral_slave_req_o,
     input  reg_rsp_t ext_peripheral_slave_resp_i,
     output logic  [EXT_HARTS_RND-1:0] ext_debug_req_o,
@@ -268,14 +268,14 @@ parameter EXT_XBAR_NMASTER = 0,
     output logic [EXT_DOMAINS_RND-1:0] external_ram_banks_set_retentive_no,
     output logic [EXT_DOMAINS_RND-1:0] external_subsystem_clkgate_en_no,
     output logic [31:0] exit_value_o,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_o
 );
 
   if_xif xif_bus ();
 
-  core_v_mini_mcu #(
+  mosaic_soc #(
     .EXT_XBAR_NMASTER(EXT_XBAR_NMASTER),
     .AO_SPC_NUM(AO_SPC_NUM),
     .EXT_HARTS(EXT_HARTS),
@@ -284,7 +284,7 @@ parameter EXT_XBAR_NMASTER = 0,
     .EXT_DOMAINS_RND(EXT_DOMAINS_RND),
     .NEXT_INT_RND(NEXT_INT_RND),
     .EXT_HARTS_RND(EXT_HARTS_RND)
-  ) i_core_v_mini_mcu (
+  ) i_mosaic_soc (
     .rst_ni(rst_ni),
     .clk_i(clk_i),
     .boot_select_i(boot_select_i),

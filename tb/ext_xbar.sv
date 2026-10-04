@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
 module ext_xbar #(
-    parameter core_v_mini_mcu_pkg::bus_type_e BUS_TYPE = core_v_mini_mcu_pkg::BusType,
+    parameter mosaic_soc_pkg::bus_type_e BUS_TYPE = mosaic_soc_pkg::BusType,
     parameter int unsigned XBAR_NMASTER = 3,
     parameter int unsigned XBAR_NSLAVE = 6,
     // Dependent parameters: do not override!
@@ -28,7 +28,7 @@ module ext_xbar #(
 
 );
   import obi_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
   import testharness_pkg::*;
 
   localparam int unsigned LOG_XBAR_NSLAVE = XBAR_NSLAVE > 1 ? $clog2(XBAR_NSLAVE) : 32'd1;

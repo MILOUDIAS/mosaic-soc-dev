@@ -61,7 +61,7 @@ module testharness #(
   import fifo_pkg::*;
   import testharness_pkg::*;
   import addr_map_rule_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
   localparam AO_SPC_NUM = 1;
   localparam AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 0 : AO_SPC_NUM - 1;
@@ -73,8 +73,8 @@ module testharness #(
       EXT_XBAR_NSLAVE
   ) : 32'd1;
 
-  localparam EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS;
-  localparam NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT;
+  localparam EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS;
+  localparam NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT;
 
   // CV-X-IF coprocessors configuration
 % if xheep.is_extension_defined("testharness"):
@@ -133,14 +133,14 @@ module testharness #(
   logic dlc_dir_o;
 
   // External DMA slots
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx;
 
   assign ext_dma_slot_tx[0] = iffifo_in_ready;
   assign ext_dma_slot_rx[0] = iffifo_out_valid;
-  if (core_v_mini_mcu_pkg::DMA_CH_NUM > 1) begin : gen_dma_slot_tx
-    assign ext_dma_slot_tx[core_v_mini_mcu_pkg::DMA_CH_NUM-1:1] = '0;
-    assign ext_dma_slot_rx[core_v_mini_mcu_pkg::DMA_CH_NUM-1:1] = '0;
+  if (mosaic_soc_pkg::DMA_CH_NUM > 1) begin : gen_dma_slot_tx
+    assign ext_dma_slot_tx[mosaic_soc_pkg::DMA_CH_NUM-1:1] = '0;
+    assign ext_dma_slot_rx[mosaic_soc_pkg::DMA_CH_NUM-1:1] = '0;
   end
 
   // External xbar master/slave and peripheral ports
@@ -155,12 +155,12 @@ module testharness #(
   obi_resp_t heep_core_data_resp;
   obi_req_t heep_debug_master_req;
   obi_resp_t heep_debug_master_resp;
-  obi_req_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_req;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_resp;
-  obi_req_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_req;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_resp;
-  obi_req_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_req;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_resp;
+  obi_req_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_req;
+  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_resp;
+  obi_req_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_req;
+  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_resp;
+  obi_req_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_req;
+  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_resp;
 % if is_mc:
   // The testbench bus retains the legacy address-master pins for scalar
   // x-heep compatibility. Explicit MOSAIC/iDMA topologies have no such
@@ -172,8 +172,8 @@ module testharness #(
   reg_req_t periph_slave_req;
   reg_rsp_t periph_slave_rsp;
 
-  fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req;
-  fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp;
+  fifo_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req;
+  fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp;
 
 
   wire [serial_link_single_channel_reg_pkg::NumChannels-1:0] ddr_clk_o_xheep;
@@ -232,11 +232,11 @@ module testharness #(
   reg_req_t [AO_SPC_NUM_RND:0] ext_ao_peripheral_req;
   reg_rsp_t [AO_SPC_NUM_RND:0] ext_ao_peripheral_resp;
 
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_busy;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_busy;
 
   always_comb begin
     // All interrupt lines set to zero by default
-    for (int i = 0; i < core_v_mini_mcu_pkg::NEXT_INT; i++) begin
+    for (int i = 0; i < mosaic_soc_pkg::NEXT_INT; i++) begin
       intr_vector_ext[i] = 1'b0;
     end
     // Re-assign the interrupt lines used here
@@ -250,7 +250,7 @@ module testharness #(
     $display("%t: the parameter FPU_SS_ZFINX is %x", $time, FPU_SS_ZFINX);
     $display("%t: the parameter QUADRILATERO is %x", $time, QUADRILATERO);
     $display("%t: the parameter JTAG_DPI is %x", $time, JTAG_DPI);
-    $display("%t: the parameter EXT_DOMAINS is %x", $time, core_v_mini_mcu_pkg::EXTERNAL_DOMAINS);
+    $display("%t: the parameter EXT_DOMAINS is %x", $time, mosaic_soc_pkg::EXTERNAL_DOMAINS);
     $display("%t: the parameter USE_EXTERNAL_DEVICE_EXAMPLE is %x", $time,
              USE_EXTERNAL_DEVICE_EXAMPLE);
     $display("%t: the parameter CLK_FREQUENCY is %d KHz", $time, CLK_FREQUENCY);
@@ -265,7 +265,7 @@ module testharness #(
 `endif
 
   // -------------
-  // X-HEEP SYSTEM
+  // MOSAIC SYSTEM
   // -------------
   // Inout pins assignments
   // NOTE: These assignments are needed to avoid a Verilator 5.X error triggered when directly
@@ -279,11 +279,11 @@ module testharness #(
   assign execute_from_flash = execute_from_flash_i;
   assign exit_valid_o = exit_valid;
 
-  // X-HEEP system instance
-  x_heep_system #(
+  // MOSAIC system instance (pad ring and SoC)
+  mosaic_system #(
       .EXT_XBAR_NMASTER(HEEP_EXT_XBAR_NMASTER),
       .AO_SPC_NUM(AO_SPC_NUM)
-  ) x_heep_system_i (
+  ) mosaic_system_i (
       .clk_i(clk),
       .rst_ni(rst_n),
       .hart_id_i('0),
@@ -390,7 +390,7 @@ module testharness #(
       .ext_dma_slot_rx_i(ext_dma_slot_rx),
       .ext_dma_stop_i('0),
       .intr_ext_peripheral_i(gpio[31]),
-      .hw_fifo_done_i({{(core_v_mini_mcu_pkg::DMA_CH_NUM - 1) {1'b0}}, dlc_done}),
+      .hw_fifo_done_i({{(mosaic_soc_pkg::DMA_CH_NUM - 1) {1'b0}}, dlc_done}),
       .dma_done_o(dma_busy)
   );
 
@@ -598,7 +598,7 @@ module testharness #(
           .dlc_dir_o
       );
 
-      if(core_v_mini_mcu_pkg::EXTERNAL_DOMAINS > 0) begin: gen_simple_acc_pd
+      if(mosaic_soc_pkg::EXTERNAL_DOMAINS > 0) begin: gen_simple_acc_pd
         assign simple_acc_rst_n = external_subsystem_rst_n[0];
         tc_clk_gating clk_gating_simple_acc_i (
             .clk_i,
@@ -739,7 +739,7 @@ module testharness #(
       //          R4-type instruction format, with 3 source operands. One example is 'fmadd.s'. So
       //          make sure not to use CV32E20 if you need a RV32F-compliant system. The FPU is
       //          connected here just for testing purposes.
-      if ((core_v_mini_mcu_pkg::CpuType == cv32e40x || core_v_mini_mcu_pkg::CpuType == cv32e40px || (FPU_SS_ZFINX && core_v_mini_mcu_pkg::CpuType == cv32e20)) && ${"1" if xif != None else "0"} && (QUADRILATERO == 0)) begin: gen_fpu_ss_wrapper
+      if ((mosaic_soc_pkg::CpuType == cv32e40x || mosaic_soc_pkg::CpuType == cv32e40px || (FPU_SS_ZFINX && mosaic_soc_pkg::CpuType == cv32e20)) && ${"1" if xif != None else "0"} && (QUADRILATERO == 0)) begin: gen_fpu_ss_wrapper
         fpu_ss_wrapper #(
             .PULP_ZFINX(FPU_SS_ZFINX),
             .INPUT_BUFFER_DEPTH(1),
@@ -764,7 +764,7 @@ module testharness #(
 
       // Quadrilatero
       // ------------
-      if ((core_v_mini_mcu_pkg::CpuType == cv32e40x || core_v_mini_mcu_pkg::CpuType == cv32e40px || core_v_mini_mcu_pkg::CpuType == cv32e20) && ${"1" if xif != None else "0"} && (QUADRILATERO != 0)) begin: gen_quadrilatero_wrapper
+      if ((mosaic_soc_pkg::CpuType == cv32e40x || mosaic_soc_pkg::CpuType == cv32e40px || mosaic_soc_pkg::CpuType == cv32e20) && ${"1" if xif != None else "0"} && (QUADRILATERO != 0)) begin: gen_quadrilatero_wrapper
         quadrilatero_wrapper #(
             .MATRIX_FPU(0)
         ) quadrilatero_wrapper_i (

@@ -19,7 +19,7 @@ PY="${PYTHON:-python3}"
 TB="tb/mosaic"
 OBJ="${OBJDIR:-$REPO/build/mosaic_sim_obj}"
 
-INC=hw/core-v-mini-mcu/include
+INC=hw/mosaic_soc/include
 SERV=hw/vendor/mosaic/serv
 FAZ=hw/vendor/mosaic/fazyrv
 CC=hw/vendor/pulp_platform/common_cells/include
@@ -49,12 +49,12 @@ verilator --binary -j 0 --top-module mosaic_multicore_tb --Mdir "$OBJ" \
   -Wno-fatal -Wno-WIDTH -Wno-UNUSEDSIGNAL -Wno-UNDRIVEN -Wno-UNUSEDPARAM \
   -Wno-DECLFILENAME -Wno-TIMESCALEMOD -Wno-PINMISSING -Wno-CASEINCOMPLETE \
   -Wno-SYMRSVDWORD -Wno-GENUNNAMED -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC \
-  -I$CC -I$GENERATED_ROOT/hw/core-v-mini-mcu/include -I$INC \
-  -y $INC -y $SERV/rtl -y $SERV/servile -y $FAZ/rtl -y hw/sci -y hw/core-v-mini-mcu \
+  -I$CC -I$GENERATED_ROOT/hw/mosaic_soc/include -I$INC \
+  -y $INC -y $SERV/rtl -y $SERV/servile -y $FAZ/rtl -y hw/sci -y hw/mosaic_soc \
   $INC/obi_pkg.sv $INC/reg_pkg.sv $INC/fifo_pkg.sv $INC/addr_map_rule_pkg.sv \
-  $GENERATED_ROOT/hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv \
+  $GENERATED_ROOT/hw/mosaic_soc/include/mosaic_soc_pkg.sv \
   $TC \
-  $GENERATED_ROOT/hw/core-v-mini-mcu/cpu_subsystem.sv \
+  $GENERATED_ROOT/hw/mosaic_soc/cpu_subsystem.sv \
   $TB/tb_obi_mem.sv $TB/mosaic_multicore_tb.sv
 
 echo "### [3/4] running simulation ..."

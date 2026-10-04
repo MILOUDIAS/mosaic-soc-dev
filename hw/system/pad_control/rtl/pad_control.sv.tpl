@@ -48,7 +48,7 @@ module pad_control #(
 
 % if any_muxed_pads or attribute_bits != None:
 
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
   import pad_control_reg_pkg::*;
 

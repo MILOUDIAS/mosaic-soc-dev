@@ -49,11 +49,11 @@ module pad_ring (
     %endif
 
     % if attribute_bits != None:
-        input logic [core_v_mini_mcu_pkg::NUM_PAD-1:0][${attribute_bits}] pad_attributes_i
+        input logic [mosaic_soc_pkg::NUM_PAD-1:0][${attribute_bits}] pad_attributes_i
     % else:
         // here just for simplicity
         /* verilator lint_off UNUSED */
-        input logic [core_v_mini_mcu_pkg::NUM_PAD-1:0][0:0] pad_attributes_i
+        input logic [mosaic_soc_pkg::NUM_PAD-1:0][0:0] pad_attributes_i
     % endif
 );
 
@@ -74,7 +74,7 @@ module pad_ring (
     pad_oe_i = pin0_name + "oe_i"
     pad_out_o = pin0_name + "o"
     pad_io = pin0_name + "io"
-    pad_attributes_i = f"pad_attributes_i[core_v_mini_mcu_pkg::PAD_{pad.name.upper()}]" if attribute_bits != None else "\'0"
+    pad_attributes_i = f"pad_attributes_i[mosaic_soc_pkg::PAD_{pad.name.upper()}]" if attribute_bits != None else "\'0"
 
     # Determine pad type and assign specific attributes
     if has_input_pin and not has_output_pin and not has_inout_pin:

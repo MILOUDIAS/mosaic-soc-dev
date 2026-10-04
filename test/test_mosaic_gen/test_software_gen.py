@@ -568,7 +568,7 @@ def test_standard_mcu_gen_registers_software_bundle_and_builds_images(tmp_path):
             "--output-root",
             str(output_root),
             "--outtpl",
-            "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl",
+            "hw/mosaic_soc/cpu_subsystem.sv.tpl",
             "--externaltpl",
             "",
         ],

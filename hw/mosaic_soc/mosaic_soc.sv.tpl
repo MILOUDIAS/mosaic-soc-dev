@@ -31,7 +31,7 @@
 
 %>
 
-module core_v_mini_mcu
+module mosaic_soc
   import obi_pkg::*;
   import reg_pkg::*;
   import fifo_pkg::*;
@@ -42,19 +42,19 @@ module core_v_mini_mcu
     //do not touch these parameters
     parameter AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 0 : AO_SPC_NUM - 1,
     parameter EXT_XBAR_NMASTER_RND = EXT_XBAR_NMASTER == 0 ? 1 : EXT_XBAR_NMASTER,
-    parameter EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS,
-    parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT,
+    parameter EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS,
+    parameter NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT,
     parameter EXT_HARTS_RND = EXT_HARTS == 0 ? 1 : EXT_HARTS
 ) (
 
-    % if clk_module != "core_v_mini_mcu":
+    % if clk_module != "mosaic_soc":
       input logic clk_i,
     % endif
-    % if rst_module != "core_v_mini_mcu":
+    % if rst_module != "mosaic_soc":
       input logic rst_ni,
     % endif
     % for pin in xheep.get_padring().get_connected_pins():
-      % if pin.module == "core_v_mini_mcu":
+      % if pin.module == "mosaic_soc":
         % if isinstance(pin, (Input, Inout)):
           input logic ${pin.rtl_name()}i,
         % endif
@@ -95,20 +95,20 @@ module core_v_mini_mcu
     input  obi_resp_t ext_core_data_resp_i,
     output obi_req_t  ext_debug_master_req_o,
     input  obi_resp_t ext_debug_master_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i,
 % if not is_mc:
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_resp_i,
 % endif
 
-    output fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
-    input fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
+    output fifo_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
+    input fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
 
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
 
     output reg_req_t ext_peripheral_slave_req_o,
     input  reg_rsp_t ext_peripheral_slave_resp_i,
@@ -138,25 +138,25 @@ module core_v_mini_mcu
     output logic [31:0] exit_value_o,
 
     // External SPC interface
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_o
 );
 
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
   import cv32e40p_apu_core_pkg::*;
   import power_manager_pkg::*;
 
-  localparam NUM_BYTES = core_v_mini_mcu_pkg::MEM_SIZE;
-  localparam DM_HALTADDRESS = core_v_mini_mcu_pkg::DEBUG_START_ADDRESS + 32'h00000800; //debug rom code (section .text in linker) starts at 0x800
+  localparam NUM_BYTES = mosaic_soc_pkg::MEM_SIZE;
+  localparam DM_HALTADDRESS = mosaic_soc_pkg::DEBUG_START_ADDRESS + 32'h00000800; //debug rom code (section .text in linker) starts at 0x800
 
   localparam JTAG_IDCODE = 32'h10001c05;
 % if is_mc:
   localparam NRHARTS = ${nh};
 % else:
-  localparam NRHARTS = EXT_HARTS + 1; // external harts + single hart core-v-mini-mcu
+  localparam NRHARTS = EXT_HARTS + 1; // external harts + single hart mosaic_soc
 % endif
-  localparam BOOT_ADDR = core_v_mini_mcu_pkg::BOOTROM_START_ADDRESS;
+  localparam BOOT_ADDR = mosaic_soc_pkg::BOOTROM_START_ADDRESS;
 
   // Log top level parameter values
 `ifndef SYNTHESIS
@@ -200,8 +200,8 @@ module core_v_mini_mcu
 % endif
 
   // ram signals
-  obi_req_t [core_v_mini_mcu_pkg::NUM_BANKS-1:0] ram_slave_req;
-  obi_resp_t [core_v_mini_mcu_pkg::NUM_BANKS-1:0] ram_slave_resp;
+  obi_req_t [mosaic_soc_pkg::NUM_BANKS-1:0] ram_slave_req;
+  obi_resp_t [mosaic_soc_pkg::NUM_BANKS-1:0] ram_slave_resp;
 
   // w25q128jw controller signals
   logic w25q128jw_controller_intr;
@@ -314,19 +314,19 @@ module core_v_mini_mcu
   //Power manager signals
   power_manager_out_t cpu_subsystem_pwr_ctrl_out;
   power_manager_out_t peripheral_subsystem_pwr_ctrl_out;
-  power_manager_out_t memory_subsystem_pwr_ctrl_out[core_v_mini_mcu_pkg::NUM_BANKS-1:0];
+  power_manager_out_t memory_subsystem_pwr_ctrl_out[mosaic_soc_pkg::NUM_BANKS-1:0];
   power_manager_out_t external_subsystem_pwr_ctrl_out[EXT_DOMAINS_RND-1:0];
 
   power_manager_in_t  cpu_subsystem_pwr_ctrl_in;
   power_manager_in_t  peripheral_subsystem_pwr_ctrl_in;
-  power_manager_in_t  memory_subsystem_pwr_ctrl_in[core_v_mini_mcu_pkg::NUM_BANKS-1:0];
+  power_manager_in_t  memory_subsystem_pwr_ctrl_in[mosaic_soc_pkg::NUM_BANKS-1:0];
   power_manager_in_t  external_subsystem_pwr_ctrl_in[EXT_DOMAINS_RND-1:0];
 
   // The pad reset is asynchronous to clk_i. A board button or supervisor can
   // release it at any phase, and a release inside a flop's recovery/removal
   // window lets harts and peripherals leave reset on different edges -- the
   // GLS bench showed boot depends on that phase. Assert asynchronously,
-  // release on a clock edge: x-heep's own rstgen, which x_heep_system uses and
+  // release on a clock edge: x-heep's own rstgen, which mosaic_system uses and
   // the MOSAIC delivery wrappers bypass. Every reset below derives from
   // rst_n_sync, including the power manager's per-domain resets.
   logic rst_n_sync;
@@ -345,11 +345,11 @@ module core_v_mini_mcu
   logic peripheral_subsystem_powergate_iso_n;
   logic peripheral_subsystem_clkgate_en_n;
 
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_switch_n;
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_switch_ack_n;
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_banks_set_retentive_n;
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_iso_n;
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_clkgate_en_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_switch_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_switch_ack_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_banks_set_retentive_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_iso_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_clkgate_en_n;
 
   //pwrgate exposed outside for UPF sim flow and switch cells
   assign cpu_subsystem_powergate_switch_no    = cpu_subsystem_pwr_ctrl_out.pwrgate_en_n;
@@ -521,7 +521,7 @@ module core_v_mini_mcu
 % endif
 
   system_bus #(
-      .NUM_BANKS(core_v_mini_mcu_pkg::NUM_BANKS),
+      .NUM_BANKS(mosaic_soc_pkg::NUM_BANKS),
       .EXT_XBAR_NMASTER(EXT_XBAR_NMASTER)
   ) system_bus_i (
       .clk_i,
@@ -577,7 +577,7 @@ module core_v_mini_mcu
   );
 
   memory_subsystem #(
-      .NUM_BANKS(core_v_mini_mcu_pkg::NUM_BANKS)
+      .NUM_BANKS(mosaic_soc_pkg::NUM_BANKS)
   ) memory_subsystem_i (
       .clk_i,
       .rst_ni(rst_n_sync && debug_reset_n),
@@ -779,7 +779,7 @@ module core_v_mini_mcu
   assign pdm2pcm_pdm_oe_o = 0;
 
   % for pin in xheep.get_padring().get_connected_pins():
-    % if pin.module == "core_v_mini_mcu" and "gpio_" in pin.name:
+    % if pin.module == "mosaic_soc" and "gpio_" in pin.name:
       <% gpio_number = int(pin.name.split('_')[-1]) %>
       % if gpio_number < 8: # THE NUMBER OF GPIOS ON THE ALWAYS ON PERIPHERAL DOMAIN GPIO
         assign gpio_ao_in[${gpio_number}] = gpio_${gpio_number}_i;
@@ -794,4 +794,4 @@ module core_v_mini_mcu
   % endfor
 
 
-endmodule  // core_v_mini_mcu
+endmodule  // mosaic_soc

@@ -30,8 +30,8 @@ module power_manager import power_manager_pkg::*; #(
     parameter logic ISO_VALUE_AT_RESET = ISO_IDLE_VALUE, //the value for isolation cells at reset
     parameter logic RESET_VALUE_AT_RESET = ~RESET_IDLE_VALUE, //the value when the reset is active
     //do not touch these parameters
-    parameter EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS,
-    parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT
+    parameter EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS,
+    parameter NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -52,14 +52,14 @@ module power_manager import power_manager_pkg::*; #(
     // Power Manager output signals
     output power_manager_out_t cpu_subsystem_pwr_ctrl_o,
     output power_manager_out_t peripheral_subsystem_pwr_ctrl_o,
-    output power_manager_out_t memory_subsystem_pwr_ctrl_o[core_v_mini_mcu_pkg::NUM_BANKS-1:0],
+    output power_manager_out_t memory_subsystem_pwr_ctrl_o[mosaic_soc_pkg::NUM_BANKS-1:0],
     output power_manager_out_t external_subsystem_pwr_ctrl_o[EXT_DOMAINS_RND-1:0],
-    output power_manager_out_t dma_subsystem_pwr_ctrl_o[core_v_mini_mcu_pkg::DMA_CH_NUM-1:0],
+    output power_manager_out_t dma_subsystem_pwr_ctrl_o[mosaic_soc_pkg::DMA_CH_NUM-1:0],
 
     // Power Manager input signals
     input power_manager_in_t cpu_subsystem_pwr_ctrl_i,
     input power_manager_in_t peripheral_subsystem_pwr_ctrl_i,
-    input power_manager_in_t memory_subsystem_pwr_ctrl_i[core_v_mini_mcu_pkg::NUM_BANKS-1:0],
+    input power_manager_in_t memory_subsystem_pwr_ctrl_i[mosaic_soc_pkg::NUM_BANKS-1:0],
     input power_manager_in_t external_subsystem_pwr_ctrl_i[EXT_DOMAINS_RND-1:0]
 
 );
@@ -83,7 +83,7 @@ module power_manager import power_manager_pkg::*; #(
     intr_i[7]  // rv_timer_0
   };
 
-  if (core_v_mini_mcu_pkg::NEXT_INT > 16) begin: gen_ext_int_lt16
+  if (mosaic_soc_pkg::NEXT_INT > 16) begin: gen_ext_int_lt16
     assign hw2reg.intr_state.d[31:16] = ext_irq_i[15:0];
   end else begin : gen_ext_int_gt16
     assign hw2reg.intr_state.d[31:16] = $unsigned(ext_irq_i);
@@ -110,12 +110,12 @@ module power_manager import power_manager_pkg::*; #(
   logic peripheral_subsystem_powergate_switch_n;
   logic peripheral_subsystem_powergate_iso_n;
   logic peripheral_subsystem_rst_n;
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_switch_n;
-  logic [core_v_mini_mcu_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_iso_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_switch_n;
+  logic [mosaic_soc_pkg::NUM_BANKS-1:0] memory_subsystem_banks_powergate_iso_n;
 % if external_domains != 0:
-  logic [core_v_mini_mcu_pkg::EXTERNAL_DOMAINS-1:0] external_subsystem_powergate_switch_n;
-  logic [core_v_mini_mcu_pkg::EXTERNAL_DOMAINS-1:0] external_subsystem_powergate_iso_n;
-  logic [core_v_mini_mcu_pkg::EXTERNAL_DOMAINS-1:0] external_subsystem_rst_n;
+  logic [mosaic_soc_pkg::EXTERNAL_DOMAINS-1:0] external_subsystem_powergate_switch_n;
+  logic [mosaic_soc_pkg::EXTERNAL_DOMAINS-1:0] external_subsystem_powergate_iso_n;
+  logic [mosaic_soc_pkg::EXTERNAL_DOMAINS-1:0] external_subsystem_rst_n;
 % endif
 
   assign cpu_subsystem_pwr_ctrl_o.pwrgate_en_n = cpu_subsystem_powergate_switch_n;

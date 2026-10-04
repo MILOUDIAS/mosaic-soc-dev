@@ -1,6 +1,6 @@
 # MOSAIC SoC core — Classic-flow timing constraints.
 #
-# Hardens core_v_mini_mcu as a standalone macro: the clock arrives directly on
+# Hardens mosaic_soc as a standalone macro: the clock arrives directly on
 # the clk_i pin (no pad cell, unlike the Chip flow's clk_PAD/clk_pad/Y).
 # Target STA closure: 50 MHz (20 ns).
 #

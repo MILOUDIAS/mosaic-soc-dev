@@ -1,7 +1,7 @@
 # Full-SoC simulation
 
 These runners build and simulate the complete generated SoC in Verilator: the
-X-HEEP test harness around `core_v_mini_mcu`, with every hart, the bus fabric,
+X-HEEP test harness around `mosaic_soc`, with every hart, the bus fabric,
 the memories, the TDU, the DMA and the peripherals. Programs run on the harts
 through the real boot ROM, bus and memory.
 

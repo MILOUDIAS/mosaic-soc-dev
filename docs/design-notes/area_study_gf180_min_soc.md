@@ -9,7 +9,9 @@
 > [physical-flow.md](../physical-flow.md) for place-and-route results. File and
 > line references, and the description of `configs/mosaic_tapeout_ultra.yaml` in
 > section 8g (a 256-byte scratchpad), are those of the study's dates; the shipped
-> file now uses a 128-byte scratchpad.
+> file now uses a 128-byte scratchpad. The study also uses the names of its
+> dates: `core_v_mini_mcu` and `hw/core-v-mini-mcu/` are now `mosaic_soc` and
+> `hw/mosaic_soc/`, and `core-v-mini-mcu.core` is `mosaic_soc.core`.
 
 > **Date:** 2026-07-28
 > **Question asked:** can a SoC of 1× FazyRV (1-bit config) + 2× SERV, no

@@ -4,8 +4,8 @@ CAPI=2:
 # Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
 # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
-name: openhwgroup.org:systems:core-v-mini-mcu:1.0.5
-description: CORE-V MINI-MCU Top.
+name: mosaic:systems:mosaic_soc
+description: MOSAIC-SoC top.
 
 filesets:
   files_rtl_generic:
@@ -51,7 +51,7 @@ filesets:
     - hw/vendor/pulp_platform/obi/include/obi/typedef.svh:
         is_include_file: true
         include_path: hw/vendor/pulp_platform/obi/include
-    # core_v_mini_mcu imports these four APU sizing constants even when the
+    # mosaic_soc imports these four APU sizing constants even when the
     # selected CPU is not CV32E40P. Carry the tiny standalone package without
     # importing the complete CV32E40P/fpnew implementation closure.
     - hw/vendor/openhwgroup/cv32e40p/rtl/include/cv32e40p_apu_core_pkg.sv
@@ -60,16 +60,16 @@ filesets:
     # compatibility interface in the common closure, not the CV32E40X core.
     - hw/vendor/openhwgroup/cv32e40x/rtl/include/cv32e40x_pkg.sv
     - hw/vendor/openhwgroup/if_xif_compat.sv
-    - hw/core-v-mini-mcu/core_v_mini_mcu.sv
-    - hw/core-v-mini-mcu/cpu_subsystem.sv
-    - hw/core-v-mini-mcu/memory_subsystem.sv
-    - hw/core-v-mini-mcu/xbar_varlat_one_to_n.sv
-    - hw/core-v-mini-mcu/xbar_varlat_n_to_one.sv
-    - hw/core-v-mini-mcu/system_bus.sv
-    - hw/core-v-mini-mcu/system_xbar.sv
-    - hw/core-v-mini-mcu/debug_subsystem.sv
-    - hw/core-v-mini-mcu/peripheral_subsystem.sv
-    - hw/core-v-mini-mcu/ao_peripheral_subsystem.sv
+    - hw/mosaic_soc/mosaic_soc.sv
+    - hw/mosaic_soc/cpu_subsystem.sv
+    - hw/mosaic_soc/memory_subsystem.sv
+    - hw/mosaic_soc/xbar_varlat_one_to_n.sv
+    - hw/mosaic_soc/xbar_varlat_n_to_one.sv
+    - hw/mosaic_soc/system_bus.sv
+    - hw/mosaic_soc/system_xbar.sv
+    - hw/mosaic_soc/debug_subsystem.sv
+    - hw/mosaic_soc/peripheral_subsystem.sv
+    - hw/mosaic_soc/ao_peripheral_subsystem.sv
     file_type: systemVerilogSource
 
   # Native x-heep cores are selected per resolved MOSAIC config.  Keeping
@@ -82,15 +82,15 @@ filesets:
     - openhwgroup:cve2:cve2_top
     - x-heep:ip:cv32e40px
     files:
-    - hw/core-v-mini-mcu/cve2_xif_wrapper.sv
-    - hw/core-v-mini-mcu/cv32e40px_xif_wrapper.sv
+    - hw/mosaic_soc/cve2_xif_wrapper.sv
+    - hw/mosaic_soc/cv32e40px_xif_wrapper.sv
     file_type: systemVerilogSource
 
   files_rtl_cv32e20:
     depend:
     - openhwgroup:cve2:cve2_top
     files:
-    - hw/core-v-mini-mcu/cve2_xif_wrapper.sv
+    - hw/mosaic_soc/cve2_xif_wrapper.sv
     file_type: systemVerilogSource
 
   files_rtl_cv32e40p:
@@ -101,7 +101,7 @@ filesets:
     depend:
     - x-heep:ip:cv32e40px
     files:
-    - hw/core-v-mini-mcu/cv32e40px_xif_wrapper.sv
+    - hw/mosaic_soc/cv32e40px_xif_wrapper.sv
     file_type: systemVerilogSource
 
   files_rtl_cv32e40x:
@@ -126,13 +126,13 @@ filesets:
     - x-heep:sim:sram_wrapper
     - x-heep:sim:pad_cells
 
-  x_heep_system:
+  mosaic_system:
     depend:
     - x-heep::packages
     - x-heep:ip:pad_control
     - x-heep:ip:pad-ring
     files:
-    - hw/system/x_heep_system.sv
+    - hw/system/mosaic_system.sv
     file_type: systemVerilogSource
 
   tb-utils:
@@ -144,7 +144,7 @@ filesets:
     depend:
     - openhwgroup.org:ip:verilator_waiver
     files:
-    - hw/core-v-mini-mcu/core_v_mini_mcu.vlt
+    - hw/mosaic_soc/mosaic_soc.vlt
     - hw/ip/soc_ctrl/soc_ctrl.vlt
     - hw/ip/obi_spimemio/obi_spimemio.vlt
     - hw/ip/dma_subsystem/dma_subsystem.vlt
@@ -153,7 +153,7 @@ filesets:
     - hw/ip/fast_intr_ctrl/fast_intr_ctrl.vlt
     - hw/ip/serial_link_xheep_wrapper/serial_link_xheep_wrapper.vlt
     - hw/system/pad_control/pad_control.vlt
-    - hw/system/x_heep_system.vlt
+    - hw/system/mosaic_system.vlt
     file_type: vlt
 
   # GF180MCU macro-backed scratchpad. Swaps the flip-flop sram_wrapper for real
@@ -227,7 +227,7 @@ targets:
     - "!mosaic_configured? (files_rtl_floonoc)"
     - mosaic_floonoc? (files_rtl_floonoc)
     - target_sim ? (tool_verilator? (files_verilator_waiver))
-    toplevel: [core_v_mini_mcu]
+    toplevel: [mosaic_soc]
 
   sim:
     <<: *default_target
@@ -236,7 +236,7 @@ targets:
     - tb-utils
     - rtl-simulation
     - tool_verilator? (tb-verilator)
-    - "!integrated_heep? (x_heep_system)"
+    - "!integrated_heep? (mosaic_system)"
     toplevel:
     - tool_verilator? (testharness)
     hooks:

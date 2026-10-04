@@ -26,11 +26,11 @@ module im2col_spc
     input  reg_req_t reg_req_i,
     output reg_rsp_t reg_rsp_o,
 
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_i,
     output logic im2col_spc_done_int_o
 );
 
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
   import dma_if_pkg::*;
   import im2col_spc_reg_pkg::*;
   import dma_reg_pkg::*;
@@ -540,7 +540,7 @@ module im2col_spc
         dma_ch_free <= 1'b1;
       end
 
-      if (|(dma_ch_en_mask[core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] & dma_done_i) == 1'b1) begin
+      if (|(dma_ch_en_mask[mosaic_soc_pkg::DMA_CH_NUM-1:0] & dma_done_i) == 1'b1) begin
         dma_ch_free <= 1'b1;
       end
 

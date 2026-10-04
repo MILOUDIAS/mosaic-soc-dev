@@ -13,7 +13,7 @@ filesets:
     - x-heep:rtl:structs
     files:
     - power_manager_pkg.sv
-    - core_v_mini_mcu_pkg.sv
+    - mosaic_soc_pkg.sv
     file_type: systemVerilogSource
 
 targets:

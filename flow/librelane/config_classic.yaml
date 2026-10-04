@@ -1,7 +1,7 @@
 meta:
   version: 3
   # Classic = macro hardening flow (no chip-level pad ring / sealring). This
-  # hardens the MOSAIC SoC core (core_v_mini_mcu) by itself — useful for early
+  # hardens the MOSAIC SoC core (mosaic_soc) by itself — useful for early
   # synthesis / PnR / area + timing exploration without the GF180 pad frame.
   # For the full chip (pad ring + sealring + chip streamout) use config.yaml
   # (meta.flow: Chip) with slots/slot_mosaic.yaml instead.
@@ -15,7 +15,7 @@ meta:
     #Netgen.LVS: null
     #Checker.LVS: null
 
-DESIGN_NAME: core_v_mini_mcu
+DESIGN_NAME: mosaic_soc
 
 # Hash-checked flattened RTL supplied by the PHYSICAL_BUNDLE preflight.
 VERILOG_FILES:

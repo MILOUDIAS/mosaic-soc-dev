@@ -282,7 +282,7 @@ def test_boolean_core_params_are_coerced_to_int_in_template():
     import re
     from harness.core import REPO_ROOT
 
-    tpl = (REPO_ROOT / "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl").read_text()
+    tpl = (REPO_ROOT / "hw/mosaic_soc/cpu_subsystem.sv.tpl").read_text()
     bool_params = (
         "memdly1", "with_csr", "compressed", "mdu", "pre_register", "mul", "div",
     )

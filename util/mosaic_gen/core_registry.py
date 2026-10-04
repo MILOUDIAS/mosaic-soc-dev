@@ -324,7 +324,7 @@ TAPEOUT_BOOT_ROM_KB = 1
 TAPEOUT_SCRATCHPAD_BYTES = 128
 MIN_BOOT_IMAGE_BYTES = 0x400
 
-# x-heep's external-slave window, from core_v_mini_mcu.h:
+# x-heep's external-slave window, from mosaic_soc.h:
 #   #define EXT_SLAVE_START_ADDRESS 0xF0000000
 #   #define EXT_SLAVE_SIZE          0x01000000
 # The external-memory profile (memory.sram_kb: 0) places off-chip SRAM here.
@@ -332,7 +332,7 @@ EXT_SLAVE_BASE = 0xF000_0000
 EXT_SLAVE_SIZE_KB = 0x0100_0000 // 1024
 
 # The memory-mapped SPI-flash execute-in-place window, from configs/general.hjson
-# `flash_mem` and core_v_mini_mcu.h:
+# `flash_mem` and mosaic_soc.h:
 #   #define FLASH_MEM_START_ADDRESS 0x40000000
 #   #define FLASH_MEM_SIZE          0x01000000
 # Code is read-only and non-volatile, so a reset vector here is valid with no
@@ -842,7 +842,7 @@ def validate_soc_config(cfg: Any, allow_sim_only: bool = True) -> List[str]:
         # is_mc, and the two flavours have DIFFERENT PORT GEOMETRY -- the
         # simple DMA adds a third `dma_addr_*` master per stream
         # (DMA_OBI_PORTS_PER_STREAM 3 vs the iDMA's 2), which changes the
-        # module port list, core_v_mini_mcu wiring, system_bus, and the
+        # module port list, mosaic_soc wiring, system_bus, and the
         # SYSTEM_XBAR_NMASTER index map. Accepting this value and silently
         # instantiating the iDMA anyway would be worse than refusing it.
         errors.append(

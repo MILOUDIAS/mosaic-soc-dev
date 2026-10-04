@@ -25,12 +25,12 @@ def test_canonical_amp_renders_effective_tdu_clint_and_debug_capabilities():
     kwargs = kwargs_for(REPO_ROOT / "mosaic.yaml")
 
     package = render(
-        "hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv.tpl", kwargs
+        "hw/mosaic_soc/include/mosaic_soc_pkg.sv.tpl", kwargs
     )
-    ao = render("hw/core-v-mini-mcu/ao_peripheral_subsystem.sv.tpl", kwargs)
-    top = render("hw/core-v-mini-mcu/core_v_mini_mcu.sv.tpl", kwargs)
-    peripheral = render("hw/core-v-mini-mcu/peripheral_subsystem.sv.tpl", kwargs)
-    system_bus = render("hw/core-v-mini-mcu/system_bus.sv.tpl", kwargs)
+    ao = render("hw/mosaic_soc/ao_peripheral_subsystem.sv.tpl", kwargs)
+    top = render("hw/mosaic_soc/mosaic_soc.sv.tpl", kwargs)
+    peripheral = render("hw/mosaic_soc/peripheral_subsystem.sv.tpl", kwargs)
+    system_bus = render("hw/mosaic_soc/system_bus.sv.tpl", kwargs)
 
     assert "localparam int unsigned NUM_HARTS = 7;" in package
     assert "MEM_SIZE = 32'h00008000" in package
@@ -50,12 +50,12 @@ def test_canonical_amp_renders_effective_tdu_clint_and_debug_capabilities():
     assert "EXT_HARTS is unsupported with an explicit MOSAIC topology" in top
     # Only cv32e20 implements debug in the canonical 7-hart topology.
     assert ".HART_DEBUG_CAPABLE(NRHARTS'(1))" in top
-    assert "output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] irq_plic_o" in peripheral
+    assert "output logic [mosaic_soc_pkg::NUM_HARTS-1:0] irq_plic_o" in peripheral
     assert "core_ext_instr_arbiter_i" in system_bus
     assert "core_ext_data_arbiter_i" in system_bus
     assert "CORE6_DATA_IDX][DEMUX_XBAR_EXT_SLAVE_IDX] = core_ext_data_resp[6]" in system_bus
 
-    cpu = render("hw/core-v-mini-mcu/cpu_subsystem.sv.tpl", kwargs)
+    cpu = render("hw/mosaic_soc/cpu_subsystem.sv.tpl", kwargs)
     assert cpu.count("tc_clk_gating hart_clock_gate_") == 7
     assert ".en_i      (hart_clock_enable_1_0)" in cpu
     assert "reset_clock_hold_1_0 <= core_run_1_0;" in cpu
@@ -80,10 +80,10 @@ def test_all_titan_smp_without_tdu_still_has_per_hart_platform_services(tmp_path
     kwargs = kwargs_for(config)
 
     package = render(
-        "hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv.tpl", kwargs
+        "hw/mosaic_soc/include/mosaic_soc_pkg.sv.tpl", kwargs
     )
-    ao = render("hw/core-v-mini-mcu/ao_peripheral_subsystem.sv.tpl", kwargs)
-    top = render("hw/core-v-mini-mcu/core_v_mini_mcu.sv.tpl", kwargs)
+    ao = render("hw/mosaic_soc/ao_peripheral_subsystem.sv.tpl", kwargs)
+    top = render("hw/mosaic_soc/mosaic_soc.sv.tpl", kwargs)
 
     assert "CLINT_START_ADDRESS" in package
     assert "TDU_START_ADDRESS" not in package
@@ -111,7 +111,7 @@ def test_singleton_sci_uses_topology_platform_and_is_honest_about_debug(tmp_path
 """
     )
     kwargs = kwargs_for(config)
-    top = render("hw/core-v-mini-mcu/core_v_mini_mcu.sv.tpl", kwargs)
+    top = render("hw/mosaic_soc/mosaic_soc.sv.tpl", kwargs)
 
     assert "localparam NRHARTS = 1;" in top
     assert ".HART_DEBUG_CAPABLE(NRHARTS'(0))" in top
@@ -121,13 +121,13 @@ def test_singleton_sci_uses_topology_platform_and_is_honest_about_debug(tmp_path
 def test_interrupt_capable_workers_receive_their_own_plic_context():
     capable = kwargs_for(REPO_ROOT / "configs/mosaic_hazard3.yaml")
     capable_top = render(
-        "hw/core-v-mini-mcu/core_v_mini_mcu.sv.tpl", capable
+        "hw/mosaic_soc/mosaic_soc.sv.tpl", capable
     )
     assert "intr_array[1][11] = irq_external[1];" in capable_top
     assert "| irq_software[1]" in capable_top
 
     timer_only = kwargs_for(REPO_ROOT / "mosaic.yaml")
     timer_only_top = render(
-        "hw/core-v-mini-mcu/core_v_mini_mcu.sv.tpl", timer_only
+        "hw/mosaic_soc/mosaic_soc.sv.tpl", timer_only
     )
     assert "intr_array[1][11] = irq_external[1];" not in timer_only_top

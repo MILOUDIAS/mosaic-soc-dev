@@ -9,7 +9,7 @@ MODULE         = test_idma
 THIS_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 REPO     := $(abspath $(THIS_DIR)/../../..)
 
-INC  := $(REPO)/hw/core-v-mini-mcu/include
+INC  := $(REPO)/hw/mosaic_soc/include
 IDMA := $(REPO)/hw/vendor/mosaic/idma
 CC   := $(REPO)/hw/vendor/pulp_platform/common_cells
 AXI  := $(REPO)/hw/vendor/pulp_platform/axi
@@ -27,7 +27,7 @@ VERILOG_SOURCES = \
   $(INC)/reg_pkg.sv \
   $(INC)/fifo_pkg.sv \
   $(INC)/addr_map_rule_pkg.sv \
-  $(INC)/core_v_mini_mcu_pkg.sv \
+  $(INC)/mosaic_soc_pkg.sv \
   $(DMA)/dma_reg_pkg.sv \
   $(IDMA)/rtl/idma_reg32_3d_reg_pkg.sv \
   $(IDMA)/rtl/idma_pkg.sv \

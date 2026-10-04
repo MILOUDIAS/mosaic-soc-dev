@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "x-heep.h"
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "csr.h"
 #include "dma.h"
 #include "dma_regs.h"

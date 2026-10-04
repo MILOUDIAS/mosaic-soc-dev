@@ -273,9 +273,9 @@ def validate_bundle(bundle_path: Path, mode: str) -> Dict[str, Path]:
         raise PreflightError(
             "flattened_rtl is too small to be a MOSAIC SoC closure; placeholder forbidden"
         )
-    if not re.search(r"\bmodule\s+(?:core_v_mini_mcu|x_heep_system)\b", flat_code):
+    if not re.search(r"\bmodule\s+(?:mosaic_soc|mosaic_system)\b", flat_code):
         raise PreflightError(
-            "flattened_rtl does not define core_v_mini_mcu or x_heep_system"
+            "flattened_rtl does not define mosaic_soc or mosaic_system"
         )
 
     if mode == "chip":
@@ -285,9 +285,9 @@ def validate_bundle(bundle_path: Path, mode: str) -> Dict[str, Path]:
             raise PreflightError("bound_core_rtl is a placeholder-sized adapter")
         if not re.search(r"\bmodule\s+mosaic_soc_core\b", bound_code):
             raise PreflightError("bound_core_rtl does not define mosaic_soc_core")
-        if not re.search(r"\bx_heep_system\b[\s\S]*?\b[A-Za-z_]\w*\s*\(", bound_code):
+        if not re.search(r"\bmosaic_system\b[\s\S]*?\b[A-Za-z_]\w*\s*\(", bound_code):
             raise PreflightError(
-                "bound_core_rtl does not instantiate x_heep_system; the placeholder is forbidden"
+                "bound_core_rtl does not instantiate mosaic_system; the placeholder is forbidden"
             )
         if "TODO(authoring step)" in bound_text:
             raise PreflightError("bound_core_rtl still contains the authoring placeholder")

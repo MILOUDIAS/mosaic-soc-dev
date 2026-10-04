@@ -4,7 +4,7 @@ WHY THIS EXISTS
 ---------------
 Nothing else describes a whole SoC as one object. The facts are spread over the
 bundle manifest (a curated projection), boot_images.json, the generated
-`core_v_mini_mcu_pkg.sv` (the only per-bundle crossbar and address map), the
+`mosaic_soc_pkg.sv` (the only per-bundle crossbar and address map), the
 core registry, the wrapper headers, run DEFs and external padframe files. Every
 consumer that stitched its own subset got something wrong: topo-viz drew
 `2*nh+1+4` crossbar masters and 2 RAM banks for every OBI design, and the
@@ -17,7 +17,7 @@ It never keeps its own copy of a fact the generator owns:
 - the topology comes from `mosaic_to_xheep_kwargs`, the same `XHeep` object
   every template renders from;
 - the crossbar, address map and PLIC come from rendering
-  `core_v_mini_mcu_pkg.sv.tpl` in memory with those kwargs (byte-identical to
+  `mosaic_soc_pkg.sv.tpl` in memory with those kwargs (byte-identical to
   the generated file apart from the trailing whitespace mcu_gen strips) and
   reading its localparams and address-rule tables;
 - "is this block instantiated" mirrors the templates' own guard expressions
@@ -46,7 +46,7 @@ import yaml
 from .core import REPO_ROOT
 
 SCHEMA = 1
-PKG_TEMPLATE = "hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv.tpl"
+PKG_TEMPLATE = "hw/mosaic_soc/include/mosaic_soc_pkg.sv.tpl"
 BASE_CONFIG = "configs/general.hjson"
 PADS_CONFIG = "configs/pad_cfg.py"
 
@@ -83,7 +83,7 @@ def _xheep_kwargs(config: Path, repo_root: Path) -> Dict[str, Any]:
 
 
 def render_pkg(kwargs: Dict[str, Any], repo_root: Path) -> str:
-    """core_v_mini_mcu_pkg.sv exactly as mcu_gen would write it."""
+    """mosaic_soc_pkg.sv exactly as mcu_gen would write it."""
     from mako.template import Template
     with _generator(repo_root):
         text = str(Template(filename=str(repo_root / PKG_TEMPLATE)).render_unicode(
@@ -140,11 +140,11 @@ def _instantiated(name: str, xheep) -> bool:
     is_mc = xheep.is_multi_core()
     base = xheep.get_base_peripheral_domain()
     guards = {
-        # ao_peripheral_subsystem.sv.tpl:8 / core_v_mini_mcu.sv.tpl:17
+        # ao_peripheral_subsystem.sv.tpl:8 / mosaic_soc.sv.tpl:17
         "tdu": is_mc and _ext(xheep, "tdu_enabled", False),
-        # core_v_mini_mcu_pkg.sv.tpl:132
+        # mosaic_soc_pkg.sv.tpl:132
         "clint": is_mc,
-        # core_v_mini_mcu.sv.tpl:18-19
+        # mosaic_soc.sv.tpl:18-19
         "debug": _ext(xheep, "debug_enabled", True),
         # ao_peripheral_subsystem.sv.tpl:445 and :9-12
         "rv_timer_ao": _ext(xheep, "ao_rv_timer", True),

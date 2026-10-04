@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: SHL-0.51
 // Derived from Occamy: https://github.com/pulp-platform/snitch/blob/master/hw/system/occamy/src/occamy_cfg.hjson
 //
-// Pad configuration for core-v-mini-mcu. Read by mcu_gen.py.
+// Pad configuration for mosaic_soc. Read by mcu_gen.py.
 //
 // For detailed documentation and usage instructions, please refer to docs/source/Configuration/PadConfiguration.md
 

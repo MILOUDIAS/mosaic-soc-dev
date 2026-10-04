@@ -9,7 +9,7 @@
 
 module idma_tb_top #(
     parameter int unsigned NUM_STREAMS =
-        core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS
+        mosaic_soc_pkg::DMA_NUM_MASTER_PORTS
 ) (
     input  logic        clk_i,
     input  logic        rst_ni,
@@ -23,11 +23,11 @@ module idma_tb_top #(
     // status
     output logic        dma_done_o,
     output logic        dma_done_intr_o,
-    output logic [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] stream_done_o,
-    output logic [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] rd_seen_o,
-    output logic [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] wr_seen_o
+    output logic [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] stream_done_o,
+    output logic [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] rd_seen_o,
+    output logic [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] wr_seen_o
 );
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
   // ── Register bus ───────────────────────────────────────────────
   reg_pkg::reg_req_t reg_req;

@@ -29,8 +29,8 @@ module ao_peripheral_subsystem
     parameter AO_SPC_NUM = 0,
     //do not touch these parameters
     parameter AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 0 : AO_SPC_NUM - 1,
-    parameter EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS,
-    parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT
+    parameter EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS,
+    parameter NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -77,12 +77,12 @@ module ao_peripheral_subsystem
 
     output power_manager_out_t cpu_subsystem_pwr_ctrl_o,
     output power_manager_out_t peripheral_subsystem_pwr_ctrl_o,
-    output power_manager_out_t memory_subsystem_pwr_ctrl_o[core_v_mini_mcu_pkg::NUM_BANKS-1:0],
+    output power_manager_out_t memory_subsystem_pwr_ctrl_o[mosaic_soc_pkg::NUM_BANKS-1:0],
     output power_manager_out_t external_subsystem_pwr_ctrl_o[EXT_DOMAINS_RND-1:0],
 
     input power_manager_in_t cpu_subsystem_pwr_ctrl_i,
     input power_manager_in_t peripheral_subsystem_pwr_ctrl_i,
-    input power_manager_in_t memory_subsystem_pwr_ctrl_i[core_v_mini_mcu_pkg::NUM_BANKS-1:0],
+    input power_manager_in_t memory_subsystem_pwr_ctrl_i[mosaic_soc_pkg::NUM_BANKS-1:0],
     input power_manager_in_t external_subsystem_pwr_ctrl_i[EXT_DOMAINS_RND-1:0],
 
     // RV TIMER
@@ -90,19 +90,19 @@ module ao_peripheral_subsystem
     output logic rv_timer_1_intr_o,
 
     // DMA
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_resp_i,
 % if not is_mc:
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_resp_i,
 % endif
     output logic                                                      dma_done_intr_o,
     output logic                                                      dma_window_intr_o,
 
-    output fifo_req_t  [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
-    input  fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
+    output fifo_req_t  [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
+    input  fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
 
     // External PADs
     output reg_req_t pad_req_o,
@@ -126,35 +126,35 @@ module ao_peripheral_subsystem
     input  reg_rsp_t ext_peripheral_slave_resp_i,
 
     // SPC interface
-    input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
-    input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
-    input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o
+    input  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
+    input  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
+    input  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
+    input  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_o
 
 % if is_mc:
     ,
     // Per-hart core-local timer and software interrupts (CLINT-compatible)
-    output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] clint_timer_irq_o,
-    output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] clint_software_irq_o,
+    output logic [mosaic_soc_pkg::NUM_HARTS-1:0] clint_timer_irq_o,
+    output logic [mosaic_soc_pkg::NUM_HARTS-1:0] clint_software_irq_o,
     output logic [63:0]                                clint_mtime_o
 % endif
 % if tdu_enabled:
     ,
     // MOSAIC Task Dispatch Unit (multi-core only)
-    input  logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] tdu_core_running_i,
-    input  logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] tdu_core_sleep_i,
-    output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] tdu_core_wake_o,
-    output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] tdu_core_park_o,
+    input  logic [mosaic_soc_pkg::NUM_HARTS-1:0] tdu_core_running_i,
+    input  logic [mosaic_soc_pkg::NUM_HARTS-1:0] tdu_core_sleep_i,
+    output logic [mosaic_soc_pkg::NUM_HARTS-1:0] tdu_core_wake_o,
+    output logic [mosaic_soc_pkg::NUM_HARTS-1:0] tdu_core_park_o,
     output logic                                      tdu_irq_o
 % endif
 );
 
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
   import tlul_pkg::*;
 
   localparam DMA_GLOBAL_TRIGGER_SLOT_NUM = 5;
-  localparam DMA_EXT_TRIGGER_SLOT_NUM = core_v_mini_mcu_pkg::DMA_CH_NUM * 2;
+  localparam DMA_EXT_TRIGGER_SLOT_NUM = mosaic_soc_pkg::DMA_CH_NUM * 2;
 
   /*_________________________________________________________________________________________________________________________________ */
 
@@ -165,8 +165,8 @@ module ao_peripheral_subsystem
   /* Peripheral register inteface */
   reg_pkg::reg_req_t peripheral_req;
   reg_pkg::reg_rsp_t peripheral_rsp;
-  reg_pkg::reg_req_t [core_v_mini_mcu_pkg::AO_PERIPHERALS-1:0] ao_peripheral_slv_req;
-  reg_pkg::reg_rsp_t [core_v_mini_mcu_pkg::AO_PERIPHERALS-1:0] ao_peripheral_slv_rsp;
+  reg_pkg::reg_req_t [mosaic_soc_pkg::AO_PERIPHERALS-1:0] ao_peripheral_slv_req;
+  reg_pkg::reg_rsp_t [mosaic_soc_pkg::AO_PERIPHERALS-1:0] ao_peripheral_slv_rsp;
   logic [AO_PERIPHERALS_PORT_SEL_WIDTH-1:0] peripheral_select;
 
   tlul_pkg::tl_h2d_t rv_timer_tl_h2d;
@@ -183,29 +183,29 @@ module ao_peripheral_subsystem
   logic [23:0] cio_gpio_en_unused;
 
   /* DMA signals */
-  logic dma_clk_gate_en_n[core_v_mini_mcu_pkg::DMA_CH_NUM-1:0];
-  power_manager_out_t dma_subsystem_pwr_ctrl[core_v_mini_mcu_pkg::DMA_CH_NUM-1:0];
+  logic dma_clk_gate_en_n[mosaic_soc_pkg::DMA_CH_NUM-1:0];
+  power_manager_out_t dma_subsystem_pwr_ctrl[mosaic_soc_pkg::DMA_CH_NUM-1:0];
   logic [DMA_GLOBAL_TRIGGER_SLOT_NUM-1:0] dma_global_trigger_slots;
   logic [DMA_EXT_TRIGGER_SLOT_NUM-1:0] dma_ext_trigger_slots;
   obi_pkg::obi_req_t slave_fifoout_req;
   obi_pkg::obi_resp_t slave_fifoout_resp;
   reg_req_t perconv2regdemux_req;
   reg_rsp_t regdemux2perconv_resp;
-  dma_reg_pkg::dma_hw2reg_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] external_dma_hw2reg;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_ready;
+  dma_reg_pkg::dma_hw2reg_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] external_dma_hw2reg;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_ready;
 
   /*_________________________________________________________________________________________________________________________________ */
 
   /* Signal assignment */
 
   /* Peripheral demuxed register interface */
-  assign ext_peripheral_slave_req_o = ao_peripheral_slv_req[core_v_mini_mcu_pkg::EXT_PERIPHERAL_IDX];
-  assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::EXT_PERIPHERAL_IDX] = ext_peripheral_slave_resp_i;
+  assign ext_peripheral_slave_req_o = ao_peripheral_slv_req[mosaic_soc_pkg::EXT_PERIPHERAL_IDX];
+  assign ao_peripheral_slv_rsp[mosaic_soc_pkg::EXT_PERIPHERAL_IDX] = ext_peripheral_slave_resp_i;
 
 
 % if base_peripheral_domain.contains_peripheral('pad_control'):
-  assign pad_req_o = ao_peripheral_slv_req[core_v_mini_mcu_pkg::PAD_CONTROL_IDX];
-  assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::PAD_CONTROL_IDX] = pad_resp_i;
+  assign pad_req_o = ao_peripheral_slv_req[mosaic_soc_pkg::PAD_CONTROL_IDX];
+  assign ao_peripheral_slv_rsp[mosaic_soc_pkg::PAD_CONTROL_IDX] = pad_resp_i;
 % else:
   assign pad_req_o = '0;
 % endif
@@ -217,7 +217,7 @@ module ao_peripheral_subsystem
   assign dma_global_trigger_slots[4] = i2s_rx_valid_i;
 
   generate
-    for (genvar i = 0; i < core_v_mini_mcu_pkg::DMA_CH_NUM; i++) begin : dma_trigger_slots_gen
+    for (genvar i = 0; i < mosaic_soc_pkg::DMA_CH_NUM; i++) begin : dma_trigger_slots_gen
       assign dma_ext_trigger_slots[2*i]   = ext_dma_slot_tx_i[i];
       assign dma_ext_trigger_slots[2*i+1] = ext_dma_slot_rx_i[i];
       if (i > 0) begin : external_dma_hw2reg_gen
@@ -228,7 +228,7 @@ module ao_peripheral_subsystem
 
   /* DMA clock gating */
   generate
-    for (genvar i = 0; i < core_v_mini_mcu_pkg::DMA_CH_NUM; i++) begin : dma_clk_gate_gen
+    for (genvar i = 0; i < mosaic_soc_pkg::DMA_CH_NUM; i++) begin : dma_clk_gate_gen
       assign dma_clk_gate_en_n[i] = dma_subsystem_pwr_ctrl[i].clkgate_en_n;
     end
   endgenerate
@@ -309,8 +309,8 @@ module ao_peripheral_subsystem
 
   /* Address decoder for the peripheral registers */
   addr_decode #(
-      .NoIndices(core_v_mini_mcu_pkg::AO_PERIPHERALS),
-      .NoRules(core_v_mini_mcu_pkg::AO_PERIPHERALS),
+      .NoIndices(mosaic_soc_pkg::AO_PERIPHERALS),
+      .NoRules(mosaic_soc_pkg::AO_PERIPHERALS),
       .addr_t(logic [31:0]),
       .rule_t(addr_map_rule_pkg::addr_map_rule_t)
   ) i_addr_decode_soc_regbus_periph_xbar (
@@ -319,7 +319,7 @@ module ao_peripheral_subsystem
 % else:
       .addr_i(perconv2regdemux_req.addr),
 % endif
-      .addr_map_i(core_v_mini_mcu_pkg::AO_PERIPHERALS_ADDR_RULES),
+      .addr_map_i(mosaic_soc_pkg::AO_PERIPHERALS_ADDR_RULES),
       .idx_o(peripheral_select),
       .dec_valid_o(),
       .dec_error_o(),
@@ -329,7 +329,7 @@ module ao_peripheral_subsystem
 
   /* Register demux */
   reg_demux #(
-      .NoPorts(core_v_mini_mcu_pkg::AO_PERIPHERALS),
+      .NoPorts(mosaic_soc_pkg::AO_PERIPHERALS),
       .req_t  (reg_pkg::reg_req_t),
       .rsp_t  (reg_pkg::reg_rsp_t)
   ) reg_demux_i (
@@ -353,8 +353,8 @@ module ao_peripheral_subsystem
   ) soc_ctrl_i (
       .clk_i,
       .rst_ni,
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::SOC_CTRL_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::SOC_CTRL_IDX]),
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::SOC_CTRL_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::SOC_CTRL_IDX]),
       .boot_select_i,
       .execute_from_flash_i,
       .xheep_instance_id_i,
@@ -365,8 +365,8 @@ module ao_peripheral_subsystem
 
   /* Boot ROM */
   boot_rom boot_rom_i (
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::BOOTROM_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::BOOTROM_IDX])
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::BOOTROM_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::BOOTROM_IDX])
   );
 
 % if base_peripheral_domain.contains_peripheral('spi_flash'):
@@ -377,13 +377,13 @@ module ao_peripheral_subsystem
       .use_spimemio_i(use_spimemio),
       .spimemio_req_i,
       .spimemio_resp_o,
-      .yo_reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::SPI_MEMIO_IDX]),
-      .yo_reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::SPI_MEMIO_IDX]),
-      .ot_reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::SPI_FLASH_IDX]),
-      .ot_reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::SPI_FLASH_IDX]),
+      .yo_reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::SPI_MEMIO_IDX]),
+      .yo_reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::SPI_MEMIO_IDX]),
+      .ot_reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::SPI_FLASH_IDX]),
+      .ot_reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::SPI_FLASH_IDX]),
 % if base_peripheral_domain.contains_peripheral('w25q128jw_controller'):
-      .flash_ctr_reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::W25Q128JW_CONTROLLER_IDX]),
-      .flash_ctr_reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::W25Q128JW_CONTROLLER_IDX]),
+      .flash_ctr_reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::W25Q128JW_CONTROLLER_IDX]),
+      .flash_ctr_reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::W25Q128JW_CONTROLLER_IDX]),
 % else:
       .flash_ctr_reg_req_i('0),
       .flash_ctr_reg_rsp_o(),
@@ -426,8 +426,8 @@ module ao_peripheral_subsystem
   ) power_manager_i (
       .clk_i,
       .rst_ni,
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::POWER_MANAGER_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::POWER_MANAGER_IDX]),
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::POWER_MANAGER_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::POWER_MANAGER_IDX]),
       .intr_i,
       .ext_irq_i(intr_vector_ext_i),
       .core_sleep_i,
@@ -456,8 +456,8 @@ module ao_peripheral_subsystem
   ) rv_timer_reg_to_tlul_i (
       .tl_o(rv_timer_tl_h2d),
       .tl_i(rv_timer_tl_d2h),
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::RV_TIMER_AO_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::RV_TIMER_AO_IDX])
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::RV_TIMER_AO_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::RV_TIMER_AO_IDX])
   );
 
   rv_timer rv_timer_0_1_i (
@@ -481,7 +481,7 @@ module ao_peripheral_subsystem
   assign rv_timer_tl_d2h = '0;
   assign rv_timer_0_intr_o = 1'b0;
   assign rv_timer_1_intr_o = 1'b0;
-  assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::RV_TIMER_AO_IDX] =
+  assign ao_peripheral_slv_rsp[mosaic_soc_pkg::RV_TIMER_AO_IDX] =
       '{error: 1'b1, ready: 1'b1, rdata: '0};
 % endif
 
@@ -505,8 +505,8 @@ module ao_peripheral_subsystem
       .clk_i,
       .rst_ni,
       .clk_gate_en_ni(dma_clk_gate_en_n),
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::DMA_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::DMA_IDX]),
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::DMA_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::DMA_IDX]),
       .dma_read_req_o,
       .dma_read_resp_i,
       .dma_write_req_o,
@@ -539,8 +539,8 @@ module ao_peripheral_subsystem
       .clk_i,
       .rst_ni,
       .clk_gate_en_ni(dma_clk_gate_en_n),
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::DMA_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::DMA_IDX]),
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::DMA_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::DMA_IDX]),
       .dma_read_req_o,
       .dma_read_resp_i,
       .dma_write_req_o,
@@ -585,7 +585,7 @@ module ao_peripheral_subsystem
   // ao_peripheral_slv_rsp[DMA_CH0_IDX] therefore double-drives the soc_ctrl
   // response, and the constant wins: soc_ctrl reads return error=1, rdata=0.
   // The whole DMA register window is covered by DMA_IDX alone.
-  assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::DMA_IDX] =
+  assign ao_peripheral_slv_rsp[mosaic_soc_pkg::DMA_IDX] =
       '{error: 1'b1, ready: 1'b1, rdata: '0};
 % endif
 
@@ -596,8 +596,8 @@ module ao_peripheral_subsystem
   ) fast_intr_ctrl_i (
       .clk_i,
       .rst_ni,
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::FAST_INTR_CTRL_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::FAST_INTR_CTRL_IDX]),
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::FAST_INTR_CTRL_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::FAST_INTR_CTRL_IDX]),
       .fast_intr_i,
       .fast_intr_o
   );
@@ -606,7 +606,7 @@ module ao_peripheral_subsystem
   // fast interrupt to a hart; with soc.plic already false this design takes no
   // external interrupts at all, so the controller had nothing to deliver.
   assign fast_intr_o = '0;
-  assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::FAST_INTR_CTRL_IDX] =
+  assign ao_peripheral_slv_rsp[mosaic_soc_pkg::FAST_INTR_CTRL_IDX] =
       '{error: 1'b1, ready: 1'b1, rdata: '0};
 
   logic unused_fast_intr_i;
@@ -621,8 +621,8 @@ module ao_peripheral_subsystem
   ) gpio_ao_i (
       .clk_i,
       .rst_ni,
-      .reg_req_i(ao_peripheral_slv_req[core_v_mini_mcu_pkg::GPIO_AO_IDX]),
-      .reg_rsp_o(ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::GPIO_AO_IDX]),
+      .reg_req_i(ao_peripheral_slv_req[mosaic_soc_pkg::GPIO_AO_IDX]),
+      .reg_rsp_o(ao_peripheral_slv_rsp[mosaic_soc_pkg::GPIO_AO_IDX]),
       .gpio_in({24'b0, cio_gpio_i}),
       .gpio_out({cio_gpio_unused, cio_gpio_o}),
       .gpio_tx_en_o({cio_gpio_en_unused, cio_gpio_en_o}),
@@ -651,21 +651,21 @@ module ao_peripheral_subsystem
   reg_pkg::reg_rsp_t tdu_rsp;
 % endif
 
-  assign clint_select = (perconv2regdemux_req.addr >= core_v_mini_mcu_pkg::CLINT_START_ADDRESS) &&
-                        (perconv2regdemux_req.addr <  core_v_mini_mcu_pkg::CLINT_END_ADDRESS);
+  assign clint_select = (perconv2regdemux_req.addr >= mosaic_soc_pkg::CLINT_START_ADDRESS) &&
+                        (perconv2regdemux_req.addr <  mosaic_soc_pkg::CLINT_END_ADDRESS);
   assign clint_req.valid = perconv2regdemux_req.valid & clint_select;
   assign clint_req.write = perconv2regdemux_req.write;
   assign clint_req.wstrb = perconv2regdemux_req.wstrb;
-  assign clint_req.addr  = perconv2regdemux_req.addr - core_v_mini_mcu_pkg::CLINT_START_ADDRESS;
+  assign clint_req.addr  = perconv2regdemux_req.addr - mosaic_soc_pkg::CLINT_START_ADDRESS;
   assign clint_req.wdata = perconv2regdemux_req.wdata;
 
 % if tdu_enabled:
-  assign tdu_select = (perconv2regdemux_req.addr >= core_v_mini_mcu_pkg::TDU_START_ADDRESS) &&
-                      (perconv2regdemux_req.addr <  core_v_mini_mcu_pkg::TDU_END_ADDRESS);
+  assign tdu_select = (perconv2regdemux_req.addr >= mosaic_soc_pkg::TDU_START_ADDRESS) &&
+                      (perconv2regdemux_req.addr <  mosaic_soc_pkg::TDU_END_ADDRESS);
   assign tdu_req.valid  = perconv2regdemux_req.valid & tdu_select;
   assign tdu_req.write  = perconv2regdemux_req.write;
   assign tdu_req.wstrb  = perconv2regdemux_req.wstrb;
-  assign tdu_req.addr   = perconv2regdemux_req.addr - core_v_mini_mcu_pkg::TDU_START_ADDRESS;
+  assign tdu_req.addr   = perconv2regdemux_req.addr - mosaic_soc_pkg::TDU_START_ADDRESS;
   assign tdu_req.wdata  = perconv2regdemux_req.wdata;
 % endif
 
@@ -688,7 +688,7 @@ module ao_peripheral_subsystem
   end
 
   mosaic_clint #(
-      .NUM_HARTS(core_v_mini_mcu_pkg::NUM_HARTS)
+      .NUM_HARTS(mosaic_soc_pkg::NUM_HARTS)
   ) mosaic_clint_i (
       .clk_i,
       .rst_ni,
@@ -701,7 +701,7 @@ module ao_peripheral_subsystem
 
 % if tdu_enabled:
   tdu #(
-      .NUM_HARTS(core_v_mini_mcu_pkg::NUM_HARTS),
+      .NUM_HARTS(mosaic_soc_pkg::NUM_HARTS),
       .RESET_SCHED_MODE(${sched_mode_sv})
   ) tdu_i (
       .clk_i          (clk_i),

@@ -330,7 +330,7 @@ waivers and the measured results of every tracked run.
 |---|---|
 | `mosaic.yaml`, `configs/` | the default configuration and the shipped ones |
 | `util/mosaic_gen/` | the generator; `core_registry.py` holds the supported cores and the validation rules |
-| `hw/core-v-mini-mcu/` | the SoC templates (`*.sv.tpl`): top level, CPU subsystem, bus, memory, peripherals |
+| `hw/mosaic_soc/` | the SoC templates (`*.sv.tpl`): top level, CPU subsystem, bus, memory, peripherals |
 | `hw/sci/` | the SCI wrappers |
 | `hw/tdu/` | the TDU and the CLINT |
 | `hw/vendor/mosaic/` | vendored cores, iDMA, FlooNoC and the bus bridges |
@@ -370,8 +370,8 @@ before sending a change, and what a pull request should contain.
 ## Licence and attribution
 
 MOSAIC-SoC is derived from [X-HEEP](https://github.com/x-heep/x-heep) and from
-its configuration generator, and it keeps X-HEEP's top-level module names
-(`core_v_mini_mcu`, `x_heep_system`).
+its configuration generator. X-HEEP's top-level modules `core_v_mini_mcu` and
+`x_heep_system` are named `mosaic_soc` and `mosaic_system` here.
 
 Files written for this project are licensed under the Solderpad Hardware
 License v2.1, SPDX identifier `Apache-2.0 WITH SHL-2.1`; the text is in

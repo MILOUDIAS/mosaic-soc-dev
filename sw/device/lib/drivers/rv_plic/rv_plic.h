@@ -341,7 +341,7 @@ plic_result_t plic_software_irq_is_pending(void);
 
 /**
  * Adds a handler function for an external interrupt to the handlers list.
- * @param id The interrupt ID of an external interrupt (from core_v_mini_mcu.h)
+ * @param id The interrupt ID of an external interrupt (from mosaic_soc.h)
  * @param handler A pointer to a function that will be called upon interrupt.
  * @return The result of the operation
 */

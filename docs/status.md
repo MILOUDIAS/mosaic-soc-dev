@@ -75,7 +75,7 @@ For sky130, none of the eight is satisfied.
 | Physical flow | No step is skipped and a missing metric is not read as clean. | `flow/librelane/experimental/run_signoff.sh`; `harness/evidence/` and its tests |
 | Reproducibility | The simulation and physical toolchains are pinned to the same nix-eda and nixpkgs revisions. | `flake.nix`; `test_toolchain_pin.py`; `./mosaic doctor` |
 | Agent tooling | Tools reach the flows only through typed, gated calls. | `harness/gates.py`; `test_mcp_plugin_mode.py`, `test_agent_runtime.py` |
-| Python suite | 1654 passed, 98 skipped. | `make test` |
+| Python suite | 1656 passed, 98 skipped. | `make test` |
 
 The sweep steps are defined in the repository; their results depend on running
 them with the pinned toolchain ([verification.md](verification.md)).
@@ -116,6 +116,12 @@ Physical:
 - **The chip-level flow has no inputs.** `make harden` and `make classic` in
   `flow/librelane/` need a physical bundle with SRAM macro views and a bound
   pad adapter that the repository does not contain.
+- **The Block A fan-out waiver names a pre-rename instance.** Its two violator
+  names start with `clkbuf_0_i_core_v_mini_mcu`, as in the netlist of
+  `blocka_d15_rstsync`. The wrapper now names that instance `i_mosaic_soc`, so
+  the names have to be re-based on the next Block A run. The signoff gate
+  compares violator names only for disconnected pins; for this waiver the
+  check that reports a difference is `./mosaic waiver-author`.
 
 Tooling:
 

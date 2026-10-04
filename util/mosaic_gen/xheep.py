@@ -223,7 +223,7 @@ class XHeep:
     def num_bus_masters(self) -> int:
         """Number of master ports on the internal system crossbar.
 
-        Mirrors ``SYSTEM_XBAR_NMASTER`` in ``core_v_mini_mcu_pkg.sv.tpl``:
+        Mirrors ``SYSTEM_XBAR_NMASTER`` in ``mosaic_soc_pkg.sv.tpl``:
         2 OBI ports (instr + data) per hart and 1 debug master. Explicit
         MOSAIC topologies use iDMA's read/write pair per stream; legacy scalar
         x-heep configurations retain the simple DMA's read/write/addr triplet.
@@ -238,7 +238,7 @@ class XHeep:
             if dma is not None:
                 # Counted even when soc.dma is "none". The DMA is then stubbed
                 # to one master port and its instantiation is skipped, but
-                # core_v_mini_mcu_pkg.sv.tpl computes SYSTEM_XBAR_NMASTER from
+                # mosaic_soc_pkg.sv.tpl computes SYSTEM_XBAR_NMASTER from
                 # get_num_master_ports() without consulting get_is_included(),
                 # so subtracting here would make this count disagree with the
                 # generated RTL -- and this value drives the LOG-bus bank check.

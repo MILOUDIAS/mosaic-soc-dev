@@ -441,7 +441,7 @@ def main(arg_vect):
     )
     parser.add_argument(
         "--header_filename",
-        default="core_v_mini_mcu.h",
+        default="mosaic_soc.h",
         help="name of the file in which register addresses are found, and which should be included on top.",
     )
 

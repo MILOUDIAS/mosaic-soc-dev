@@ -14,7 +14,7 @@ mosaic_need_verilator
 rm -rf build/tl_obi_tb_obj
 verilator --binary -j 0 --timescale 1ns/1ps --top-module tl_obi_tb \
   --Mdir build/tl_obi_tb_obj -o Vtl_obi_tb \
-  hw/core-v-mini-mcu/include/obi_pkg.sv \
+  hw/mosaic_soc/include/obi_pkg.sv \
   hw/vendor/mosaic/tl_obi/mosaic_tilelink_to_obi.sv \
   tb/tl_obi/tl_obi_tb.sv
 

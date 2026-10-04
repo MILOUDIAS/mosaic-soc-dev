@@ -8,7 +8,7 @@ strict mode, after a synthesis run. Generating it from the padframe interface fi
 the two agree by construction.
 
 Emits the port declarations and the constant drives. The functional connections
-to core_v_mini_mcu stay hand-written in the wrapper, because they carry design
+to mosaic_soc stay hand-written in the wrapper, because they carry design
 intent this file cannot know.
 """
 from __future__ import annotations

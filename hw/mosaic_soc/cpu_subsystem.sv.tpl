@@ -149,7 +149,7 @@
 // ─── Multi-core cpu_subsystem ──────────────────────────────────────
 module cpu_subsystem
   import obi_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 #(
     parameter int NUM_HARTS = ${nh},
     parameter BOOT_ADDR = 'h180,
@@ -915,7 +915,7 @@ endmodule
 // ─── Single-core cpu_subsystem (original backward-compat) ──────────
 module cpu_subsystem
   import obi_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 #(
     parameter BOOT_ADDR = 'h180,
     parameter DM_HALTADDRESS = '0

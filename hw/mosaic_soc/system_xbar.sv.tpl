@@ -21,9 +21,9 @@
 module system_xbar
   import obi_pkg::*;
   import addr_map_rule_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 #(
-    parameter core_v_mini_mcu_pkg::bus_type_e BUS_TYPE = core_v_mini_mcu_pkg::BusType,
+    parameter mosaic_soc_pkg::bus_type_e BUS_TYPE = mosaic_soc_pkg::BusType,
     parameter XBAR_NMASTER = 3,
     parameter XBAR_NSLAVE = 6,
     localparam int unsigned IdxWidth = cf_math_pkg::idx_width(XBAR_NSLAVE)

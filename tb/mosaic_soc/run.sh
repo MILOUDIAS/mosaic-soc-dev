@@ -2,7 +2,7 @@
 # MOSAIC full-SoC functional simulation (Verilator) — TDU wake-and-run demo.
 #
 # Builds the COMPLETE multi-core SoC (x-heep testharness wrapping the generated
-# core_v_mini_mcu) for the 3-core wake demo (configs/mosaic_wake_demo.yaml:
+# mosaic_soc) for the 3-core wake demo (configs/mosaic_wake_demo.yaml:
 # 1 cv32e20 TITAN + 1 fazyrv ATLAS + 1 serv NANO + TDU + system_bus + peripherals
 # + debug) and runs three programs:
 #   - TITAN boots from the boot ROM, writes its sentinel, then WAKES the workers
@@ -67,7 +67,7 @@ echo "### [2/4] assembling the 3 programs (TITAN + ATLAS + NANO, rv32i, ld-linke
 # worker would need per-hart program selection here.
 ATLAS_S=atlas; NANO_S=nano
 CPU_SUBSYSTEM="$("$PY" util/mosaic_gen/build_manifest.py generated-path --manifest "$MANIFEST" \
-    --logical-path hw/core-v-mini-mcu/cpu_subsystem.sv)" || exit 1
+    --logical-path hw/mosaic_soc/cpu_subsystem.sv)" || exit 1
 if grep -qE "rocket_sci|boom_sci" "$CPU_SUBSYSTEM" 2>/dev/null; then
   ATLAS_S=atlas_tl; NANO_S=nano_tl
   echo "    (berkeley tiles detected: using CLINT-window worker programs)"

@@ -15,7 +15,7 @@ class Pin:
     """
 
     # Default module to which the pin will be attached to. See Pin.module.
-    DEFAULT_MODULE = "core_v_mini_mcu"
+    DEFAULT_MODULE = "mosaic_soc"
 
     def __init__(
         self,
@@ -29,8 +29,8 @@ class Pin:
         :param name: The name of the signal (without _i, _n, or similar RTL suffixes).
         :param module: The module to which the pin belongs. This represent where in the CHEEP is the
             pin connected to. Does it come directly from the border? Does it come from an external
-            peripheral? Does it come from inside core_v_mini_mcu? By default, it will be assigned to
-            "core_v_mini_mcu".
+            peripheral? Does it come from inside mosaic_soc? By default, it will be assigned to
+            "mosaic_soc".
         :param attributes: Additional attributes of the pin as key-value pairs. Useful attributes
             can be:
             - {"active": "low"} to indicate that this pin is active low

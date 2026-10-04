@@ -76,9 +76,9 @@ else
     FUSESOC_ROOT="$RUN_ROOT/core-root"
     # Match FuseSoC's historical default layout so existing Makefile targets
     # still find build/<VLNV>/sim-verilator in compatibility mode.
-    BUILD_ROOT="$REPO_ROOT/build/openhwgroup.org_systems_core-v-mini-mcu_1.0.5"
+    BUILD_ROOT="$REPO_ROOT/build/mosaic_systems_mosaic_soc_0"
     mkdir -p "$FUSESOC_ROOT"
-    cp "$REPO_ROOT/core-v-mini-mcu.core" "$FUSESOC_ROOT/"
+    cp "$REPO_ROOT/mosaic_soc.core" "$FUSESOC_ROOT/"
     cp "$REPO_ROOT/waiver_v5.core" "$FUSESOC_ROOT/"
     for directory in hw tb util configs sw flow scripts; do
         [ ! -e "$REPO_ROOT/$directory" ] || ln -s "$REPO_ROOT/$directory" "$FUSESOC_ROOT/$directory"
@@ -101,7 +101,7 @@ mkdir -p "$BUILD_ROOT"
     --build-root "$BUILD_ROOT" \
     --target=sim --tool=verilator --setup \
     "${FUSESOC_ARGS[@]}" \
-    openhwgroup.org:systems:core-v-mini-mcu
+    mosaic:systems:mosaic_soc
 
 # This x-heep FuseSoC fork can return zero after dependency-resolution errors.
 # A successful setup always emits the backend command file; treat its absence

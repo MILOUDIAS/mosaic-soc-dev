@@ -32,7 +32,7 @@ extern "C" {
 #include <errno.h>
 #include "uart.h"
 #include "soc_ctrl.h"
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "error.h"
 #include "x-heep.h"
 

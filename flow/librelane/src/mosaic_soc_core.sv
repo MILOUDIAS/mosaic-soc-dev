@@ -1,14 +1,14 @@
-// MOSAIC-SoC core adapter — generic GF180 pad buses ⇄ x_heep_system pins.
+// MOSAIC-SoC core adapter — generic GF180 pad buses ⇄ mosaic_system pins.
 //
 // chip_top.sv drives this with generic pad buses (input_*, bidir_*). This
-// adapter maps them onto x_heep_system's physical pins following the order in
+// adapter maps them onto mosaic_system's physical pins following the order in
 // configs/pad_cfg.py, and instantiates the generated MOSAIC SoC.
 //
 // ─────────────────────────────────────────────────────────────────────────
 // AUTHORING STEP (the only remaining piece of the GF180 flow bring-up):
-//   1. `make mosaic-gen` to emit hw/system/x_heep_system.sv + the SoC RTL.
-//   2. Instantiate x_heep_system (or the x-heep pin-level top) below.
-//   3. Bind each pad bus bit to the matching x_heep_system pin, in the SAME
+//   1. `make mosaic-gen` to emit hw/system/mosaic_system.sv + the SoC RTL.
+//   2. Instantiate mosaic_system (or the x-heep pin-level top) below.
+//   3. Bind each pad bus bit to the matching mosaic_system pin, in the SAME
 //      order pad_cfg.py lists them, so the bit indices here line up with the
 //      PAD_{N,S,E,W} instance-name lists in slots/slot_mosaic.yaml:
 //        input_in[k]   -> the k-th pure-input pin  (boot_select, exec_from_flash,
@@ -65,13 +65,13 @@ module mosaic_soc_core #(
   assign input_pu = {NUM_INPUT_PADS{1'b0}};
   assign input_pd = {NUM_INPUT_PADS{1'b0}};
 
-  // TODO(authoring step): instantiate x_heep_system and bind pads to pins.
+  // TODO(authoring step): instantiate mosaic_system and bind pads to pins.
   // Until then, drive outputs to a safe (tristate) state so this module
   // elaborates standalone.
   assign bidir_out = {NUM_BIDIR_PADS{1'b0}};
   assign bidir_oe  = {NUM_BIDIR_PADS{1'b0}};  // all pads input-only until bound
 
-  // x_heep_system i_soc (
+  // mosaic_system i_soc (
   //   .clk_i (clk), .rst_ni(rst_n), .hart_id_i(32'd0),
   //   ... bind the ~95 pad_cfg.py pins here ...
   // );

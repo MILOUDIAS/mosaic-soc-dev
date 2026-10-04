@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #include "fast_intr_ctrl.h"
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "fast_intr_ctrl_regs.h"  // Generated.
 #include "fast_intr_ctrl_structs.h"
 

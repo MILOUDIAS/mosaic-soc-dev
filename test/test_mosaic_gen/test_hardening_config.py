@@ -202,7 +202,8 @@ def test_an_explicit_override_supplies_the_clock_without_an_objective():
     assert yaml.safe_load(text)["CLOCK_PERIOD"] == 40.0
 
 
-@pytest.mark.parametrize("name", ["", "not a module", "has-dashes", "3leading"])
+@pytest.mark.parametrize(
+    "name", ["", "not a module", "has-dashes", "3leading", "mosaic_soc", "mosaic_system"])
 def test_an_invalid_design_name_is_refused(name):
     text, errors = generate_hardening_config(
         block_a_soc(), name, repo_root=REPO_ROOT, target_utilisation=BLOCK_A_UTILISATION)

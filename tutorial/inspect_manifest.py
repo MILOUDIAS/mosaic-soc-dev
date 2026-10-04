@@ -58,8 +58,8 @@ def main() -> int:
             f"boot={hart['boot_address']} image={hart['image_id']}"
         )
 
-    rtl_root = generated_root / "hw" / "core-v-mini-mcu"
-    rtl_package = require_file(rtl_root / "include" / "core_v_mini_mcu_pkg.sv")
+    rtl_root = generated_root / "hw" / "mosaic_soc"
+    rtl_package = require_file(rtl_root / "include" / "mosaic_soc_pkg.sv")
     cpu_rtl = require_file(rtl_root / "cpu_subsystem.sv")
     print(f"RTL package: {display_path(rtl_package)}")
     print(f"CPU RTL: {display_path(cpu_rtl)}")

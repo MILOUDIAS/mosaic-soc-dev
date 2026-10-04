@@ -2,7 +2,7 @@
 // Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
 // SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "power_manager_regs.h"  // Generated.
 
 # power_manager_cpu.S

@@ -23,42 +23,42 @@ module dma_subsystem
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input logic clk_gate_en_ni[core_v_mini_mcu_pkg::DMA_CH_NUM-1:0],
+    input logic clk_gate_en_ni[mosaic_soc_pkg::DMA_CH_NUM-1:0],
 
     input  reg_req_t reg_req_i,
     output reg_rsp_t reg_rsp_o,
 
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_read_resp_i,
 
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_write_resp_i,
 
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] dma_addr_resp_i,
 
-    output fifo_req_t  [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
-    input  fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
+    output fifo_req_t  [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
+    input  fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
 
     input logic [GLOBAL_SLOT_NUM-1:0] global_trigger_slot_i,
     input logic [EXT_SLOT_NUM-1:0] ext_trigger_slot_i,
 
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
 
-    input dma_reg_pkg::dma_hw2reg_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] external_hw2reg_i,
+    input dma_reg_pkg::dma_hw2reg_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] external_hw2reg_i,
 
     output logic dma_done_intr_o,
     output logic dma_window_intr_o,
 
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_ready_o,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_ready_o,
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_o
 );
 
   /*_________________________________________________________________________________________________________________________________ */
 
   /* Imports and parameters */
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
   localparam RVALID_FIFO_DEPTH = 4;
 
@@ -67,22 +67,22 @@ module dma_subsystem
   /* Signals declaration */
 
   /* Masters requests to the bus */
-  obi_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] xbar_write_req;
-  obi_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] xbar_read_req;
-  obi_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] xbar_address_req;
+  obi_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] xbar_write_req;
+  obi_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] xbar_read_req;
+  obi_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] xbar_address_req;
 
   /* Masters response from the bus*/
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] xbar_write_resp;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] xbar_read_resp;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] xbar_address_resp;
+  obi_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] xbar_write_resp;
+  obi_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] xbar_read_resp;
+  obi_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] xbar_address_resp;
 
   /* Interrupt signals */
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_trans_done;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_window_done;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_trans_done;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_window_done;
 
   /* Register interfaces from register demux to DMAs */
-  reg_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] submodules_req;
-  reg_rsp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] submodules_rsp;
+  reg_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] submodules_req;
+  reg_rsp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] submodules_rsp;
 
   /*_________________________________________________________________________________________________________________________________ */
 
@@ -90,7 +90,7 @@ module dma_subsystem
 
   /* DMA modules */
   generate
-    for (genvar i = 0; i < core_v_mini_mcu_pkg::DMA_CH_NUM; i++) begin : dma_i_gen
+    for (genvar i = 0; i < mosaic_soc_pkg::DMA_CH_NUM; i++) begin : dma_i_gen
       dma #(
           .reg_req_t(reg_req_t),
           .reg_rsp_t(reg_rsp_t),
@@ -99,7 +99,7 @@ module dma_subsystem
           .fifo_resp_t(fifo_resp_t),
           .fifo_req_t(fifo_req_t),
           .SLOT_NUM(GLOBAL_SLOT_NUM + 2),
-          .FIFO_DEPTH(core_v_mini_mcu_pkg::DMA_FIFO_DEPTH),
+          .FIFO_DEPTH(mosaic_soc_pkg::DMA_FIFO_DEPTH),
           .RVALID_FIFO_DEPTH(RVALID_FIFO_DEPTH)
       ) dma_i (
           .clk_i,
@@ -134,17 +134,17 @@ module dma_subsystem
 
 
   generate
-    if (core_v_mini_mcu_pkg::DMA_CH_NUM > 1) begin : gen_dma_channels
+    if (mosaic_soc_pkg::DMA_CH_NUM > 1) begin : gen_dma_channels
 
       /* Register interface routing signals */
-      logic [core_v_mini_mcu_pkg::DMA_CH_PORT_SEL_WIDTH-1:0] submodules_select;
+      logic [mosaic_soc_pkg::DMA_CH_PORT_SEL_WIDTH-1:0] submodules_select;
 
-      if (core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS > 1 && core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS != core_v_mini_mcu_pkg::DMA_CH_NUM) begin : xbar_n_to_m_gen
+      if (mosaic_soc_pkg::DMA_NUM_MASTER_PORTS > 1 && mosaic_soc_pkg::DMA_NUM_MASTER_PORTS != mosaic_soc_pkg::DMA_CH_NUM) begin : xbar_n_to_m_gen
 
         /* Read, write & address mode operations xbar*/
         dma_NtoM_xbar #(
-            .XBAR_NMASTER(core_v_mini_mcu_pkg::DMA_CH_NUM),
-            .XBAR_MSLAVE (core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS)
+            .XBAR_NMASTER(mosaic_soc_pkg::DMA_CH_NUM),
+            .XBAR_MSLAVE (mosaic_soc_pkg::DMA_NUM_MASTER_PORTS)
         ) xbar_read_i (
             .clk_i(clk_i),
             .rst_ni(rst_ni),
@@ -155,8 +155,8 @@ module dma_subsystem
         );
 
         dma_NtoM_xbar #(
-            .XBAR_NMASTER(core_v_mini_mcu_pkg::DMA_CH_NUM),
-            .XBAR_MSLAVE (core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS)
+            .XBAR_NMASTER(mosaic_soc_pkg::DMA_CH_NUM),
+            .XBAR_MSLAVE (mosaic_soc_pkg::DMA_NUM_MASTER_PORTS)
         ) xbar_write_i (
             .clk_i(clk_i),
             .rst_ni(rst_ni),
@@ -167,8 +167,8 @@ module dma_subsystem
         );
 
         dma_NtoM_xbar #(
-            .XBAR_NMASTER(core_v_mini_mcu_pkg::DMA_CH_NUM),
-            .XBAR_MSLAVE (core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS)
+            .XBAR_NMASTER(mosaic_soc_pkg::DMA_CH_NUM),
+            .XBAR_MSLAVE (mosaic_soc_pkg::DMA_NUM_MASTER_PORTS)
         ) xbar_address_i (
             .clk_i(clk_i),
             .rst_ni(rst_ni),
@@ -177,9 +177,9 @@ module dma_subsystem
             .slave_req_o(dma_addr_req_o),
             .slave_resp_i(dma_addr_resp_i)
         );
-      end else if (core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS > 1 && core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS == core_v_mini_mcu_pkg::DMA_CH_NUM) begin : xbar_n_to_n_gen
+      end else if (mosaic_soc_pkg::DMA_NUM_MASTER_PORTS > 1 && mosaic_soc_pkg::DMA_NUM_MASTER_PORTS == mosaic_soc_pkg::DMA_CH_NUM) begin : xbar_n_to_n_gen
         for (
-            genvar i = 0; i < core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS; i++
+            genvar i = 0; i < mosaic_soc_pkg::DMA_NUM_MASTER_PORTS; i++
         ) begin : gen_master_ports
           assign dma_read_req_o[i] = xbar_read_req[i];
           assign xbar_read_resp[i] = dma_read_resp_i[i];
@@ -192,7 +192,7 @@ module dma_subsystem
       end else begin : xbar_n_to_1_gen
         /* Read, write & address mode operations xbar*/
         xbar_varlat_n_to_one #(
-            .XBAR_NMASTER(core_v_mini_mcu_pkg::DMA_CH_NUM)
+            .XBAR_NMASTER(mosaic_soc_pkg::DMA_CH_NUM)
         ) xbar_read_i (
             .clk_i        (clk_i),
             .rst_ni       (rst_ni),
@@ -203,7 +203,7 @@ module dma_subsystem
         );
 
         xbar_varlat_n_to_one #(
-            .XBAR_NMASTER(core_v_mini_mcu_pkg::DMA_CH_NUM)
+            .XBAR_NMASTER(mosaic_soc_pkg::DMA_CH_NUM)
         ) xbar_write_i (
             .clk_i        (clk_i),
             .rst_ni       (rst_ni),
@@ -214,7 +214,7 @@ module dma_subsystem
         );
 
         xbar_varlat_n_to_one #(
-            .XBAR_NMASTER(core_v_mini_mcu_pkg::DMA_CH_NUM)
+            .XBAR_NMASTER(mosaic_soc_pkg::DMA_CH_NUM)
         ) xbar_address_i (
             .clk_i        (clk_i),
             .rst_ni       (rst_ni),
@@ -227,13 +227,13 @@ module dma_subsystem
 
       /* Internal address decoder */
       addr_decode #(
-          .NoIndices(core_v_mini_mcu_pkg::DMA_CH_NUM),
-          .NoRules(core_v_mini_mcu_pkg::DMA_CH_NUM),
+          .NoIndices(mosaic_soc_pkg::DMA_CH_NUM),
+          .NoRules(mosaic_soc_pkg::DMA_CH_NUM),
           .addr_t(logic [7:0]),
           .rule_t(addr_map_rule_pkg::addr_map_rule_8bit_t)
       ) addr_dec_i (
           .addr_i(reg_req_i.addr[15:8]),
-          .addr_map_i(core_v_mini_mcu_pkg::DMA_ADDR_RULES),
+          .addr_map_i(mosaic_soc_pkg::DMA_ADDR_RULES),
           .idx_o(submodules_select),
           .dec_valid_o(),
           .dec_error_o(),
@@ -243,7 +243,7 @@ module dma_subsystem
 
       /* Register demux */
       reg_demux #(
-          .NoPorts(core_v_mini_mcu_pkg::DMA_CH_NUM),
+          .NoPorts(mosaic_soc_pkg::DMA_CH_NUM),
           .req_t  (reg_req_t),
           .rsp_t  (reg_rsp_t)
       ) reg_demux_i (

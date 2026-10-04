@@ -153,7 +153,7 @@ What this creates:
 ```text
 build/mosaic/tutorial_soc-<hash>/
 ├── manifest.json
-├── generated/hw/core-v-mini-mcu/    # generated SoC RTL
+├── generated/hw/mosaic_soc/         # generated SoC RTL
 ├── generated/sw/boot_images.json    # per-hart boot contract
 ├── generated/sw/include/            # topology and memory-map headers
 ├── generated/sw/linker/             # one linker script per image
@@ -188,8 +188,8 @@ harts: 3
   hart 0: cv32e20  role=titan  isa=rv32emc  boot=0x00000180 image=0
   hart 1: fazyrv   role=atlas  isa=rv32i    boot=0x00001000 image=1
   hart 2: serv     role=nano   isa=rv32i    boot=0x00002000 image=2
-RTL package: build/mosaic/tutorial_soc-<hash>/generated/hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv
-CPU RTL: build/mosaic/tutorial_soc-<hash>/generated/hw/core-v-mini-mcu/cpu_subsystem.sv
+RTL package: build/mosaic/tutorial_soc-<hash>/generated/hw/mosaic_soc/include/mosaic_soc_pkg.sv
+CPU RTL: build/mosaic/tutorial_soc-<hash>/generated/hw/mosaic_soc/cpu_subsystem.sv
 boot contract: build/mosaic/tutorial_soc-<hash>/generated/sw/boot_images.json
 ```
 

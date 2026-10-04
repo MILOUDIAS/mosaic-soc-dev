@@ -32,7 +32,7 @@ module tdu_soc_tb_top #(
     output logic                                      tdu_irq_o
 );
   // Keep this integration test independent of whichever configuration last
-  // rendered core_v_mini_mcu_pkg.sv into the source tree.
+  // rendered mosaic_soc_pkg.sv into the source tree.
   localparam logic [31:0] TDU_START_ADDRESS = 32'h200A_0000;
   localparam logic [31:0] TDU_END_ADDRESS   = TDU_START_ADDRESS + 32'h1000;
 
@@ -64,7 +64,7 @@ module tdu_soc_tb_top #(
   // When not addressing the TDU, behave like a benign always-ready slave.
   assign soc_rsp = tdu_select ? tdu_rsp : '{ready: 1'b1, error: 1'b0, rdata: 32'h0};
 
-  // core_running is the inverse of core_sleep (as wired in core_v_mini_mcu.sv).
+  // core_running is the inverse of core_sleep (as wired in mosaic_soc.sv).
   logic [NUM_HARTS-1:0] core_running;
   assign core_running = ~core_sleep_i;
 

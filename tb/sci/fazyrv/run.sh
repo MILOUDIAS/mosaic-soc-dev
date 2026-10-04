@@ -10,6 +10,6 @@ cd "$REPO"
 source "$REPO/tb/tools.sh"
 mosaic_need_verilator
 rm -rf "build/tb_fazyrv_sci_obj"
-verilator --binary -j 0 --timescale 1ns/1ps --top-module tb_fazyrv_sci   --Mdir "build/tb_fazyrv_sci_obj" -o "Vtb_fazyrv_sci"   -Wno-fatal -Wno-WIDTH -Wno-UNUSEDSIGNAL -Wno-UNDRIVEN -Wno-UNUSEDPARAM   -Wno-DECLFILENAME -Wno-PINMISSING -Wno-CASEINCOMPLETE -Wno-WIDTHEXPAND   -Wno-WIDTHTRUNC -Wno-UNOPTFLAT -Wno-TIMESCALEMOD -Wno-LATCH -Wno-MULTIDRIVEN   -Wno-GENUNNAMED -Wno-SYMRSVDWORD -Wno-IMPLICIT -Wno-COMBDLY   hw/core-v-mini-mcu/include/obi_pkg.sv   tb/mosaic/tb_obi_mem.sv   hw/sci/fazyrv_sci.sv   -f "$HERE/deps.f"   "$HERE/tb_fazyrv_sci.sv"
+verilator --binary -j 0 --timescale 1ns/1ps --top-module tb_fazyrv_sci   --Mdir "build/tb_fazyrv_sci_obj" -o "Vtb_fazyrv_sci"   -Wno-fatal -Wno-WIDTH -Wno-UNUSEDSIGNAL -Wno-UNDRIVEN -Wno-UNUSEDPARAM   -Wno-DECLFILENAME -Wno-PINMISSING -Wno-CASEINCOMPLETE -Wno-WIDTHEXPAND   -Wno-WIDTHTRUNC -Wno-UNOPTFLAT -Wno-TIMESCALEMOD -Wno-LATCH -Wno-MULTIDRIVEN   -Wno-GENUNNAMED -Wno-SYMRSVDWORD -Wno-IMPLICIT -Wno-COMBDLY   hw/mosaic_soc/include/obi_pkg.sv   tb/mosaic/tb_obi_mem.sv   hw/sci/fazyrv_sci.sv   -f "$HERE/deps.f"   "$HERE/tb_fazyrv_sci.sv"
 
 "build/tb_fazyrv_sci_obj/Vtb_fazyrv_sci"

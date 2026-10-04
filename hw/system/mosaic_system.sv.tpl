@@ -15,7 +15,7 @@
     any_muxed_pads = xheep.get_padring().num_muxed_pads() > 0
 %>
 
-module x_heep_system
+module mosaic_system
   import obi_pkg::*;
   import reg_pkg::*;
   import fifo_pkg::*;
@@ -26,8 +26,8 @@ module x_heep_system
     //do not touch these parameters
     parameter AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 0 : AO_SPC_NUM - 1,
     parameter EXT_XBAR_NMASTER_RND = EXT_XBAR_NMASTER == 0 ? 1 : EXT_XBAR_NMASTER,
-    parameter EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS,
-    parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT
+    parameter EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS,
+    parameter NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT
 ) (
     // IDs
     input logic [31:0] hart_id_i,
@@ -46,17 +46,17 @@ module x_heep_system
     input  obi_resp_t ext_core_data_resp_i,
     output obi_req_t  ext_debug_master_req_o,
     input  obi_resp_t ext_debug_master_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i,
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i,
 % if not is_mc:
-    output obi_req_t  [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_req_o,
-    input  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_resp_i,
+    output obi_req_t  [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_req_o,
+    input  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_addr_resp_i,
 % endif
 
-    output fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
-    input fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
+    output fifo_req_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_req_o,
+    input fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i,
 
     input reg_req_t  [AO_SPC_NUM_RND:0] ext_ao_peripheral_req_i,
     output reg_rsp_t [AO_SPC_NUM_RND:0] ext_ao_peripheral_resp_o,
@@ -79,10 +79,10 @@ module x_heep_system
 
     output logic [31:0] exit_value_o,
 
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
+    input logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i,
 
     // eXtension interface
     if_xif.cpu_compressed xif_compressed_if,
@@ -93,7 +93,7 @@ module x_heep_system
     if_xif.cpu_result     xif_result_if,
 
     // External SPC interface
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o,
+    output logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] dma_done_o,
 
     % for pad in xheep.get_padring().pad_list:
       <%
@@ -116,7 +116,7 @@ module x_heep_system
     % endfor
 );
 
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
   localparam EXT_HARTS = 0;
 
@@ -132,15 +132,15 @@ module x_heep_system
   reg_rsp_t pad_resp;
 
   % if attribute_bits != None:
-    logic [core_v_mini_mcu_pkg::NUM_PAD-1:0][${attribute_bits}] pad_attributes;
+    logic [mosaic_soc_pkg::NUM_PAD-1:0][${attribute_bits}] pad_attributes;
   % endif
   % if any_muxed_pads:
-    logic [core_v_mini_mcu_pkg::NUM_PAD-1:0][${xheep.get_padring().get_muxed_pad_select_width()-1}:0] pad_muxes;
+    logic [mosaic_soc_pkg::NUM_PAD-1:0][${xheep.get_padring().get_muxed_pad_select_width()-1}:0] pad_muxes;
   % endif
 
   logic rst_ngen;
 
-  // core_v_mini_mcu input/output pins
+  // mosaic_soc input/output pins
   % for pad in xheep.get_padring().pad_list:
     % for pin in pad.pins:
       % if isinstance(pin, PinDigital):
@@ -153,15 +153,15 @@ module x_heep_system
   % endfor
 
 
-  core_v_mini_mcu #(
+  mosaic_soc #(
     .EXT_XBAR_NMASTER(EXT_XBAR_NMASTER),
     .AO_SPC_NUM(AO_SPC_NUM),
     .EXT_HARTS(EXT_HARTS)
-  ) core_v_mini_mcu_i (   
+  ) mosaic_soc_i (   
     // MCU pads
     .rst_ni(rst_ngen),
     % for pin in xheep.get_padring().get_connected_pins():
-      % if pin.module == "core_v_mini_mcu":
+      % if pin.module == "mosaic_soc":
         % if isinstance(pin, (Input, Inout)):
           .${pin.rtl_name()}i(${pin.rtl_name()}in_x),
         % endif
@@ -291,7 +291,7 @@ analog_signal_pads = [ pad for pad in xheep.get_padring().pad_list if any(isinst
     % for pin in pad.pins:
       ${pin.rtl_name()}in_x = ${"1'b1" if pin.attributes.get("active") == "low" else "1'b0"};
     % endfor
-    unique case(pad_muxes[core_v_mini_mcu_pkg::PAD_${pad.name.upper()}])
+    unique case(pad_muxes[mosaic_soc_pkg::PAD_${pad.name.upper()}])
       % for idx, pin in enumerate(pad.pins):
         ${idx}: begin
           <% pinidx_name = pin.rtl_name() %>
@@ -312,7 +312,7 @@ analog_signal_pads = [ pad for pad in xheep.get_padring().pad_list if any(isinst
   pad_control #(
       .reg_req_t(reg_pkg::reg_req_t),
       .reg_rsp_t(reg_pkg::reg_rsp_t),
-      .NUM_PAD  (core_v_mini_mcu_pkg::NUM_PAD)
+      .NUM_PAD  (mosaic_soc_pkg::NUM_PAD)
   ) pad_control_i (
       .clk_i(clk_in_x),
       .rst_ni(rst_ngen),
@@ -335,4 +335,4 @@ analog_signal_pads = [ pad for pad in xheep.get_padring().pad_list if any(isinst
   );
 
 
-endmodule  // x_heep_system
+endmodule  // mosaic_system

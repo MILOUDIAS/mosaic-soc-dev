@@ -474,7 +474,7 @@ class WrapperSmith:
                     "util/mosaic_gen/cpu/cpu.py AVAILABLE_CPUS",
                     "util/mosaic_gen/core_registry.py CORE_SPECS",
                     "hw/sci/<core>_sci.sv wrapper",
-                    "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl branch",
+                    "hw/mosaic_soc/cpu_subsystem.sv.tpl branch",
                     "hw/sci/sci.core files list",
                     "tb/mosaic_soc/gen_filelist.py visibility",
                     "hw/vendor/mosaic/<core>/ + .core stub",
@@ -683,7 +683,7 @@ class WrapperSmith:
         return banner + out
 
     def _extract_branch(self, source_core: str) -> Optional[str]:
-        tpl = (self.repo_root / "hw" / "core-v-mini-mcu" /
+        tpl = (self.repo_root / "hw" / "mosaic_soc" /
                "cpu_subsystem.sv.tpl").read_text()
         m = re.search(
             rf'(      % elif group\.name == "{source_core}":\n)(.*?)(?=\n      % elif|\n## wrapper-smith:insert-here)',
@@ -793,7 +793,7 @@ class WrapperSmith:
             )
 
         # (4) cpu_subsystem.sv.tpl branch at the anchor
-        tpl_rel = "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl"
+        tpl_rel = "hw/mosaic_soc/cpu_subsystem.sv.tpl"
         tpl_text = (self.repo_root / tpl_rel).read_text()
         guard = f"## wrapper-smith:begin {core}"
         if f'group.name == "{core}"' in tpl_text or guard in tpl_text:

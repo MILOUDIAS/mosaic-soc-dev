@@ -24,7 +24,7 @@
   tdu_enabled = is_mc and bool(xheep.get_extension("tdu_enabled"))
 %>
 
-package core_v_mini_mcu_pkg;
+package mosaic_soc_pkg;
 
   import addr_map_rule_pkg::*;
   import power_manager_pkg::*;

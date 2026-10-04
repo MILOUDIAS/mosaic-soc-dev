@@ -14,7 +14,7 @@
 #include "mmio.h"
 #include "error.h"
 
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 
 #ifdef __cplusplus
 extern "C" {

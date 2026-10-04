@@ -137,7 +137,7 @@ def test_a_wrapper_missing_from_the_fileset_is_reported_by_name(tmp_path):
     """The refusal has to name the fileset, not just say 'wrapper missing' --
     the two have the same symptom and opposite fixes."""
     (tmp_path / "hw/sci").mkdir(parents=True)
-    (tmp_path / "hw/core-v-mini-mcu").mkdir(parents=True)
+    (tmp_path / "hw/mosaic_soc").mkdir(parents=True)
     (tmp_path / "hw/sci/serv_sci.sv").write_text("module serv_sci; endmodule")
     (tmp_path / "hw/sci/sci.core").write_text("filesets:\n  files_rtl:\n")
     (tmp_path / CPU_SUBSYSTEM_TPL).write_text('group.name == "serv"')
@@ -151,7 +151,7 @@ def test_a_wrapper_missing_from_the_fileset_is_reported_by_name(tmp_path):
 
 def test_the_fileset_check_does_not_fire_for_native_cores(tmp_path):
     """cv32e* need no wrapper, so they cannot be missing from a fileset."""
-    (tmp_path / "hw/core-v-mini-mcu").mkdir(parents=True)
+    (tmp_path / "hw/mosaic_soc").mkdir(parents=True)
     (tmp_path / CPU_SUBSYSTEM_TPL).write_text('group.name == "cv32e20"')
     r = inspect("cv32e20", tmp_path)
     assert r.sci_module is None and r.in_fileset is True and r.complete is True

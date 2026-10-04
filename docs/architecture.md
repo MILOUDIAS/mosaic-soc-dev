@@ -4,8 +4,9 @@ MOSAIC-SoC is a generator. It reads one YAML file and writes a multi-core
 RISC-V system on chip (SoC): the register-transfer-level (RTL) description, the
 linker scripts and boot images for its software, a testbench, and the inputs of
 a physical-design flow. It is a fork of [X-HEEP](https://github.com/x-heep/x-heep),
-a single-core microcontroller platform, and it keeps X-HEEP's top-level module
-names (`core_v_mini_mcu`, `x_heep_system`) and build system.
+a single-core microcontroller platform, and it keeps X-HEEP's build system. The
+SoC module `mosaic_soc` and its pad-ring wrapper `mosaic_system` are X-HEEP's
+`core_v_mini_mcu` and `x_heep_system` under this project's names.
 
 This page describes the generated SoC, then the generator that produces it, then
 where each part lives in the repository.
@@ -220,7 +221,7 @@ configurations in `configs/*.hjson`. It renders the templates in place.
 | `mosaic.yaml` | the default configuration |
 | `configs/` | shipped configurations ([configuration.md](configuration.md)) and X-HEEP's base files |
 | `util/mosaic_gen/` | the generator; `core_registry.py` is the single source of supported cores, buses, PDKs and configuration rules |
-| `hw/core-v-mini-mcu/` | the SoC templates: top level, CPU subsystem, bus, memory, peripherals |
+| `hw/mosaic_soc/` | the SoC templates: top level, CPU subsystem, bus, memory, peripherals |
 | `hw/sci/` | the SCI wrappers |
 | `hw/tdu/` | the TDU and the CLINT |
 | `hw/vendor/mosaic/` | vendored cores, iDMA, FlooNoC and the bus bridges |

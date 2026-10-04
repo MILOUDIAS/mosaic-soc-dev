@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
 #include <stdint.h>
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 
 // this translates the logical address of the FLASH relative to 0 instead of FLASH_MEM_START_ADDRESS, as used by the BSP
 uint32_t * heep_get_flash_address_offset(uint32_t* data_address_lma){

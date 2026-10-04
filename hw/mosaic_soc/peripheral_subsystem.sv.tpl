@@ -13,7 +13,7 @@ module peripheral_subsystem
   import reg_pkg::*;
 #(
     //do not touch these parameters
-    parameter NEXT_INT_RND         = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT
+    parameter NEXT_INT_RND         = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -27,8 +27,8 @@ module peripheral_subsystem
     //PLIC
     input  logic [NEXT_INT_RND-1:0] intr_vector_ext_i,
 % if is_mc:
-    output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] irq_plic_o,
-    output logic [core_v_mini_mcu_pkg::NUM_HARTS-1:0] msip_o,
+    output logic [mosaic_soc_pkg::NUM_HARTS-1:0] irq_plic_o,
+    output logic [mosaic_soc_pkg::NUM_HARTS-1:0] msip_o,
 % else:
     output logic                irq_plic_o,
     output logic                msip_o,
@@ -110,15 +110,15 @@ module peripheral_subsystem
     input  logic pdm2pcm_pdm_i
 );
 
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
   import tlul_pkg::*;
   import rv_plic_reg_pkg::*;
 
   reg_pkg::reg_req_t peripheral_req;
   reg_pkg::reg_rsp_t peripheral_rsp;
 
-  reg_pkg::reg_req_t [core_v_mini_mcu_pkg::PERIPHERALS_RND-1:0] peripheral_slv_req;
-  reg_pkg::reg_rsp_t [core_v_mini_mcu_pkg::PERIPHERALS_RND-1:0] peripheral_slv_rsp;
+  reg_pkg::reg_req_t [mosaic_soc_pkg::PERIPHERALS_RND-1:0] peripheral_slv_req;
+  reg_pkg::reg_rsp_t [mosaic_soc_pkg::PERIPHERALS_RND-1:0] peripheral_slv_rsp;
 
   tlul_pkg::tl_h2d_t plic_tl_h2d;
   tlul_pkg::tl_d2h_t plic_tl_d2h;
@@ -276,13 +276,13 @@ module peripheral_subsystem
   );
 
   addr_decode #(
-      .NoIndices(core_v_mini_mcu_pkg::PERIPHERALS_RND),
-      .NoRules(core_v_mini_mcu_pkg::PERIPHERALS_RND),
+      .NoIndices(mosaic_soc_pkg::PERIPHERALS_RND),
+      .NoRules(mosaic_soc_pkg::PERIPHERALS_RND),
       .addr_t(logic [31:0]),
       .rule_t(addr_map_rule_pkg::addr_map_rule_t)
   ) i_addr_decode_soc_regbus_periph_xbar (
       .addr_i(peripheral_req.addr),
-      .addr_map_i(core_v_mini_mcu_pkg::PERIPHERALS_ADDR_RULES),
+      .addr_map_i(mosaic_soc_pkg::PERIPHERALS_ADDR_RULES),
       .idx_o(peripheral_select),
       .dec_valid_o(),
       .dec_error_o(),
@@ -291,7 +291,7 @@ module peripheral_subsystem
   );
 
   reg_demux #(
-      .NoPorts(core_v_mini_mcu_pkg::PERIPHERALS_RND),
+      .NoPorts(mosaic_soc_pkg::PERIPHERALS_RND),
       .req_t  (reg_pkg::reg_req_t),
       .rsp_t  (reg_pkg::reg_rsp_t)
   ) reg_demux_i (
@@ -318,8 +318,8 @@ module peripheral_subsystem
   ) reg_to_tlul_plic_i (
       .tl_o(plic_tl_h2d),
       .tl_i(plic_tl_d2h),
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::RV_PLIC_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::RV_PLIC_IDX])
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::RV_PLIC_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::RV_PLIC_IDX])
   );
 
   rv_plic rv_plic_i (
@@ -350,8 +350,8 @@ module peripheral_subsystem
   ) spi_host_dma_i (
       .clk_i(clk_cg),
       .rst_ni,
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SPI_HOST_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::SPI_HOST_IDX]),
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::SPI_HOST_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::SPI_HOST_IDX]),
       .alert_rx_i(),
       .alert_tx_o(),
       .passthrough_i(spi_device_pkg::PASSTHROUGH_REQ_DEFAULT),
@@ -388,8 +388,8 @@ module peripheral_subsystem
   ) gpio_i (
       .clk_i(clk_cg),
       .rst_ni,
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::GPIO_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::GPIO_IDX]),
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::GPIO_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::GPIO_IDX]),
       .gpio_in({cio_gpio_i, 8'b0}),
       .gpio_out({cio_gpio_o, cio_gpio_unused}),
       .gpio_tx_en_o({cio_gpio_en_o, cio_gpio_en_unused}),
@@ -417,8 +417,8 @@ module peripheral_subsystem
   ) reg_to_tlul_i2c_i (
       .tl_o(i2c_tl_h2d),
       .tl_i(i2c_tl_d2h),
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::I2C_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::I2C_IDX])
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::I2C_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::I2C_IDX])
   );
 
   i2c i2c_i (
@@ -487,8 +487,8 @@ module peripheral_subsystem
   ) rv_timer_reg_to_tlul_i (
       .tl_o(rv_timer_tl_h2d),
       .tl_i(rv_timer_tl_d2h),
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::RV_TIMER_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::RV_TIMER_IDX])
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::RV_TIMER_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::RV_TIMER_IDX])
   );
 
   rv_timer rv_timer_2_3_i (
@@ -512,8 +512,8 @@ module peripheral_subsystem
   ) spi2_host (
       .clk_i(clk_cg),
       .rst_ni,
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SPI2_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::SPI2_IDX]),
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::SPI2_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::SPI2_IDX]),
       .alert_rx_i(),
       .alert_tx_o(),
       .passthrough_i(spi_device_pkg::PASSTHROUGH_REQ_DEFAULT),
@@ -548,8 +548,8 @@ module peripheral_subsystem
   ) pdm2pcm_i (
       .clk_i(clk_cg),
       .rst_ni,
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::PDM2PCM_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::PDM2PCM_IDX]),
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::PDM2PCM_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::PDM2PCM_IDX]),
       .pdm_i(pdm2pcm_pdm_i),
       .pdm_clk_o(pdm2pcm_clk_o)
   );
@@ -566,8 +566,8 @@ module peripheral_subsystem
   ) i2s_i (
       .clk_i(clk_cg),
       .rst_ni,
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::I2S_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::I2S_IDX]),
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::I2S_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::I2S_IDX]),
 
       .i2s_sck_o(i2s_sck_o),
       .i2s_sck_oe_o(i2s_sck_oe_o),
@@ -609,8 +609,8 @@ module peripheral_subsystem
   ) reg_to_tlul_uart_i (
       .tl_o(uart_tl_h2d),
       .tl_i(uart_tl_d2h),
-      .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::UART_IDX]),
-      .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::UART_IDX])
+      .reg_req_i(peripheral_slv_req[mosaic_soc_pkg::UART_IDX]),
+      .reg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::UART_IDX])
   );
 
   uart uart_i (
@@ -662,12 +662,12 @@ module peripheral_subsystem
     .clk_reg_i(clk_i),       
     .rst_reg_ni(rst_ni),      
     .testmode_i('0),
-    .writer_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_IDX]),
-    .writer_rsp_i(peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_IDX]),
-    .reader_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
-    .reader_resp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
-    .cfg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_REG_IDX]),
-    .cfg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_REG_IDX]),
+    .writer_req_i(peripheral_slv_req[mosaic_soc_pkg::SERIAL_LINK_IDX]),
+    .writer_rsp_i(peripheral_slv_rsp[mosaic_soc_pkg::SERIAL_LINK_IDX]),
+    .reader_req_i(peripheral_slv_req[mosaic_soc_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
+    .reader_resp_o(peripheral_slv_rsp[mosaic_soc_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
+    .cfg_req_i(peripheral_slv_req[mosaic_soc_pkg::SERIAL_LINK_REG_IDX]),
+    .cfg_rsp_o(peripheral_slv_rsp[mosaic_soc_pkg::SERIAL_LINK_REG_IDX]),
     .ddr_rcv_clk_i,         
     .ddr_i,                   
     .ddr_snd_clk_o,          

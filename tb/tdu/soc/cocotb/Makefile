@@ -12,7 +12,7 @@ SUB           ?= 1
 THIS_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 REPO     := $(abspath $(THIS_DIR)/../../../..)
 
-INC := $(REPO)/hw/core-v-mini-mcu/include
+INC := $(REPO)/hw/mosaic_soc/include
 TDU := $(REPO)/hw/tdu/rtl
 CC  := $(REPO)/hw/vendor/pulp_platform/common_cells
 
@@ -22,7 +22,7 @@ VERILOG_SOURCES = \
   $(INC)/fifo_pkg.sv \
   $(INC)/addr_map_rule_pkg.sv \
   $(INC)/power_manager_pkg.sv \
-  $(INC)/core_v_mini_mcu_pkg.sv \
+  $(INC)/mosaic_soc_pkg.sv \
   $(TDU)/tdu_pkg.sv \
   $(TDU)/tdu.sv \
   $(REPO)/tb/tdu/soc/tdu_soc_tb_top.sv

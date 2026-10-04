@@ -20,7 +20,7 @@ from ..core import SkillResult, REPO_ROOT, load_yaml, log
 
 # ── Memory map definitions ───────────────────────────────────────────
 
-# From core_v_mini_mcu_pkg.sv.tpl — standard x-heep memory map
+# From mosaic_soc_pkg.sv.tpl — standard x-heep memory map
 MEMORY_MAP = {
     "RAM": {"start": "0x00000000", "size": "Variable (1-16 banks x 1-32 KB)"},
     "DEBUG": {"start": "0x10000000", "size": "1 MB"},

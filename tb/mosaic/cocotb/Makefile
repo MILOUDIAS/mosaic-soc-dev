@@ -11,13 +11,13 @@ MODULE         = test_mosaic
 THIS_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 REPO     := $(abspath $(THIS_DIR)/../../..)
 
-INC  := $(REPO)/hw/core-v-mini-mcu/include
+INC  := $(REPO)/hw/mosaic_soc/include
 SERV := $(REPO)/hw/vendor/mosaic/serv
 FAZ  := $(REPO)/hw/vendor/mosaic/fazyrv
 SCI  := $(REPO)/hw/sci
-MCU  := $(REPO)/hw/core-v-mini-mcu
+MCU  := $(REPO)/hw/mosaic_soc
 MOSAIC_GENERATED_ROOT ?= $(REPO)/build/mosaic/INVALID-MANIFEST-NOT-SUPPLIED/generated
-GEN_MCU := $(MOSAIC_GENERATED_ROOT)/hw/core-v-mini-mcu
+GEN_MCU := $(MOSAIC_GENERATED_ROOT)/hw/mosaic_soc
 TB   := $(REPO)/tb/mosaic
 TC   := $(REPO)/hw/vendor/pulp_platform/tech_cells_generic/src/rtl/tc_clk.sv
 
@@ -27,7 +27,7 @@ VERILOG_SOURCES = \
   $(INC)/reg_pkg.sv \
   $(INC)/fifo_pkg.sv \
   $(INC)/addr_map_rule_pkg.sv \
-  $(GEN_MCU)/include/core_v_mini_mcu_pkg.sv \
+  $(GEN_MCU)/include/mosaic_soc_pkg.sv \
   $(TC) \
   $(GEN_MCU)/cpu_subsystem.sv \
   $(TB)/tb_obi_mem.sv \

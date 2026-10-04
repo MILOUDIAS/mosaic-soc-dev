@@ -1,6 +1,6 @@
 // See LICENSE.SiFive for license details.
 
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "soc_ctrl_regs.h"
 #include "spi_memio_regs.h"
 #include "power_manager_regs.h"

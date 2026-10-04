@@ -110,7 +110,7 @@ module mosaic_chip_top #(
 
   // ── MOSAIC SoC core ──────────────────────────────────────────────
   // mosaic_soc_core is a thin adapter (src/mosaic_soc_core.sv) that maps these
-  // generic pad buses onto x_heep_system's actual pins per configs/pad_cfg.py.
+  // generic pad buses onto mosaic_system's actual pins per configs/pad_cfg.py.
   mosaic_soc_core #(
       .NUM_INPUT_PADS (NUM_INPUT_PADS),
       .NUM_BIDIR_PADS (NUM_BIDIR_PADS),

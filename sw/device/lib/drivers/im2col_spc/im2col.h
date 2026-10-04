@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include "dma.h"
 #include "im2col_spc_regs.h"
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "x-heep.h"
 #include "rv_plic.h"
 #include "csr.h"

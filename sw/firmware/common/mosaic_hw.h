@@ -10,7 +10,7 @@
  * x-heep headers. Addresses match the PoC memory map (mosaic.yaml).
  *
  * @see hw/tdu/rtl/tdu_pkg.sv — TDU register offsets
- * @see hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv.tpl — SoC address map
+ * @see hw/mosaic_soc/include/mosaic_soc_pkg.sv.tpl — SoC address map
  */
 
 #ifndef MOSAIC_HW_H

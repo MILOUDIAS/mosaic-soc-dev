@@ -64,6 +64,10 @@ PROCESS_SPECIFIC_KEYS = ("PNR_CORNERS", "MAX_TRANSITION_CONSTRAINT")
 
 _MODULE_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
+#: Modules the generator emits. They are in every hardening file list, so a
+#: delivery wrapper cannot be given one of their names.
+GENERATED_MODULE_NAMES = ("mosaic_soc", "mosaic_system")
+
 
 def die_side_from_def(def_path: Path) -> Optional[float]:
     """The DIEAREA edge length in microns, or None if the file does not say.
@@ -262,6 +266,11 @@ def generate_hardening_config(
             f"design name {design_name!r} is not a valid module name: it must "
             "start with a letter or underscore and contain only letters, "
             "digits and underscores"
+        ]
+    if design_name in GENERATED_MODULE_NAMES:
+        return None, [
+            f"design name {design_name!r} is a module the generator emits; the "
+            "delivery wrapper needs a name of its own"
         ]
 
     die_override = None

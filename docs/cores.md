@@ -68,7 +68,7 @@ A new core needs three things.
    holds the core dormant while `fetch_enable_i` is low, and maps the interrupt
    inputs.
 3. **A template branch.** Add `% elif group.name == "<core>":` to
-   `hw/core-v-mini-mcu/cpu_subsystem.sv.tpl`, instantiating the wrapper with its
+   `hw/mosaic_soc/cpu_subsystem.sv.tpl`, instantiating the wrapper with its
    parameters.
 
 The `wrapper-smith` command does the mechanical part and marks what is left:

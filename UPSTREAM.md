@@ -32,14 +32,37 @@ single-core RISC-V microcontroller generator.
   64 are byte-identical here and 3 are files this project modified; those 3 are
   closer to this commit than to its parent. For each of the other modified
   files listed in section 3, the upstream version that matches best is the one
-  at this commit.
+  at this commit. The check was made before the two modules were renamed (see
+  below); the rename has since changed 4 of the byte-identical files, in names
+  only.
 - Licence: the `LICENSE` file of X-HEEP is the Solderpad Hardware License 0.51.
   The headers of X-HEEP's own files declare `Apache-2.0 WITH SHL-2.1`,
   `Apache-2.0` or `SHL-0.51`. Each file keeps the licence in its header.
 
 Upstream identifiers are kept so that the origin of the code stays visible:
-`x_heep_system`, `core_v_mini_mcu`, `x-heep.h`, the `x-heep:` names of the
-upstream FuseSoC cores, and the `RISCV_XHEEP` and `X_HEEP_CFG` variables.
+`x-heep.h`, the `x-heep:` names of the upstream FuseSoC cores, and the
+`RISCV_XHEEP` and `X_HEEP_CFG` variables.
+
+The two top-level modules of X-HEEP were renamed, with the names derived from
+them:
+
+| In X-HEEP | In this repository |
+|---|---|
+| module `core_v_mini_mcu`, package `core_v_mini_mcu_pkg` | `mosaic_soc`, `mosaic_soc_pkg` |
+| module `x_heep_system` | `mosaic_system` |
+| directory `hw/core-v-mini-mcu/` | `hw/mosaic_soc/` |
+| `core_v_mini_mcu.sv.tpl`, `core_v_mini_mcu.vlt`, `core_v_mini_mcu_pkg.sv.tpl` | `mosaic_soc.sv.tpl`, `mosaic_soc.vlt`, `mosaic_soc_pkg.sv.tpl` |
+| `x_heep_system.sv.tpl`, `x_heep_system.vlt` | `mosaic_system.sv.tpl`, `mosaic_system.vlt` |
+| `core-v-mini-mcu.core`, FuseSoC name `openhwgroup.org:systems:core-v-mini-mcu:1.0.5` (build directory `openhwgroup.org_systems_core-v-mini-mcu_1.0.5`) | `mosaic_soc.core`, `mosaic:systems:mosaic_soc`, without a version (`mosaic_systems_mosaic_soc_0`) |
+| `core_v_mini_mcu.h.tpl`, `core_v_mini_mcu_memory.h.tpl`, `core_v_mini_mcu.c` | `mosaic_soc.h.tpl`, `mosaic_soc_memory.h.tpl`, `mosaic_soc.c` (the generated headers are `mosaic_soc.h` and `mosaic_soc_memory.h`) |
+
+The upstream spelling remains on purpose in four places: the comment
+"Modified version for core-v-mini-mcu" in five files under `sw/device/lib/`,
+which records what X-HEEP changed in lowRISC code; the description strings of
+twelve upstream FuseSoC core files; the dated study
+`docs/design-notes/area_study_gf180_min_soc.md`; and the fan-out waiver in
+`flow/librelane/signoff_waivers.yaml` with its test fixture, which quote net
+names of netlists built before the rename.
 
 ## 2. xheep_gen
 
@@ -55,25 +78,26 @@ listed in section 3. The files this project added to the directory include
 
 ## 3. Upstream X-HEEP files modified by this project
 
-Paths are the paths in this repository. Two directories were renamed:
-`util/xheep_gen` became `util/mosaic_gen`, and `test/test_x_heep_gen` became
-`test/test_mosaic_gen`.
+Paths are the paths in this repository. Three directories were renamed:
+`util/xheep_gen` became `util/mosaic_gen`, `test/test_x_heep_gen` became
+`test/test_mosaic_gen`, and `hw/core-v-mini-mcu` became `hw/mosaic_soc`. The
+files renamed with the two modules are listed in section 1.
 
 | Directory | Modified files |
 |---|---|
-| (repository root) | `.gitignore`, `Makefile`, `README.md`, `core-v-mini-mcu.core` |
+| (repository root) | `.gitignore`, `Makefile`, `README.md`, `mosaic_soc.core` |
 | `configs/` | `pad_cfg.py` |
-| `hw/core-v-mini-mcu/` | `ao_peripheral_subsystem.sv.tpl`, `core_v_mini_mcu.sv.tpl`, `cpu_subsystem.sv.tpl`, `debug_subsystem.sv`, `peripheral_subsystem.sv.tpl`, `system_bus.sv.tpl`, `system_xbar.sv.tpl` |
-| `hw/core-v-mini-mcu/include/` | `core_v_mini_mcu_pkg.sv.tpl` |
 | `hw/ip/obi_fifo/` | `obi_fifo.sv` |
-| `hw/system/` | `x_heep_system.sv.tpl` |
+| `hw/mosaic_soc/` | `ao_peripheral_subsystem.sv.tpl`, `cpu_subsystem.sv.tpl`, `debug_subsystem.sv`, `mosaic_soc.sv.tpl`, `peripheral_subsystem.sv.tpl`, `system_bus.sv.tpl`, `system_xbar.sv.tpl` |
+| `hw/mosaic_soc/include/` | `mosaic_soc_pkg.sv.tpl` |
+| `hw/system/` | `mosaic_system.sv.tpl` |
 | `hw/vendor/` | `xheep_cluster_interconnect.core`, `openhwgroup_cv32e40x.core` |
 | `hw/vendor/lowrisc/opentitan/hw/ip/uart/rtl/` | `uart_core.sv` |
 | `hw/vendor/xheep/spi/rtl/` | `spi_subsystem.sv.tpl` |
 | `hw/vendor/openhwgroup/` | `cv32e40x.vendor.hjson`, `cv32e40x.lock.hjson`, and 58 files under `cv32e40x/` (see the note below) |
 | `tb/` | `ext_bus.sv`, `tb_top.sv`, `testharness.sv.tpl` |
-| `test/test_mosaic_gen/` | `test_peripherals.py` |
-| `util/` | `python-requirements.txt` |
+| `test/test_mosaic_gen/` | `compare_mcu_gen.py`, `test_peripherals.py` |
+| `util/` | `format-verible`, `python-requirements.txt` |
 | `util/mosaic_gen/` | `bus_type.py`, `load_config.py`, `mcu_gen.py`, `xheep.py` |
 | `util/mosaic_gen/cpu/` | `cpu.py` |
 | `util/mosaic_gen/memory_ss/` | `memory_ss.py`, `ram_bank.py` |
@@ -89,6 +113,30 @@ files are byte-identical to that upstream revision. One file,
 `hw/vendor/patches/openhwgroup_cv32e40x/` holds one patch,
 `0003-fix-xif-issue.patch`. `hw/vendor/openhwgroup/if_xif_compat.sv` is a
 compatibility file added by this project.
+
+Renaming the two modules changed 49 further upstream files, and only in those
+names. Compared with the base commit they are otherwise unchanged. Three of
+them are in the vendored directory `hw/vendor/xheep/spi/`, which has no vendor
+patch: `make vendor-update` would restore the upstream names there and in
+`spi_subsystem.sv.tpl`, and the mapping of section 1 would have to be applied
+again.
+
+| Directory | Files changed only by the rename |
+|---|---|
+| `configs/` | `benchmark.hjson`, `ci.hjson`, `example_interleaved.hjson`, `general.hjson`, `minimal.hjson`, `testall.hjson` |
+| `hw/ip/boot_rom/` | `boot_rom.S`, `gen_rom.py` |
+| `hw/ip/dma_subsystem/rtl/` | `dma_NtoM_xbar.sv`, `dma_subsystem.sv` |
+| `hw/ip/power_manager/rtl/` | `power_manager.sv.tpl` |
+| `hw/ip_examples/` | `im2col_spc/rtl/im2col_spc.sv` |
+| `hw/mosaic_soc/` | `include/x-heep_packages.core`, `memory_subsystem.sv.tpl`, `mosaic_soc.vlt` |
+| `hw/system/` | `mosaic_system.vlt`, `pad_control/rtl/pad_control.sv.tpl`, `pad_ring.sv.tpl` |
+| `hw/vendor/xheep/spi/` | `rtl/w25q128jw_controller/lint/w25q128jw_controller.vlt`, `rtl/w25q128jw_controller/rtl/w25q128jw_controller.sv`, `sw/spi_host/spi_host_structs.h` |
+| `sw/device/lib/drivers/` | `dma/dma.h`, `fast_intr_ctrl/fast_intr_ctrl.c`, `fast_intr_ctrl/fast_intr_ctrl_structs.h`, `gpio/gpio.c`, `gpio/gpio.h`, `gpio/gpio_structs.h`, `i2c/i2c_structs.h`, `i2s/i2s_structs.h`, `im2col_spc/im2col.h`, `power_manager/power_manager.c`, `power_manager/power_manager_cpu_restore.S`, `power_manager/power_manager_cpu_store.S`, `rv_plic/rv_plic.h`, `rv_plic/rv_plic_structs.h`, `rv_timer/rv_timer_structs.h`, `serial_link/serial_link.h`, `uart/uart.h`, `uart/uart_structs.h` |
+| `sw/device/lib/runtime/` | `mosaic_soc.c`, `mosaic_soc.h.tpl`, `mosaic_soc_memory.h.tpl`, `syscalls.c` |
+| `tb/` | `ext_xbar.sv`, `tb_util.svh.tpl`, `testharness_pkg.sv.tpl` |
+| `test/test_mosaic_gen/configs/` | `pad_cfg.hjson` |
+| `util/mosaic_gen/pads/` | `pin.py` |
+| `util/periph_structs_gen/` | `periph_structs_gen.py` |
 
 ## 4. Upstream X-HEEP features not carried over
 

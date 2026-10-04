@@ -35,7 +35,7 @@ extern "C" {
 #include "gpio.h"
 #include "gpio_regs.h"  // Generated.
 #include "gpio_structs.h"
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "bitfield.h"
 #include "x-heep.h"
 

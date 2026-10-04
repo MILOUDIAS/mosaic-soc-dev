@@ -205,7 +205,7 @@ def test_scaffold_stages_all_touchpoints(tmp_path):
         "hw/sci/zzztestcore_sci.sv",
         "util/mosaic_gen/cpu/cpu.py",
         "util/mosaic_gen/core_registry.py",
-        "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl",
+        "hw/mosaic_soc/cpu_subsystem.sv.tpl",
         "hw/sci/sci.core",
         "tb/mosaic_soc/gen_filelist.py",
     ):
@@ -222,7 +222,7 @@ def test_scaffold_stages_all_touchpoints(tmp_path):
     assert 'capabilities=frozenset({"unified_obi"})' in registry_py
     assert not (stage / "util/mosaic_gen/mosaic_config.py").exists()
     # staged tpl branch is guard-wrapped and above the anchor
-    tpl = (stage / "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl").read_text()
+    tpl = (stage / "hw/mosaic_soc/cpu_subsystem.sv.tpl").read_text()
     assert "## wrapper-smith:begin zzztestcore" in tpl
     assert tpl.index("## wrapper-smith:begin zzztestcore") < tpl.index(
         "## wrapper-smith:insert-here"

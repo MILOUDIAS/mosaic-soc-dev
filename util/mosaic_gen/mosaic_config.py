@@ -728,7 +728,7 @@ def _resolve_base_config(config: dict, cfg: "MosaicConfig") -> dict:
     # `none` sets is_included: "no", which ao_peripheral_subsystem.sv.tpl
     # already honours -- it skips the instantiation entirely, removing the
     # engine (0.319 mm2 of iDMA in GF180). It does NOT shrink the crossbar:
-    # core_v_mini_mcu_pkg.sv.tpl computes SYSTEM_XBAR_NMASTER from
+    # mosaic_soc_pkg.sv.tpl computes SYSTEM_XBAR_NMASTER from
     # get_num_master_ports() without consulting is_included, so the stubbed
     # DMA's master slots survive as two unused ports. See
     # test_dma_selection.py for why the two are changed together or not at all.

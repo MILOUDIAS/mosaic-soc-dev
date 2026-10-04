@@ -24,7 +24,7 @@ filesets:
       - pulp-platform.org::tech_cells_generic
       # cva6_sci.sv bridges CVA6's native AXI4 to OBI with
       # mosaic_axi_burst_to_obi, on EVERY bus -- CVA6 has no OBI port. This
-      # dependency used to be reachable only through core-v-mini-mcu's
+      # dependency used to be reachable only through mosaic_soc's
       # `files_rtl_floonoc` fileset, i.e. only when bus == floonoc, so
       # `bus: obi` builds died with MODMISSING on the bridge. The need belongs
       # to the core that has it, not to the fabric: mosaic:ip:berkeley

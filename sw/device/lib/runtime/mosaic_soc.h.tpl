@@ -10,8 +10,8 @@
     external_domains = base_peripheral_domain.get_power_manager().get_external_domains()
 %>
 
-#ifndef COREV_MINI_MCU_H_
-#define COREV_MINI_MCU_H_
+#ifndef MOSAIC_SOC_H_
+#define MOSAIC_SOC_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -153,4 +153,4 @@ uint32_t heep_rand_lfsr();
 }  // extern "C"
 #endif  // __cplusplus
 
-#endif  // COREV_MINI_MCU_H_
+#endif  // MOSAIC_SOC_H_

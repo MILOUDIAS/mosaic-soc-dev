@@ -9,7 +9,7 @@ MODULE        ?= test_bridges
 THIS_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 REPO     := $(abspath $(THIS_DIR)/../../..)
 
-INC  := $(REPO)/hw/core-v-mini-mcu/include
+INC  := $(REPO)/hw/mosaic_soc/include
 CC   := $(REPO)/hw/vendor/pulp_platform/common_cells
 AXI  := $(REPO)/hw/vendor/pulp_platform/axi
 AOB  := $(REPO)/hw/vendor/mosaic/axi_obi

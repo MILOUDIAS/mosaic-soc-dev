@@ -31,7 +31,7 @@ from .core_registry import CORE_SPECS
 
 SCI_DIR = "hw/sci"
 SCI_CORE_FILE = "hw/sci/sci.core"
-CPU_SUBSYSTEM_TPL = "hw/core-v-mini-mcu/cpu_subsystem.sv.tpl"
+CPU_SUBSYSTEM_TPL = "hw/mosaic_soc/cpu_subsystem.sv.tpl"
 
 
 @dataclass(frozen=True)

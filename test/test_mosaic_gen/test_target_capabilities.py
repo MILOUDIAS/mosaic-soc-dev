@@ -186,14 +186,14 @@ def _bundle(tmp_path: Path, *, placeholder: bool = False) -> Path:
     sram.mkdir(parents=True)
     flat = bundle / "design.v"
     flat.write_text(
-        "module core_v_mini_mcu(input logic clk_i);\n"
+        "module mosaic_soc(input logic clk_i);\n"
         + "\n".join(f"wire generated_net_{index} = clk_i;" for index in range(2500))
         + "\nendmodule\n"
     )
     bound = bundle / "mosaic_soc_core.sv"
     if placeholder:
         bound.write_text(
-            "module mosaic_soc_core; // x_heep_system i_soc();\n"
+            "module mosaic_soc_core; // mosaic_system i_soc();\n"
             + ("// placeholder padding\n" * 32)
             + "endmodule\n"
         )
@@ -201,7 +201,7 @@ def _bundle(tmp_path: Path, *, placeholder: bool = False) -> Path:
         bound.write_text(
             "module mosaic_soc_core(input logic clk_i, input logic rst_ni);\n"
             "logic [31:0] gpio_in, gpio_out, gpio_oe;\n"
-            "x_heep_system i_soc(.clk_i(clk_i), .rst_ni(rst_ni));\n"
+            "mosaic_system i_soc(.clk_i(clk_i), .rst_ni(rst_ni));\n"
             + ("assign gpio_in = gpio_out & gpio_oe;\n" * 16)
             + "endmodule\n"
         )
@@ -323,7 +323,7 @@ def test_physical_bundle_preflight_accepts_hashed_bound_inputs(tmp_path):
 def test_physical_bundle_preflight_rejects_placeholder_and_stale_hash(tmp_path):
     placeholder = _preflight(_bundle(tmp_path, placeholder=True))
     assert placeholder.returncode == 2
-    assert "does not instantiate x_heep_system" in placeholder.stderr
+    assert "does not instantiate mosaic_system" in placeholder.stderr
 
     bundle = _bundle(tmp_path / "stale")
     (bundle / "design.v").write_text("module changed; endmodule\n")

@@ -133,7 +133,7 @@ typedef struct gpio_cfg
 
 /**
  * @brief Adds a handler function for a gpio interrupt to the handlers list.
- * @param intr_id The interrupt ID of a gpio interrupt (from core_v_mini_mcu.h)
+ * @param intr_id The interrupt ID of a gpio interrupt (from mosaic_soc.h)
  * @param handler A pointer to a function that will be called upon interrupt.
  * @return The result of the operation
  */

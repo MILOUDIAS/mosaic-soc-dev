@@ -27,7 +27,7 @@ PREFLIGHT       = python3 $(MAKEFILE_DIR)/scripts/preflight.py
 LIBRELANE = librelane slots/slot_$(SLOT).yaml config.yaml \
             --pdk $(PDK) --pdk-root $(PDK_ROOT) --manual-pdk
 
-# Classic flow = harden the SoC core (core_v_mini_mcu) as a macro, no pad ring.
+# Classic flow = harden the SoC core (mosaic_soc) as a macro, no pad ring.
 LIBRELANE_CLASSIC = librelane config_classic.yaml \
             --pdk $(PDK) --pdk-root $(PDK_ROOT) --manual-pdk
 

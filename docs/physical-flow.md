@@ -219,7 +219,11 @@ Notes on the table:
   synchronizer, and its waivers were recorded on 2026-09-24. Its clock period is
   50 ns (20 MHz). The waiver record also states that gate-level simulation of
   this netlist reached `EXIT SUCCESS` after 12,404 cycles; that log is not in
-  version control.
+  version control. The run predates the renaming of the SoC module to
+  `mosaic_soc`: its netlist names the SoC instance `i_core_v_mini_mcu`, and so
+  do the two violator names in its fan-out waiver. The wrapper now names the
+  instance `i_mosaic_soc`, so the waiver has to be re-based on the next Block A
+  run.
 - The rejected runs fail only the maximum-transition gate. Most of them predate
   the split between the place-and-route constraint and the per-pin signoff
   limits described above, so their counts are measured against a single 4.0 ns

@@ -4,7 +4,7 @@
 # exercise the generated multi-core cpu_subsystem in Verilator. cv32e20 (TITAN)
 # is intentionally excluded here: its CV-X-IF SystemVerilog interfaces are left
 # unconnected by the generated cpu_subsystem and can only be elaborated through
-# the full core_v_mini_mcu testharness (which additionally needs boot_rom + a
+# the full mosaic_soc testharness (which additionally needs boot_rom + a
 # RISC-V GCC toolchain). The novel MOSAIC integration risk — the SCI wrappers
 # and the per-hart OBI fabric — lives in these serial cores and is what this
 # harness verifies. Scale the counts up toward the full PoC as sim time allows.

@@ -13,8 +13,8 @@ module mosaic_tb;
   wire jtag_tck, jtag_trst_n, jtag_tms, jtag_tdi, jtag_tdo;
 
   // Hierarchical handles into the SoC.
-  `define RAM0 testharness_i.x_heep_system_i.core_v_mini_mcu_i.memory_subsystem_i.ram0_i.tc_ram_i.sram
-  `define CMM testharness_i.x_heep_system_i.core_v_mini_mcu_i
+  `define RAM0 testharness_i.mosaic_system_i.mosaic_soc_i.memory_subsystem_i.ram0_i.tc_ram_i.sram
+  `define CMM testharness_i.mosaic_system_i.mosaic_soc_i
   `define CPU `CMM.cpu_subsystem_i
 
   // Wake-demo tracking: did the TDU ever pulse core_wake for harts 1/2? (1-cycle pulse)

@@ -34,14 +34,14 @@ module ext_bus #(
     input  obi_pkg::obi_req_t  heep_debug_master_req_i,
     output obi_pkg::obi_resp_t heep_debug_master_resp_o,
 
-    input obi_pkg::obi_req_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_req_i,
-    output obi_pkg::obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_resp_o,
+    input obi_pkg::obi_req_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_req_i,
+    output obi_pkg::obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_resp_o,
 
-    input obi_pkg::obi_req_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_req_i,
-    output obi_pkg::obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_resp_o,
+    input obi_pkg::obi_req_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_req_i,
+    output obi_pkg::obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_resp_o,
 
-    input obi_pkg::obi_req_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_req_i,
-    output obi_pkg::obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_resp_o,
+    input obi_pkg::obi_req_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_req_i,
+    output obi_pkg::obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_resp_o,
 
     // External master ports
     input  obi_pkg::obi_req_t  [EXT_XBAR_NMASTER_RND-1:0] ext_master_req_i,
@@ -57,11 +57,11 @@ module ext_bus #(
 );
   import obi_pkg::*;
   import addr_map_rule_pkg::*;
-  import core_v_mini_mcu_pkg::*;
+  import mosaic_soc_pkg::*;
 
   // X-HEEP + external master ports
-  obi_req_t [core_v_mini_mcu_pkg::SYSTEM_XBAR_NMASTER+EXT_XBAR_NMASTER-1:0] master_req;
-  obi_resp_t [core_v_mini_mcu_pkg::SYSTEM_XBAR_NMASTER+EXT_XBAR_NMASTER-1:0] master_resp;
+  obi_req_t [mosaic_soc_pkg::SYSTEM_XBAR_NMASTER+EXT_XBAR_NMASTER-1:0] master_req;
+  obi_resp_t [mosaic_soc_pkg::SYSTEM_XBAR_NMASTER+EXT_XBAR_NMASTER-1:0] master_resp;
 
   // Forward crossbars ports
   obi_req_t [EXT_XBAR_NMASTER-1:0][1:0] demux_xbar_req;
@@ -83,16 +83,16 @@ module ext_bus #(
 
   generate
     for (
-        genvar i = 0; i < core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS; i++
+        genvar i = 0; i < mosaic_soc_pkg::DMA_NUM_MASTER_PORTS; i++
     ) begin : gen_dma_master_req_map
-      assign master_req[core_v_mini_mcu_pkg::DMA_READ_P0_IDX+
-                        i*core_v_mini_mcu_pkg::DMA_OBI_PORTS_PER_STREAM] =
+      assign master_req[mosaic_soc_pkg::DMA_READ_P0_IDX+
+                        i*mosaic_soc_pkg::DMA_OBI_PORTS_PER_STREAM] =
           heep_dma_read_req_i[i];
-      assign master_req[core_v_mini_mcu_pkg::DMA_WRITE_P0_IDX+
-                        i*core_v_mini_mcu_pkg::DMA_OBI_PORTS_PER_STREAM] =
+      assign master_req[mosaic_soc_pkg::DMA_WRITE_P0_IDX+
+                        i*mosaic_soc_pkg::DMA_OBI_PORTS_PER_STREAM] =
           heep_dma_write_req_i[i];
-      if (core_v_mini_mcu_pkg::DMA_OBI_PORTS_PER_STREAM == 3) begin : gen_legacy_addr_req
-        assign master_req[core_v_mini_mcu_pkg::DMA_READ_P0_IDX+2+i*3] =
+      if (mosaic_soc_pkg::DMA_OBI_PORTS_PER_STREAM == 3) begin : gen_legacy_addr_req
+        assign master_req[mosaic_soc_pkg::DMA_READ_P0_IDX+2+i*3] =
             heep_dma_addr_req_i[i];
       end
     end
@@ -111,17 +111,17 @@ module ext_bus #(
 
   generate
     for (
-        genvar i = 0; i < core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS; i++
+        genvar i = 0; i < mosaic_soc_pkg::DMA_NUM_MASTER_PORTS; i++
     ) begin : gen_dma_master_resp_map
       assign heep_dma_read_resp_o[i] =
-          master_resp[core_v_mini_mcu_pkg::DMA_READ_P0_IDX+
-                      i*core_v_mini_mcu_pkg::DMA_OBI_PORTS_PER_STREAM];
+          master_resp[mosaic_soc_pkg::DMA_READ_P0_IDX+
+                      i*mosaic_soc_pkg::DMA_OBI_PORTS_PER_STREAM];
       assign heep_dma_write_resp_o[i] =
-          master_resp[core_v_mini_mcu_pkg::DMA_WRITE_P0_IDX+
-                      i*core_v_mini_mcu_pkg::DMA_OBI_PORTS_PER_STREAM];
-      if (core_v_mini_mcu_pkg::DMA_OBI_PORTS_PER_STREAM == 3) begin : gen_legacy_addr_resp
+          master_resp[mosaic_soc_pkg::DMA_WRITE_P0_IDX+
+                      i*mosaic_soc_pkg::DMA_OBI_PORTS_PER_STREAM];
+      if (mosaic_soc_pkg::DMA_OBI_PORTS_PER_STREAM == 3) begin : gen_legacy_addr_resp
         assign heep_dma_addr_resp_o[i] =
-            master_resp[core_v_mini_mcu_pkg::DMA_READ_P0_IDX+2+i*3];
+            master_resp[mosaic_soc_pkg::DMA_READ_P0_IDX+2+i*3];
       end else begin : gen_no_addr_resp
         assign heep_dma_addr_resp_o[i] = '0;
       end

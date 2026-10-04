@@ -32,7 +32,7 @@
 // means IE=0 and their _IN terminals stay unread; they are declared because the
 // DEF declares them, and left unconnected on purpose.
 //
-// core_v_mini_mcu exposes 251 ports, almost all x-heep expansion interfaces
+// mosaic_soc exposes 251 ports, almost all x-heep expansion interfaces
 // (ext_*, hw_fifo_*, GPIO, JTAG, DDR) this block does not bring out. They are
 // terminated HERE rather than deleted from the RTL: unused outputs left
 // unconnected so synthesis prunes their logic, unused inputs tied to constants.
@@ -56,8 +56,8 @@ parameter EXT_XBAR_NMASTER = 0,
     
     parameter AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 0 : AO_SPC_NUM - 1,
     parameter EXT_XBAR_NMASTER_RND = EXT_XBAR_NMASTER == 0 ? 1 : EXT_XBAR_NMASTER,
-    parameter EXT_DOMAINS_RND = core_v_mini_mcu_pkg::EXTERNAL_DOMAINS == 0 ? 1 : core_v_mini_mcu_pkg::EXTERNAL_DOMAINS,
-    parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT,
+    parameter EXT_DOMAINS_RND = mosaic_soc_pkg::EXTERNAL_DOMAINS == 0 ? 1 : mosaic_soc_pkg::EXTERNAL_DOMAINS,
+    parameter NEXT_INT_RND = mosaic_soc_pkg::NEXT_INT == 0 ? 1 : mosaic_soc_pkg::NEXT_INT,
     parameter EXT_HARTS_RND = EXT_HARTS == 0 ? 1 : EXT_HARTS
 ) (
     inout  wire          VDD,
@@ -300,22 +300,22 @@ parameter EXT_XBAR_NMASTER = 0,
   obi_resp_t ext_core_instr_resp_i_tie = '0;
   obi_resp_t ext_core_data_resp_i_tie = '0;
   obi_resp_t ext_debug_master_resp_i_tie = '0;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i_tie = '0;
-  obi_resp_t [core_v_mini_mcu_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i_tie = '0;
-  fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i_tie = '0;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i_tie = '0;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i_tie = '0;
+  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_read_resp_i_tie = '0;
+  obi_resp_t [mosaic_soc_pkg::DMA_NUM_MASTER_PORTS-1:0] ext_dma_write_resp_i_tie = '0;
+  fifo_resp_t [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_i_tie = '0;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i_tie = '0;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] hw_fifo_done_i_tie = '0;
   reg_rsp_t ext_peripheral_slave_resp_i_tie = '0;
   logic [NEXT_INT_RND-1:0] intr_vector_ext_i_tie = '0;
   logic intr_ext_peripheral_i_tie = '0;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i_tie = '0;
-  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i_tie = '0;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i_tie = '0;
+  logic [mosaic_soc_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i_tie = '0;
 
-  // Unused core_v_mini_mcu OUTPUTS are omitted from this instantiation rather
+  // Unused mosaic_soc OUTPUTS are omitted from this instantiation rather
   // than bound to an empty reference: synthesis then prunes the logic that
   // drove them, which is the point of trimming the interface. Unused INPUTS
   // are tied to explicit constants below.
-  core_v_mini_mcu i_core_v_mini_mcu (
+  mosaic_soc i_mosaic_soc (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .boot_select_i(boot_select_i),

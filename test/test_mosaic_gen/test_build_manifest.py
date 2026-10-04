@@ -71,7 +71,7 @@ def test_stage_rejects_generated_file_modified_after_manifest(tmp_path):
     generated.parent.mkdir(parents=True)
     generated.write_text("module original; endmodule\n")
     repo.mkdir()
-    (repo / "core-v-mini-mcu.core").write_text("CAPI=2:\n")
+    (repo / "mosaic_soc.core").write_text("CAPI=2:\n")
     (repo / "waiver_v5.core").write_text("CAPI=2:\n")
     manifest = {
         "schema_version": build_manifest.SCHEMA_VERSION,
@@ -94,7 +94,7 @@ def test_stage_rejects_live_source_drift_and_materializes_snapshot(tmp_path):
     source = repo / "hw/rtl/core.sv"
     source.parent.mkdir(parents=True)
     source.write_text("module core; endmodule\n")
-    (repo / "core-v-mini-mcu.core").write_text("CAPI=2:\n")
+    (repo / "mosaic_soc.core").write_text("CAPI=2:\n")
     (repo / "waiver_v5.core").write_text("CAPI=2:\n")
     manifest_path = tmp_path / "bundle/manifest.json"
     generated_root = tmp_path / "bundle/generated"
@@ -141,7 +141,7 @@ def test_generated_platform_artifact_registration_and_overlay(tmp_path):
     (repo / "hw/platform").mkdir(parents=True)
     (repo / "hw/platform/static.sv").write_text("module static; endmodule\n")
     (repo / "hw/platform/rv_plic_reg_pkg.sv").write_text("package stale; endpackage\n")
-    (repo / "core-v-mini-mcu.core").write_text("CAPI=2:\n")
+    (repo / "mosaic_soc.core").write_text("CAPI=2:\n")
     (repo / "waiver_v5.core").write_text("CAPI=2:\n")
 
     generated = generated_root / "hw/platform/rv_plic_reg_pkg.sv"
@@ -200,7 +200,7 @@ def test_registration_rejects_artifact_outside_generated_root(tmp_path):
 
 
 def test_core_descriptors_select_instead_of_aggregating_catalog():
-    top = (REPO_ROOT / "core-v-mini-mcu.core").read_text()
+    top = (REPO_ROOT / "mosaic_soc.core").read_text()
     sci = (REPO_ROOT / "hw/sci/sci.core").read_text()
     assert "mosaic_cv32e20? (files_rtl_cv32e20)" in top
     assert "mosaic_configured? (files_rtl_mosaic_sci)" in top

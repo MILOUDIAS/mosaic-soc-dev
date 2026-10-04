@@ -5,7 +5,7 @@
 #include "power_manager.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "core_v_mini_mcu.h"
+#include "mosaic_soc.h"
 #include "power_manager_regs.h"
 #include "power_manager_structs.h"
 #include "x-heep.h"
